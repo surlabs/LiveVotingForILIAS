@@ -137,8 +137,11 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     public function showContent(): void
     {
+        global $DIC;
         if (!ilObjLiveVotingAccess::hasWriteAccess()) {
-            $this->tpl->setContent($this->renderer->render($this->factory->messageBox()->failure($this->plugin->txt("permission_denied"))));
+            $param_manager = ParamManager::getInstance();
+            $pin_url = $this->object->getLiveVoting()->getShortLink($param_manager->getRefId());
+            $DIC->ctrl()->redirectToURL($pin_url);
             return;
         }
 
