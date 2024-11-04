@@ -30,6 +30,7 @@ use ilObjLiveVotingGUI;
 use ilPlugin;
 use LiveVoting\legacy\liveVotingTableGUI;
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\objects\modes\LiveVotingMode;
 
 /**
  * Class LiveVotingManageUI
@@ -70,7 +71,7 @@ class LiveVotingManageUI
      * @throws ilException
      * @throws LiveVotingException
      */
-    public function showManage($parent): string
+    public function showManage(ilObjLiveVotingGUI $parent): string
     {
         global $DIC;
 
@@ -90,8 +91,17 @@ class LiveVotingManageUI
         $button4 = $f->button()->bulky($glyph, '<div style="margin-left:10px">' . $this->plugin->txt("voting_type_5") . ' <br/><small><muted>' . $this->plugin->txt("voting_type_5_info") . '</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedPriorities'));
         $button5 = $f->button()->bulky($glyph, '<div style="margin-left:10px">' . $this->plugin->txt("voting_type_6") . ' <br/><small><muted>' . $this->plugin->txt("voting_type_6_info") . '</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedRange'));
 
+        $buttons = [$button];
+
+        if ($parent->getObject()->getLiveVoting()->getMode()->getMode() == LiveVotingMode::BASIC_MODE) {
+            $buttons[] = $button2;
+            $buttons[] = $button3;
+            $buttons[] = $button4;
+            $buttons[] = $button5;
+        }
+
         $items = [
-            $f->menu()->sub('<div><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> ' . $this->plugin->txt('voting_add') . '</div>', [$button, $button2, $button3, $button4, $button5]),
+            $f->menu()->sub('<div><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> ' . $this->plugin->txt('voting_add') . '</div>', $buttons),
 
             $f->button()->bulky($glyph_reset, '&nbsp;' . $this->plugin->txt('voting_reset_all'), $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'confirmResetAll')),
         ];

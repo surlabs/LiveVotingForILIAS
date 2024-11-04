@@ -18,30 +18,30 @@ declare(strict_types=1);
  *
  */
 
-namespace LiveVoting\votings;
+namespace LiveVoting\objects\modes;
+
+use LiveVoting\platform\LiveVotingException;
 
 /**
  * Class LiveVotingMode
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-class LiveVotingMode
+abstract class LiveVotingMode
 {
     const BASIC_MODE = 0;
+    const CHALLENGE_MODE = 1;
 
-    private int $mode = self::BASIC_MODE;
-
-    public function __construct(int $mode)
+    /**
+     * @throws LiveVotingException
+     */
+    public static function new(int $mode): LiveVotingMode
     {
-        $this->mode = $mode;
+        return match ($mode) {
+            self::BASIC_MODE => new LiveVotingBasicMode(),
+            self::CHALLENGE_MODE => new LiveVotingChallengeMode(),
+            default => throw new LiveVotingException('Invalid mode'),
+        };
     }
 
-    public function getMode(): int
-    {
-        return $this->mode;
-    }
-
-    public function setMode(int $mode): void
-    {
-        $this->mode = $mode;
-    }
+    abstract public function getMode(): int;
 }

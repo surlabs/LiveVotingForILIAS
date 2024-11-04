@@ -689,3 +689,17 @@ if ($db->tableExists('rep_robj_xlvo_voting_n')) {
     $db->manipulate("ALTER TABLE rep_robj_xlvo_voting_n MODIFY COLUMN question LONGTEXT");
 }
 ?>
+<#45>
+<?php
+global $DIC;
+$db = $DIC->database();
+if ($db->tableExists('rep_robj_xlvo_config_n') && !$db->tableColumnExists('rep_robj_xlvo_config_n', 'mode')) {
+    $db->addTableColumn('rep_robj_xlvo_config_n', 'mode', [
+        'type' => 'integer',
+        'length' => 4,
+        'notnull' => false
+    ]);
+
+    $db->manipulate("UPDATE rep_robj_xlvo_config_n SET mode = 0 WHERE mode IS NULL");
+}
+?>

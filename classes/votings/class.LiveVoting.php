@@ -27,6 +27,7 @@ use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
+use LiveVoting\objects\modes\LiveVotingMode;
 
 /**
  * Class LiveVoting
@@ -41,9 +42,9 @@ class LiveVoting
 
     /**
      * How the voting is being conducted
-     * @var LiveVotingMode
+     * @var LiveVotingMode|null
      */
-    private LiveVotingMode $mode;
+    private ?LiveVotingMode $mode;
 
     /**
      * The log of the voting
@@ -318,7 +319,8 @@ class LiveVoting
             "results_behaviour" => $this->results_behaviour,
             "voting_history" => (int)$this->voting_history,
             "show_attendees" => (int)$this->show_attendees,
-            "puk" => $this->puk
+            "puk" => $this->puk,
+            "mode" => $this->mode->getMode()
         ));
 
         return $this->id;
@@ -342,11 +344,10 @@ class LiveVoting
             $this->setVotingHistory((bool)$result[0]["voting_history"]);
             $this->setShowAttendees((bool)$result[0]["show_attendees"]);
             $this->setPuk($result[0]["puk"]);
+            $this->setMode(LiveVotingMode::new((int) $result[0]["mode"]));
         } else {
             $this->loadDefaultValues();
         }
-
-        $this->setMode(new LiveVotingMode(LiveVotingMode::BASIC_MODE)); // For this version, only basic mode is available
 
         $this->questions = LiveVotingQuestion::loadAllQuestionsByObjectId($this->getId());
     }
@@ -365,6 +366,7 @@ class LiveVoting
         $this->setVotingHistory(false);
         $this->setShowAttendees(false);
         $this->setPuk(LiveVoting::generatePuk());
+        $this->setMode(LiveVotingMode::new(LiveVotingMode::BASIC_MODE));
 
         $this->save();
     }

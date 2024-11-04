@@ -46,6 +46,7 @@ use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingRound;
 use LiveVoting\votings\LiveVotingVote;
 use LiveVoting\votings\LiveVotingVoter;
+use LiveVoting\objects\modes\LiveVotingMode;
 
 /**
  * Class ilObjLiveVotingGUI
@@ -82,7 +83,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     {
         return 'index';
     }
-
 
     public function performCommand(string $cmd): void
     {
@@ -1245,5 +1245,35 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         }
 
         parent::_goto($a_target);
+    }
+
+    protected function initCreateForm(string $new_type): ilPropertyFormGUI
+    {
+        $form = parent::initCreateForm($new_type);
+
+        $mode = new ilRadioGroupInputGUI($this->plugin->txt('xlvo_mode'), 'xlvo_mode');
+        $mode->addOption(new ilRadioOption($this->plugin->txt('xlvo_mode_basic'), (string) LiveVotingMode::BASIC_MODE, $this->plugin->txt('xlvo_mode_basic_info')));
+        $mode->addOption(new ilRadioOption($this->plugin->txt('xlvo_mode_challenge'), (string) LiveVotingMode::CHALLENGE_MODE, $this->plugin->txt('xlvo_mode_challenge_info')));
+
+        $mode->setRequired(true);
+
+        $form->addItem($mode);
+
+        return $form;
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    protected function afterSave(ilObject $new_object): void
+    {
+        $form = $this->initCreateForm("xlvo");
+
+        if ($form->checkInput()) {
+            $new_object->getLiveVoting()->setMode(LiveVotingMode::new((int)$form->getInput("xlvo_mode")));
+            $new_object->getLiveVoting()->save();
+        }
+
+        parent::afterSave($new_object);
     }
 }
