@@ -149,18 +149,20 @@ class LiveVotingSettingsUI
 
             $formFields = [];
 
-            $frozenOptions = $DIC->ui()->factory()->input()->field()->radio($this->plugin->txt('obj_frozen_behaviour'), "")
-                ->withOption("1", $this->plugin->txt('obj_frozen_alway_on'), $this->plugin->txt('obj_frozen_alway_on_info'))
-                ->withOption("0", $this->plugin->txt('obj_frozen_alway_off'), $this->plugin->txt('obj_frozen_alway_off_info'))
-                ->withOption("2", $this->plugin->txt('obj_frozen_reuse'), $this->plugin->txt('obj_frozen_reuse_info'))
-                ->withValue($this->object->getLiveVoting()->getFrozenBehaviour())
-                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
-                    function ($v) {
-                        $this->object->getLiveVoting()->setFrozenBehaviour((int)$v);
-                    }
-                ));
+            if ($this->object->getLiveVoting()->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
+                $frozenOptions = $DIC->ui()->factory()->input()->field()->radio($this->plugin->txt('obj_frozen_behaviour'), "")
+                    ->withOption("1", $this->plugin->txt('obj_frozen_alway_on'), $this->plugin->txt('obj_frozen_alway_on_info'))
+                    ->withOption("0", $this->plugin->txt('obj_frozen_alway_off'), $this->plugin->txt('obj_frozen_alway_off_info'))
+                    ->withOption("2", $this->plugin->txt('obj_frozen_reuse'), $this->plugin->txt('obj_frozen_reuse_info'))
+                    ->withValue($this->object->getLiveVoting()->getFrozenBehaviour())
+                    ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
+                        function ($v) {
+                            $this->object->getLiveVoting()->setFrozenBehaviour((int)$v);
+                        }
+                    ));
 
-            $formFields['frozen_options'] = $frozenOptions;
+                $formFields['frozen_options'] = $frozenOptions;
+            }
 
             $resultsOptions = $DIC->ui()->factory()->input()->field()->radio($this->plugin->txt('obj_results_behaviour'), "")
                 ->withOption("1", $this->plugin->txt('obj_results_alway_on'), $this->plugin->txt('obj_results_alway_on_info'))

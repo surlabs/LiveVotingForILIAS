@@ -93,7 +93,7 @@ class LiveVotingManageUI
 
         $buttons = [$button];
 
-        if ($parent->getObject()->getLiveVoting()->getMode()->getMode() == LiveVotingMode::BASIC_MODE) {
+        if ($parent->getObject()->getLiveVoting()->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
             $buttons[] = $button2;
             $buttons[] = $button3;
             $buttons[] = $button4;

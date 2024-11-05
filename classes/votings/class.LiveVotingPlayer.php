@@ -27,6 +27,7 @@ use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
 use LiveVoting\questions\LiveVotingQuestionOption;
 use LiveVoting\Utils\LiveVotingUtils;
+use LiveVoting\objects\modes\LiveVotingMode;
 
 /**
  * Class LiveVotingPlayer
@@ -599,16 +600,20 @@ class LiveVotingPlayer
                 break;
         }
 
-        switch ($liveVoting->getFrozenBehaviour()) {
-            case 1:
-                $this->setFrozen(false);
-                break;
-            case 0:
-                $this->setFrozen(true);
-                break;
-            case 2:
-                $this->setFrozen($this->isFrozen());
-                break;
+        if ($liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
+            switch ($liveVoting->getFrozenBehaviour()) {
+                case 1:
+                    $this->setFrozen(false);
+                    break;
+                case 0:
+                    $this->setFrozen(true);
+                    break;
+                case 2:
+                    $this->setFrozen($this->isFrozen());
+                    break;
+            }
+        } else {
+            $this->setFrozen(false);
         }
     }
 
