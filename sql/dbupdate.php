@@ -693,13 +693,25 @@ if ($db->tableExists('rep_robj_xlvo_voting_n')) {
 <?php
 global $DIC;
 $db = $DIC->database();
-if ($db->tableExists('rep_robj_xlvo_config_n') && !$db->tableColumnExists('rep_robj_xlvo_config_n', 'mode')) {
-    $db->addTableColumn('rep_robj_xlvo_config_n', 'mode', [
-        'type' => 'integer',
-        'length' => 4,
-        'notnull' => false
-    ]);
+if ($db->tableExists('rep_robj_xlvo_config_n')) {
+    if (!$db->tableColumnExists('rep_robj_xlvo_config_n', 'mode')) {
+        $db->addTableColumn('rep_robj_xlvo_config_n', 'mode', [
+            'type' => 'integer',
+            'length' => 4,
+            'notnull' => false
+        ]);
 
-    $db->manipulate("UPDATE rep_robj_xlvo_config_n SET mode = 0 WHERE mode IS NULL");
+        $db->manipulate("UPDATE rep_robj_xlvo_config_n SET mode = 0 WHERE mode IS NULL");
+    }
+
+    if (!$db->tableColumnExists('rep_robj_xlvo_config_n', 'nicknames')) {
+        $db->addTableColumn("rep_robj_xlvo_config_n", "nicknames", [
+            "type" => "integer",
+            "length" => 4,
+            "notnull" => false
+        ]);
+
+        $db->manipulate("UPDATE rep_robj_xlvo_config_n SET nicknames = 0 WHERE nicknames IS NULL");
+    }
 }
 ?>

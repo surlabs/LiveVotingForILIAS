@@ -181,6 +181,8 @@ results_title#:#Resultate
 root_create_xlvo#:#LiveVoting erstellen
 show_attendees#:#Anzahl Teilnehmende (Online)
 show_attendees_info#:#Die Anzahl der aktuell teilnehmenden Personen wird im Präsentationsmodus angezeigt. Diese Funktion hat einen Einfluss auf die Geschwindigkeit des Systems und sollte nur bei LiveVotings mit geringer Anzahl Teilnehmenden (abhängig von der Installationsgröße) verwendet werden.
+nicknames#:#Spitznamen
+nicknames_info#:#Diese Option ermöglicht es den Teilnehmern, vor der Abstimmung einen Spitznamen einzugeben; nur im Challenge-Modus verfügbar.
 subtab_show#:#Zeigen
 tab_content#:#Inhalt
 tab_manage#:#Verwalten

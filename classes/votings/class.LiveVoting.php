@@ -76,6 +76,7 @@ class LiveVoting
     private int $frozen_behaviour = 0;
     private int $results_behaviour = 0;
     private string $puk = "";
+    private bool $nicknames = false;
     private LiveVotingPlayer $player;
 
     /**
@@ -289,6 +290,16 @@ class LiveVoting
         $this->puk = $puk;
     }
 
+    public function isNicknames(): bool
+    {
+        return $this->nicknames;
+    }
+
+    public function setNicknames(bool $nicknames): void
+    {
+        $this->nicknames = $nicknames;
+    }
+
     public function getPlayer(): LiveVotingPlayer
     {
         return $this->player;
@@ -320,7 +331,8 @@ class LiveVoting
             "voting_history" => (int)$this->voting_history,
             "show_attendees" => (int)$this->show_attendees,
             "puk" => $this->puk,
-            "mode" => $this->mode->getMode()
+            "mode" => $this->mode->getMode(),
+            "nicknames" => (int)$this->nicknames
         ));
 
         return $this->id;
@@ -345,6 +357,7 @@ class LiveVoting
             $this->setShowAttendees((bool)$result[0]["show_attendees"]);
             $this->setPuk($result[0]["puk"]);
             $this->setMode(LiveVotingMode::new((int) $result[0]["mode"]));
+            $this->setNicknames((bool)$result[0]["nicknames"]);
         } else {
             $this->loadDefaultValues();
         }
@@ -367,6 +380,7 @@ class LiveVoting
         $this->setShowAttendees(false);
         $this->setPuk(LiveVoting::generatePuk());
         $this->setMode(LiveVotingMode::new(LiveVotingMode::BASIC_MODE));
+        $this->setNicknames(false);
 
         $this->save();
     }

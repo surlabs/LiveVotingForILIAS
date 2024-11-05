@@ -27,6 +27,7 @@ use ILIAS\UI\Renderer;
 use ilLiveVotingPlugin;
 use ilObjLiveVoting;
 use ilPlugin;
+use LiveVoting\objects\modes\LiveVotingMode;
 
 /**
  * Class LiveVotingSettingsUI
@@ -131,6 +132,16 @@ class LiveVotingSettingsUI
                     }
                 ));
             $formFields['show_attendees'] = $showAttendeesCheck;
+
+            if ($this->object->getLiveVoting()->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
+                $formFields['nicknames'] = $DIC->ui()->factory()->input()->field()->checkbox($this->plugin->txt("nicknames"), $this->plugin->txt("nicknames_info"))
+                    ->withValue($this->object->getLiveVoting()->isNicknames())
+                    ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
+                        function ($v) {
+                            $this->object->getLiveVoting()->setNicknames((bool)$v);
+                        }
+                    ));
+            }
 
             $sectionObject = $DIC->ui()->factory()->input()->field()->section($formFields, $this->plugin->txt("obj_edit_properties"), "");
 
