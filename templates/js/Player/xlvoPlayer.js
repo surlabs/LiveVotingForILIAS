@@ -268,7 +268,6 @@ var xlvoPlayer = {
     $.get(xlvoPlayer.config.base_url, { cmd: 'getPlayerData' })
       .done((data) => {
         xlvoPlayer.counter++;
-        //console.log(data);
 
         if (
           xlvoPlayer.counter > xlvoPlayer.forced_update_interval || // Forced update of HTML
@@ -290,28 +289,23 @@ var xlvoPlayer = {
 
           // Update only if the content has changed
           if($('.panel-heading').html() !== newHeading.html()) {
-            console.log('Updating #xlvo-question-title');
             $('.panel-heading').html(newHeading.html());
           }
 
           if ($('#xlvo-votes').html() !== newVotes.html()) {
-            console.log('Updating #xlvo-votes');
             $('#xlvo-votes').html(newVotes.html());
           }
 
           if ($('#xlvo-attendees').html() !== newAttendees.html()) {
-            console.log('Updating #xlvo-attendees');
             $('#xlvo-attendees').html(newAttendees.html());
           }
 
           if ($('#xlvo-display-options').html() !== rowOptions.html()) {
             $('#xlvo-display-options').html(rowOptions.html());
             $(".xlvo-question").html(newQuestion.html());
-
           }
 
           if ($('#xlvo-display-results').html() !== newResults.html()) {
-            console.log('Updating #xlvo-display-results');
             $('#xlvo-display-results').html(newResults.html());
           }
 
@@ -348,7 +342,6 @@ var xlvoPlayer = {
         xlvoPlayer.endRequest();
       });
   },
-
 
   handleSwitch() {
     xlvoPlayer.buttons_handled = false;
