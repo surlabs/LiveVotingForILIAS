@@ -317,3 +317,5 @@ permission_denied#:#Permission denied
 voting_msg_all_reset#:#All results have been reset
 voting_msg_reset#:#Results have been reset
 sorting_msg_saved#:#Order has been saved
+voting_msg_duplicated_failed#:#Question could not be duplicated
+voting_msg_duplicated_success#:#Question has been duplicated

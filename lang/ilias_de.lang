@@ -316,3 +316,5 @@ permission_denied#:#Berechtigungen verweigert
 voting_msg_all_reset#:#Alle Resultate wurden zurückgesetzt
 voting_msg_reset#:#Resultate wurden zurückgesetzt
 sorting_msg_saved#:#Reihenfolge gespeichert
+voting_msg_duplicated_failed#:#Fehler beim Kopieren der Frage
+voting_msg_duplicated_success#:#Frage wurde kopiert

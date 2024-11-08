@@ -419,11 +419,13 @@ abstract class LiveVotingQuestion
 
             $questions = LiveVotingQuestion::loadAllQuestionsByObjectId($newObj->getObjId());
 
-            while (in_array($newObj->getTitle() . ' (' . $count . ')', array_column($questions, 'title'))) {
-                $count++;
-            }
+            if (in_array($newObj->getTitle(), array_column($questions, 'title'))) {
+                while (in_array($newObj->getTitle() . ' (' . $count . ')', array_column($questions, 'title'))) {
+                    $count++;
+                }
 
-            $newObj->setTitle($newObj->getTitle() . ' (' . $count . ')');
+                $newObj->setTitle($newObj->getTitle() . ' (' . $count . ')');
+            }
         }
 
         $newObj->save();

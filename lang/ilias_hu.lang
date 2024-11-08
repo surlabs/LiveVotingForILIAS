@@ -303,3 +303,5 @@ permission_denied#:#Engedélyek megtagadva.
 voting_msg_all_reset#:#Az összes válasz törölve
 voting_msg_reset#:#Válasz törölve
 sorting_msg_saved#:#Sorrend mentve
+voting_msg_duplicated_failed#:#Kérdés duplikálása sikertelen
+voting_msg_duplicated_success#:#Kérdés duplikálása sikeres

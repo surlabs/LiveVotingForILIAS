@@ -66,6 +66,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $this->factory = $DIC->ui()->factory();
         $this->renderer = $DIC->ui()->renderer();
+        $this->request = $DIC->http()->request();
     }
 
     public function getType(): string
@@ -124,6 +125,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'resetQuestion':
             case 'duplicateQuestion':
             case 'duplicateQuestionToAnotherObjectSelect':
+            case 'duplicateQuestionToAnotherObject':
             case 'confirmDeleteQuestion':
             case 'deleteQuestion':
             case 'saveSorting':
@@ -777,35 +779,114 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
 
-        $form = $this->getDuplicateToAnotherObjectSelectForm($question);
-
-        $DIC->ui()->mainTemplate()->setContent($form);
+        $DIC->ui()->mainTemplate()->setContent($this->getDuplicateToAnotherObjectSelectTree($question));
     }
 
-    private function getDuplicateToAnotherObjectSelectForm(LiveVotingQuestion $question): string
+    private function getDuplicateToAnotherObjectSelectTree(LiveVotingQuestion $question): string
     {
-        $form = new ilPropertyFormGUI();
+        $liveVotings = [
+            [
+                "ref_id" => $this->tree->getRootId(),
+                "title" => "LiveVotings",
+                "childs" => $this->findLiveVotings($this->tree->getRootId())
+            ]
+        ];
 
-        $form->setFormAction($this->ctrl->getFormAction($this));
-        $form->addCommandButton("duplicateQuestionToAnotherObject", $this->txt("voting_duplicate"), $this->ctrl->getFormAction($this));
-        $form->addCommandButton("manage", $this->txt("voting_cancel"), $this->ctrl->getFormAction($this));
+        $recursion = new class () implements \ILIAS\UI\Component\Tree\TreeRecursion {
+            public function getChildren($record, $environment = null): array
+            {
+                return $record['childs'];
+            }
 
-        $form->setTitle($this->txt("voting_duplicateToAnotherObject"));
+            public function build(
+                \ILIAS\UI\Component\Tree\Node\Factory $factory,
+                $record,
+                $environment = null
+            ): \ILIAS\UI\Component\Tree\Node\Node {
+                $node = $factory->simple($record['title']);
 
-        $repository_selector = new ilRepositorySelector2InputGUI($this->txt("obj_xlvo"), "ref_id", false, $this);
+                if (empty($record['childs'])) {
+                    $uri = new \ILIAS\Data\URI($environment['url'] . "&to_ref_id=" . $record['ref_id']);
+                    $node = $node->withLink($uri);
+                }
 
-        $repository_selector->setRequired(true);
+                return $node;
+            }
+        };
 
-        $repository_selector->getExplorerGUI()->setSelectableTypes([ilLiveVotingPlugin::PLUGIN_ID]);
+        $this->ctrl->setParameter($this, "question_id", $question->getId());
+        $tree = $this->factory->tree()->expandable("LiveVotings", $recursion)->withData($liveVotings)->withHighlightOnNodeClick(true)->withEnvironment(array(
+            "url" => ILIAS_HTTP_PATH . "/" . $this->ctrl->getLinkTarget($this, "duplicateQuestionToAnotherObject")
+        ));
 
-        $form->addItem($repository_selector);
-
-        return $form->getHTML();
+        return $this->renderer->render($tree);
     }
 
+    private function findLiveVotings(int $ref_id): array
+    {        $childs = $this->tree->getChilds($ref_id);
+
+        $result = [];
+
+        foreach ($childs as $child) {
+            if ($child["type"] == ilLiveVotingPlugin::PLUGIN_ID) {
+                $result[] = [
+                    "ref_id" => (int) $child["ref_id"],
+                    "title" => $child["title"],
+                    "childs" => []
+                ];
+            } else {
+                $childs_result = $this->findLiveVotings((int) $child["ref_id"]);
+
+                if (!empty($childs_result)) {
+                    $result[] = [
+                        "ref_id" => (int) $child["ref_id"],
+                        "title" => $child["title"],
+                        "childs" => $childs_result
+                    ];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @throws ilCtrlException
+     * @throws LiveVotingException
+     */
     public function duplicateQuestionToAnotherObject()
     {
+        global $DIC;
 
+        $question_id = isset($this->request->getQueryParams()["question_id"]) ? intval($this->request->getQueryParams()["question_id"]) : 0;
+        $to_ref_id = isset($this->request->getQueryParams()["to_ref_id"]) ? intval($this->request->getQueryParams()["to_ref_id"]) : 0;
+
+        if ($question_id == 0 || $to_ref_id == 0) {
+            $DIC->ui()->mainTemplate()->setOnScreenMessage("failure", $this->txt('voting_msg_duplicated_failed'), true);
+            $this->ctrl->redirect($this, "manage");
+            return;
+        }
+
+        $obj_id = ilObject::_lookupObjId($to_ref_id);
+
+        if ($obj_id == 0) {
+            $DIC->ui()->mainTemplate()->setOnScreenMessage("failure", $this->txt('voting_msg_duplicated_failed'), true);
+            $this->ctrl->redirect($this, "manage");
+            return;
+        }
+
+        $question = LiveVotingQuestion::loadQuestionById($question_id);
+
+        if ($question == null) {
+            $DIC->ui()->mainTemplate()->setOnScreenMessage("failure", $this->txt('voting_msg_duplicated_failed'), true);
+            $this->ctrl->redirect($this, "manage");
+            return;
+        }
+
+        $question->fullClone(true, true, $obj_id);
+
+        $DIC->ui()->mainTemplate()->setOnScreenMessage("success", $this->txt('voting_msg_duplicated'), true);
+        $this->ctrl->redirect($this, "manage");
     }
 
     /**
