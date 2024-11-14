@@ -26,7 +26,7 @@ class LiveVotingILIAS extends ILIAS
 {
     public function __construct()
     {
-
+        parent::__construct();
     }
 
 
