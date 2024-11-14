@@ -195,6 +195,8 @@ class LiveVotingUI
             }
         }
 
+        $DIC->ctrl()->clearParameterByClass("ilObjLiveVotingGUI", "xlvo_voting");
+
         return $current_selection_list;
     }
 
