@@ -788,14 +788,30 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             [
                 "ref_id" => $this->tree->getRootId(),
                 "title" => "LiveVotings",
-                "childs" => $this->findLiveVotings($this->tree->getRootId())
+                "livevoting" => false
             ]
         ];
 
         $recursion = new class () implements \ILIAS\UI\Component\Tree\TreeRecursion {
             public function getChildren($record, $environment = null): array
             {
-                return $record['childs'];
+                global $DIC;
+
+                $childs = $DIC->repositoryTree()->getChilds($record["ref_id"]);
+
+                $result = [];
+
+                foreach ($childs as $child) {
+                    if (($child["type"] == ilLiveVotingPlugin::PLUGIN_ID || count($DIC->repositoryTree()->getChilds((int) $child["ref_id"])) > 0) && $child["type"] != "adm") {
+                        $result[] = [
+                            "ref_id" => (int) $child["ref_id"],
+                            "title" => $child["title"],
+                            "livevoting" => $child["type"] == ilLiveVotingPlugin::PLUGIN_ID
+                        ];
+                    }
+                }
+
+                return $result;
             }
 
             public function build(
@@ -805,7 +821,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             ): \ILIAS\UI\Component\Tree\Node\Node {
                 $node = $factory->simple($record['title']);
 
-                if (empty($record['childs'])) {
+                if ($record['livevoting']) {
                     $uri = new \ILIAS\Data\URI($environment['url'] . "&to_ref_id=" . $record['ref_id']);
                     $node = $node->withLink($uri);
                 }
@@ -820,34 +836,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         ));
 
         return $this->renderer->render($tree);
-    }
-
-    private function findLiveVotings(int $ref_id): array
-    {        $childs = $this->tree->getChilds($ref_id);
-
-        $result = [];
-
-        foreach ($childs as $child) {
-            if ($child["type"] == ilLiveVotingPlugin::PLUGIN_ID) {
-                $result[] = [
-                    "ref_id" => (int) $child["ref_id"],
-                    "title" => $child["title"],
-                    "childs" => []
-                ];
-            } else {
-                $childs_result = $this->findLiveVotings((int) $child["ref_id"]);
-
-                if (!empty($childs_result)) {
-                    $result[] = [
-                        "ref_id" => (int) $child["ref_id"],
-                        "title" => $child["title"],
-                        "childs" => $childs_result
-                    ];
-                }
-            }
-        }
-
-        return $result;
     }
 
     /**
