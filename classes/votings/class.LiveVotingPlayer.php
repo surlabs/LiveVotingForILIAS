@@ -40,6 +40,7 @@ class LiveVotingPlayer
     const STAT_START_VOTING = 2;
     const STAT_END_VOTING = 3;
     const STAT_FROZEN = 4;
+    const STAT_SCOREBOARD = 5;
 
     private int $id;
     private int $obj_id;

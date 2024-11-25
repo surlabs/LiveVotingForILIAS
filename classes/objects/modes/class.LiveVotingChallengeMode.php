@@ -30,4 +30,14 @@ class LiveVotingChallengeMode extends LiveVotingMode
     {
         return self::CHALLENGE_MODE;
     }
+
+    public function getStartTemplate(): string
+    {
+        return "startChallenge";
+    }
+
+    public function getInnerTemplate(): string
+    {
+        return "inner_screen_challenge";
+    }
 }

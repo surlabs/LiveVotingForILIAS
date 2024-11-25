@@ -26,6 +26,7 @@ use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingVoter;
+use LiveVoting\objects\modes\LiveVotingMode;
 
 /**
  * Class LiveVotingPlayerGUI
@@ -224,7 +225,7 @@ class LiveVotingPlayerGUI
      */
     public function getHTML(): void
     {
-        $tpl_voting = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.inner_screen.html', true, true);
+        $tpl_voting = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.' . $this->live_voting->getMode()->getInnerTemplate() . '.html', true, true);
         $this->setVotingTemplate($tpl_voting);
 
         if ($this->getLiveVoting()->getPlayer()->isFrozen()) {
@@ -237,8 +238,7 @@ class LiveVotingPlayerGUI
             echo $this->getVotingTemplate()->get();
             exit();
         } else {
-            /*switch ($this->getLiveVoting()->getPlayer()->getStatus()) {*/
-            switch ("scoreboard") {
+            switch ($this->getLiveVoting()->getPlayer()->getStatus()) {
                 case LiveVotingPlayer::STAT_STOPPED:
                     $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_stopped'));
                     $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_stopped'));
@@ -263,7 +263,14 @@ class LiveVotingPlayerGUI
                 case LiveVotingPlayer::STAT_START_VOTING:
                     $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_start'));
                     $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_start'));
-                    $this->getVotingTemplate()->setVariable('GLYPH', '<span class="glyphicon glyphicon-pause"></span>');
+
+                    if ($this->getLiveVoting()->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
+                        $this->getVotingTemplate()->setVariable('GLYPH', '<span class="glyphicon glyphicon-pause"></span>');
+                    } else {
+                        $this->getVotingTemplate()->setVariable('ONLINE_TEXT', vsprintf($this->plugin_object->txt("start_online"), [LiveVotingVoter::countVoters($this->live_voting->getPlayer()->getId())]));
+                        $this->getVotingTemplate()->setVariable('N_QUESTIONS', $this->live_voting->countQuestions() . " " . $this->plugin_object->txt("player_voting_list"));
+                    }
+
                     break;
                 case LiveVotingPlayer::STAT_END_VOTING:
                     $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_end'));
@@ -278,7 +285,7 @@ class LiveVotingPlayerGUI
                     $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
                     $this->getVotingTemplate()->setVariable('GLYPH', '<span class="glyphicon glyphicon-pause"></span>');
                     break;
-                case "scoreboard":
+                case LiveVotingPlayer::STAT_SCOREBOARD:
                     $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_scoreboard'));
 
                     $tpl_scoreboard = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard.html', true, false);

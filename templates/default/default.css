@@ -37,6 +37,14 @@ div.xlvo_shortlink {
   word-wrap: break-word;
   margin-bottom:10px;
 }
+div.xlvo_cm_qr {
+  height: 98%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 div.xlvo_pin * {
   margin: 0;
 }

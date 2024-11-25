@@ -44,4 +44,8 @@ abstract class LiveVotingMode
     }
 
     abstract public function getMode(): int;
+
+    abstract public function getStartTemplate(): string;
+
+    abstract public function getInnerTemplate(): string;
 }

@@ -30,4 +30,14 @@ class LiveVotingBasicMode extends LiveVotingMode
     {
         return self::BASIC_MODE;
     }
+
+    public function getStartTemplate(): string
+    {
+        return "start";
+    }
+
+    public function getInnerTemplate(): string
+    {
+        return "inner_screen";
+    }
 }

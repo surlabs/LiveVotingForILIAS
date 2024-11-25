@@ -46,6 +46,7 @@ use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingVoter;
 use stdClass;
+use LiveVoting\objects\modes\LiveVotingMode;
 
 /**
  * Class LiveVotingUI
@@ -114,25 +115,37 @@ class LiveVotingUI
                     return $this->renderer->render($this->factory->messageBox()->failure($this->pl->txt("player_msg_no_start_2")));
                 }
 
-                $b = ilLinkButton::getInstance();
-                $b->setCaption($this->pl->txt('player_start_voting'), false);
-                $b->addCSSClass('xlvo-preview');
-                $b->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayer"));
-                $b->setId('btn-start-voting');
-                $b->setPrimary(true);
-                $DIC->toolbar()->addButtonInstance($b);
 
-                $current_selection_list = $this->getQuestionSelectionList(false);
-                $DIC->toolbar()->addText($current_selection_list->getHTML());
+                if ($this->liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
+                    $b = ilLinkButton::getInstance();
+                    $b->setCaption($this->pl->txt('player_start_voting'), false);
+                    $b->addCSSClass('xlvo-preview');
+                    $b->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayer"));
+                    $b->setId('btn-start-voting');
+                    $b->setPrimary(true);
+                    $DIC->toolbar()->addButtonInstance($b);
 
-                $b2 = ilLinkButton::getInstance();
-                $b2->setCaption($this->pl->txt('player_start_voting_and_unfreeze'), false);
-                $b2->addCSSClass('xlvo-preview');
-                $b2->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayerAnUnfreeze"));
-                $b2->setId('btn-start-voting-unfreeze');
-                $DIC->toolbar()->addButtonInstance($b2);
 
-                $template = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.start.html", true, true);
+                    $current_selection_list = $this->getQuestionSelectionList(false);
+                    $DIC->toolbar()->addText($current_selection_list->getHTML());
+
+                    $b2 = ilLinkButton::getInstance();
+                    $b2->setCaption($this->pl->txt('player_start_voting_and_unfreeze'), false);
+                    $b2->addCSSClass('xlvo-preview');
+                    $b2->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayerAnUnfreeze"));
+                    $b2->setId('btn-start-voting-unfreeze');
+                    $DIC->toolbar()->addButtonInstance($b2);
+                } else {
+                    $b = ilLinkButton::getInstance();
+                    $b->setCaption($this->pl->txt('player_start_voting'), false);
+                    $b->addCSSClass('xlvo-preview');
+                    $b->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayerAnUnfreeze"));
+                    $b->setId('btn-start-voting');
+                    $b->setPrimary(true);
+                    $DIC->toolbar()->addButtonInstance($b);
+                }
+
+                $template = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl." . $this->liveVoting->getMode()->getStartTemplate() . ".html", true, true);
                 $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/default/default.css');
 
 
@@ -140,7 +153,11 @@ class LiveVotingUI
 
                 $param_manager = ParamManager::getInstance();
 
-                $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId(), 180));
+                if ($this->liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
+                    $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId(), 180));
+                } else {
+                    $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId(), 280));
+                }
 
                 $template->setVariable('SHORTLINK', $this->liveVoting->getShortLink($param_manager->getRefId()));
 
