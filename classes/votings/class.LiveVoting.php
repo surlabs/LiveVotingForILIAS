@@ -77,6 +77,7 @@ class LiveVoting
     private int $results_behaviour = 0;
     private string $puk = "";
     private bool $nicknames = false;
+    private bool $scoreboard = false;
     private LiveVotingPlayer $player;
 
     /**
@@ -300,6 +301,16 @@ class LiveVoting
         $this->nicknames = $nicknames;
     }
 
+    public function isScoreboard(): bool
+    {
+        return $this->scoreboard;
+    }
+
+    public function setScoreboard(bool $scoreboard): void
+    {
+        $this->scoreboard = $scoreboard;
+    }
+
     public function getPlayer(): LiveVotingPlayer
     {
         return $this->player;
@@ -332,7 +343,8 @@ class LiveVoting
             "show_attendees" => (int)$this->show_attendees,
             "puk" => $this->puk,
             "mode" => $this->mode->getMode(),
-            "nicknames" => (int)$this->nicknames
+            "nicknames" => (int)$this->nicknames,
+            "scoreboard" => (int)$this->scoreboard
         ));
 
         return $this->id;
@@ -358,6 +370,7 @@ class LiveVoting
             $this->setPuk($result[0]["puk"]);
             $this->setMode(LiveVotingMode::new((int) $result[0]["mode"]));
             $this->setNicknames((bool)$result[0]["nicknames"]);
+            $this->setScoreboard((bool)$result[0]["scoreboard"]);
         } else {
             $this->loadDefaultValues();
         }

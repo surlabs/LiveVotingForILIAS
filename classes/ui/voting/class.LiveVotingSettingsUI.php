@@ -141,6 +141,14 @@ class LiveVotingSettingsUI
                             $this->object->getLiveVoting()->setNicknames((bool)$v);
                         }
                     ));
+
+                $formFields['scoreboard'] = $DIC->ui()->factory()->input()->field()->checkbox($this->plugin->txt("scoreboard"), $this->plugin->txt("scoreboard_info"))
+                   ->withValue($this->object->getLiveVoting()->isScoreboard())
+                   ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
+                       function ($v) {
+                           $this->object->getLiveVoting()->setScoreboard((bool)$v);
+                       }
+                   ));
             }
 
             $sectionObject = $DIC->ui()->factory()->input()->field()->section($formFields, $this->plugin->txt("obj_edit_properties"), "");

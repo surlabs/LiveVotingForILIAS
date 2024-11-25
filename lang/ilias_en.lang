@@ -181,6 +181,8 @@ show_attendees#:#Show Attendees (Online)
 show_attendees_info#:#Show the count of attendees, this has an impact on performance and should only be activated for a small live voting.
 nicknames#:#Nicknames
 nicknames_info#:#This option allows the participants to enter a nickname before voting, only available in challenge mode.
+scoreboard#:#Scoreboard
+scoreboard_info#:#Show the scoreboard after each question, only available in challenge mode.
 subtab_show#:#Show
 tab_content#:#Content
 tab_manage#:#Manage
