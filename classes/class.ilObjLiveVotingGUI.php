@@ -34,6 +34,7 @@ use LiveVoting\UI\LiveVotingFreeInputUI;
 use LiveVoting\UI\LiveVotingManageUI;
 use LiveVoting\UI\LiveVotingPrioritiesUI;
 use LiveVoting\UI\LiveVotingRangeUI;
+use LiveVoting\UI\LiveVotingChoicesCMUI;
 use LiveVoting\UI\LiveVotingResultsUI;
 use LiveVoting\UI\LiveVotingSettingsUI;
 use LiveVoting\UI\LiveVotingUI;
@@ -109,6 +110,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'selectedCorrectOrder':
             case 'selectedPriorities':
             case 'selectedRange':
+            case 'selectedChoicesCM':
             case 'updateProperties':
             case 'confirmNewRound':
             case 'newRound':
@@ -208,6 +210,36 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         if ($DIC->http()->request()->getMethod() == "POST") {
 
             $id = $liveVotingChoicesUI->save($form->withRequest($DIC->http()->request())->getData());
+
+            if ($id !== 0) {
+                $DIC->ctrl()->setParameter($this, "question_id", $id);
+                $DIC->ctrl()->setParameter($this, "show_success", true);
+                $DIC->ctrl()->redirect($this, "edit");
+
+            } else {
+                $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
+                $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+            }
+        } else {
+            $this->tpl->setContent($DIC->ui()->renderer()->render($form));
+
+        }
+    }
+
+    /**
+     * @throws ilException
+     * @throws LiveVotingException
+     */
+    public function selectedChoicesCM(): void
+    {
+        global $DIC;
+        $this->tabs->activateTab("tab_manage");
+
+        $liveVotingChoicesCMUI = new LiveVotingChoicesCMUI();
+        $form = $liveVotingChoicesCMUI->getChoicesForm();
+        if ($DIC->http()->request()->getMethod() == "POST") {
+
+            $id = $liveVotingChoicesCMUI->save($form->withRequest($DIC->http()->request())->getData());
 
             if ($id !== 0) {
                 $DIC->ctrl()->setParameter($this, "question_id", $id);

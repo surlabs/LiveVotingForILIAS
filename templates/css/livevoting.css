@@ -5,7 +5,7 @@
 
 }
 
-.multiple-input .action-buttons, .order-input-container .action-buttons{
+.multiple-input .action-buttons, .order-input-container .action-buttons, .multiple-input-cm .action-buttons {
     display:flex;
     gap:5px;
     flex-shrink: 0;

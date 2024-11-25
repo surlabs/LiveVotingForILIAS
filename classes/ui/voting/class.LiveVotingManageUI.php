@@ -85,7 +85,7 @@ class LiveVotingManageUI
         $glyph = $f->symbol()->glyph()->add("#");
         $glyph_reset = $f->symbol()->glyph()->reset("#");
 
-        $button = $f->button()->bulky($glyph, '<div style="margin-left:10px">' . $this->plugin->txt("voting_type_1") . ' <br/><small><muted>' . $this->plugin->txt("voting_type_1_info") . '</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedChoices'));
+        $button = $f->button()->bulky($glyph, '<div style="margin-left:10px">' . $this->plugin->txt("voting_type_1") . ' <br/><small><muted>' . $this->plugin->txt("voting_type_1_info") . '</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, $parent->getObject()->getLiveVoting()->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE ? 'selectedChoices' : 'selectedChoicesCM'));
         $button2 = $f->button()->bulky($glyph, '<div style="margin-left:10px">' . $this->plugin->txt("voting_type_2") . ' <br/><small><muted>' . $this->plugin->txt("voting_type_2_info") . '</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedFreeInput'));
         $button3 = $f->button()->bulky($glyph, '<div style="margin-left:10px">' . $this->plugin->txt("voting_type_4") . ' <br/><small><muted>' . $this->plugin->txt("voting_type_4_info") . '</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedCorrectOrder'));
         $button4 = $f->button()->bulky($glyph, '<div style="margin-left:10px">' . $this->plugin->txt("voting_type_5") . ' <br/><small><muted>' . $this->plugin->txt("voting_type_5_info") . '</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedPriorities'));
