@@ -27,6 +27,7 @@ use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingVoter;
 use LiveVoting\objects\modes\LiveVotingMode;
+use LiveVoting\votings\LiveVotingParticipant;
 
 /**
  * Class LiveVotingPlayerGUI
@@ -109,15 +110,22 @@ class LiveVotingPlayerGUI
      */
     protected function startVoterPlayer(): void
     {
+        global $DIC;
+
+        $player = $this->live_voting->getPlayer();
+
+        if ($this->live_voting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
+            if ($this->live_voting->isNicknames() && LiveVotingParticipant::getInstance()->getNickname($player->getId()) == "") {
+                $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'requestNickname');
+            }
+        }
+
         $this->prepareFrameworkTemplate();
         $this->prepareVotingTemplate();
         $this->initCssAndJs();
         $this->showVotingTemplate();
 
-        $player = $this->live_voting->getPlayer();
-
         LiveVotingQuestionTypesUI::getInstance($player)->initJS();
-
     }
 
     private function prepareFrameworkTemplate(): void
@@ -352,6 +360,20 @@ class LiveVotingPlayerGUI
         $this->setVoterPlayerTemplate($tpl);
 
         $this->showVotingTemplate();
+    }
+
+    /**
+     * @throws LiveVotingException
+     * @throws ilCtrlException
+     */
+    public function requestNickname(): void
+    {
+        global $DIC;
+
+        // TODO: Por el momento se establece como "Test Nickanme" para evitar errores
+        LiveVotingParticipant::getInstance()->setNickname("Test Nickname", $this->live_voting->getPlayer()->getId());
+
+        $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
     }
 
     /**

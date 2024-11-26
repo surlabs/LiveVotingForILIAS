@@ -724,4 +724,27 @@ if ($db->tableExists('rep_robj_xlvo_config_n')) {
         $db->manipulate("UPDATE rep_robj_xlvo_config_n SET scoreboard = 0 WHERE scoreboard IS NULL");
     }
 }
+
+if (!$db->tableExists("xlvo_nicknames")) {
+    $fields = [
+        "identifier" => [
+            "type" => "text",
+            "length" => 256,
+            "notnull" => true
+        ],
+        "player_id" => [
+            "type" => "integer",
+            "length" => 8,
+            "notnull" => false
+        ],
+        "nickname" => [
+            "type" => "text",
+            "length" => 256,
+            "notnull" => true
+        ]
+    ];
+
+    $db->createTable("xlvo_nicknames", $fields);
+    $db->addPrimaryKey("xlvo_nicknames", ["identifier", "player_id"]);
+}
 ?>
