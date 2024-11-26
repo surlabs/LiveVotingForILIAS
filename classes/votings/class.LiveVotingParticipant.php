@@ -113,22 +113,23 @@ class LiveVotingParticipant
     public function getNickname(?int $player = null): string
     {
         if ($this->nickname == '' && isset($player)) {
-            $this->nickname = $this->getNicknameFromDatabase($player);
+            $this->nickname = $this->getNicknameFromDatabase($this->getIdentifier(), $player);
         }
 
         return $this->nickname;
     }
 
     /**
-     * @param int $player
+     * @param string $identifier
+     * @param int    $player
      * @return string
      * @throws LiveVotingException
      */
-    public function getNicknameFromDatabase(int $player): string
+    public static function getNicknameFromDatabase(string $identifier, int $player): string
     {
         $database = new LiveVotingDatabase();
         $result = $database->select("xlvo_nicknames", [
-            'identifier' => $this->getIdentifier(),
+            'identifier' => $identifier,
             'player_id' => $player
         ], ['nickname']);
 

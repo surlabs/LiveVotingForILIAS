@@ -49,6 +49,7 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
 
 
     protected ?object $parent_obj;
+    private int $player_id;
 
 
     /**
@@ -65,6 +66,7 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
         parent::__construct($a_parent_obj, $a_parent_cmd);
         $this->setRowTemplate('tpl.results_list.html', ilLiveVotingPlugin::getInstance()->getDirectory());
         $this->setTitle(ilLiveVotingPlugin::getInstance()->txt('results_title'));
+        $this->player_id = $a_parent_obj->getObject()->getLiveVoting()->getPlayer()->getId();
         $this->showHistory = $show_history;
         $this->setExportFormats(array(self::EXPORT_CSV));
 
@@ -120,7 +122,7 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
 
                 $a_data[] = array(
                     "position" => $question->getPosition(),
-                    "participant" => $vote->getParticipantName(),
+                    "participant" => $vote->getParticipantName($this->player_id),
                     "user_id" => $vote->getUserId(),
                     "user_identifier" => $vote->getUserIdentifier(),
                     "question_type" => $question->getQuestionTypeId(),
@@ -280,5 +282,10 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
         }
 
         return implode(",", $answers_ids);
+    }
+    
+    public function getPlayerId(): int
+    {
+        return $this->player_id;
     }
 }
