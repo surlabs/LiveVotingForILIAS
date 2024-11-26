@@ -747,4 +747,24 @@ if (!$db->tableExists("xlvo_nicknames")) {
     $db->createTable("xlvo_nicknames", $fields);
     $db->addPrimaryKey("xlvo_nicknames", ["identifier", "player_id"]);
 }
+
+if (!$db->tableColumnExists("rep_robj_xlvo_option_n", "is_correct")) {
+    $db->addTableColumn("rep_robj_xlvo_option_n", "is_correct", [
+        "type" => "integer",
+        "length" => 4,
+        "notnull" => false
+    ]);
+
+    $db->manipulate("UPDATE rep_robj_xlvo_option_n SET is_correct = 0 WHERE is_correct IS NULL");
+}
+
+if (!$db->tableColumnExists("rep_robj_xlvo_voting_n", "score")) {
+    $db->addTableColumn("rep_robj_xlvo_voting_n", "score", [
+        "type" => "integer",
+        "length" => 8,
+        "notnull" => false
+    ]);
+
+    $db->manipulate("UPDATE rep_robj_xlvo_voting_n SET score = 0 WHERE score IS NULL");
+}
 ?>

@@ -37,6 +37,7 @@ class LiveVotingQuestionOption
     private int $status = 1;
     private ?int $position = null;
     private ?int $correct_position = null;
+    private bool $is_correct = false;
 
     public function __construct(?array $data = null)
     {
@@ -48,6 +49,7 @@ class LiveVotingQuestionOption
             $this->status = isset($data["status"]) ? (int)$data["status"] : 1;
             $this->position = isset($data["position"]) ? (int)$data["position"] : null;
             $this->correct_position = isset($data["correct_position"]) ? (int)$data["correct_position"] : null;
+            $this->is_correct = isset($data["is_correct"]) && $data["is_correct"] == 1;
         }
     }
 
@@ -128,7 +130,8 @@ class LiveVotingQuestionOption
                 "type" => $this->type,
                 "status" => $this->status,
                 "position" => $this->position,
-                "correct_position" => $this->correct_position
+                "correct_position" => $this->correct_position,
+                "is_correct" => $this->is_correct ? 1 : 0
             ), array(
                 "id" => $this->id
             ));
@@ -142,7 +145,8 @@ class LiveVotingQuestionOption
                 "type" => $this->type,
                 "status" => $this->status,
                 "position" => $this->position,
-                "correct_position" => $this->correct_position
+                "correct_position" => $this->correct_position,
+                "is_correct" => $this->is_correct ? 1 : 0
             ));
         }
 
@@ -222,6 +226,16 @@ class LiveVotingQuestionOption
     public function setCorrectPosition(?int $correct_position): void
     {
         $this->correct_position = $correct_position;
+    }
+
+    public function isCorrect(): bool
+    {
+        return $this->is_correct;
+    }
+
+    public function setIsCorrect(bool $is_correct): void
+    {
+        $this->is_correct = $is_correct;
     }
 
     public function getCipher(): string

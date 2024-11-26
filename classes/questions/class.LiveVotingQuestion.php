@@ -52,6 +52,7 @@ abstract class LiveVotingQuestion
     protected int $voting_status = 5;
     protected array $options = array();
     private LiveVotingQuestionOption $first_option;
+    private int $score = 0;
 
     public function __construct(?array $data = null)
     {
@@ -63,6 +64,7 @@ abstract class LiveVotingQuestion
             $this->position = (int)$data["position"];
             $this->voting_status = (int)$data["voting_status"];
             $this->options = $data["options"];
+            $this->score = (int)$data["score"];
 
             if (!empty($this->options)) {
                 $this->setFirstOption($this->options[0]);
@@ -226,7 +228,8 @@ abstract class LiveVotingQuestion
                 "title" => $this->title,
                 "question" => $this->question,
                 "voting_status" => $this->voting_status,
-                "position" => $this->position
+                "position" => $this->position,
+                "score" => $this->score
             ), array(
                 "id" => $this->id
             ));
@@ -244,7 +247,8 @@ abstract class LiveVotingQuestion
                 "question" => $this->question,
                 "voting_type" => $this->getQuestionTypeId(),
                 "voting_status" => $this->voting_status,
-                "position" => $this->position
+                "position" => $this->position,
+                "score" => $this->score
             ));
         } else {
             throw new LiveVotingException("Invalid object id");
@@ -338,6 +342,16 @@ abstract class LiveVotingQuestion
     public function setOptions(array $options): void
     {
         $this->options = $options;
+    }
+
+    public function getScore(): int
+    {
+        return $this->score;
+    }
+
+    public function setScore(int $score): void
+    {
+        $this->score = $score;
     }
 
     public function getFirstOption(): LiveVotingQuestionOption

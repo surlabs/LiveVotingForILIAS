@@ -132,7 +132,11 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $this->{$cmd}();
                 break;
             case 'edit':
-                $this->editQuestion();
+                if ($this->object->getLiveVoting()->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
+                    $this->editQuestionCM();
+                } else {
+                    $this->editQuestion();
+                }
                 break;
         }
     }
@@ -653,6 +657,54 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $next->setUrl($DIC->ctrl()->getLinkTarget($this, "edit"));
                 $next->setCaption(ilGlyphGUI::get(ilGlyphGUI::NEXT), false);
                 $DIC->toolbar()->addButtonInstance($next);
+            }
+        } else {
+            $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_write')));
+            $DIC->ctrl()->redirect($this, "index");
+        }
+    }
+
+    /**
+     * @throws ilCtrlException
+     * @throws ilException
+     * @throws LiveVotingException
+     */
+    public function editQuestionCM(): void
+    {
+        global $DIC;
+
+        if (ilObjLiveVotingAccess::hasWriteAccess()) {
+            $this->tabs->activateTab("tab_manage");
+
+            $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
+            switch ($question->getQuestionType()) {
+                case "Choices":
+                    $liveVotingChoicesUI = new LiveVotingChoicesCMUI($question->getId());
+                    $form = $liveVotingChoicesUI->getChoicesForm();
+                    $saving_info = "";
+                    if ($DIC->http()->request()->getMethod() == "POST") {
+
+                        $id = $liveVotingChoicesUI->save($form->withRequest($DIC->http()->request())->getData(), $question->getId());
+
+                        if ($id !== 0) {
+                            $liveVotingChoicesUI = new LiveVotingChoicesCMUI($id);
+                            $form = $liveVotingChoicesUI->getChoicesForm();
+
+                            $DIC->ctrl()->setParameter($this, "question_id", $id);
+                            $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_updated')));
+                            $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form));
+                        } else {
+                            $this->tpl->setContent($DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+                        }
+
+                    } else {
+                        if (isset($_GET['show_success'])) {
+                            $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_created')));
+                        }
+                        $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form));
+
+                    }
+                    break;
             }
         } else {
             $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_write')));

@@ -137,7 +137,8 @@ class LiveVotingChoicesCMUI
                                                     ->withValue(isset($options) ? htmlspecialchars(str_replace('"', "\'", json_encode(array_map(function ($option) {
                                                         return [
                                                             "text" => $option->getText(),
-                                                            "id" => $option->getId()
+                                                            "id" => $option->getId(),
+                                                            "isCorrect" => $option->isCorrect()
                                                         ];
                                                     }, $options), JSON_UNESCAPED_UNICODE))) : "")
                                                     ->withOnLoadCode(function ($id) {
@@ -250,9 +251,6 @@ class LiveVotingChoicesCMUI
             $answers_data = $result["config_answers"];
             $options_data = json_decode(str_replace("\'", '"', $answers_data["hidden"]));
 
-
-            dump($question_data, $scoring_data, $answers_data, $options_data); exit();
-
             if (!empty($options_data)) {
                 $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Choices");
 
@@ -260,6 +258,7 @@ class LiveVotingChoicesCMUI
                 $question->setQuestion($_POST["form/input_0/input_2"] ? ilRTE::_replaceMediaObjectImageSrc($_POST["form/input_0/input_2"]) : null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
                 $question->setMultiSelection($answers_data["selection"] ?? false);
+                $question->setScore((int)($scoring_data["points"] ?? 0));
 
                 $old_options = $question->getOptions();
 
@@ -277,6 +276,10 @@ class LiveVotingChoicesCMUI
 
                                 if (isset($option_data->text)) {
                                     $old_option->setText($option_data->text);
+                                }
+
+                                if (isset($option_data->isCorrect)) {
+                                    $old_option->setIsCorrect($option_data->isCorrect);
                                 }
 
                                 $old_option->save();
