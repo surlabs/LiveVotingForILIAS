@@ -354,6 +354,7 @@ class LiveVotingPlayerGUI
         $tpl->setVariable('TITLE', $this->txt('player_start_voting'));
         $tpl->setVariable('FORM', $pin_form->getHTML());
 
+
         $this->setVoterPlayerTemplate($tpl);
 
         $this->prepareFrameworkTemplate();
@@ -370,10 +371,47 @@ class LiveVotingPlayerGUI
     {
         global $DIC;
 
-        // TODO: Por el momento se establece como "Test Nickanme" para evitar errores
-        LiveVotingParticipant::getInstance()->setNickname("Test Nickname", $this->live_voting->getPlayer()->getId());
+        $receivingNickname = $_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['nickname_input']);
 
-        $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
+        if ($receivingNickname) {
+            $this->collectNickname();
+        }
+
+        // Show nickname form
+        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Voter/tpl.nickname.html', true, false);
+        $DIC->ui()->mainTemplate()->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Voter/pin.css'); // Por ahora usamos el mismo css que el de pin
+        $nickname_form = new ilPropertyFormGUI();
+        $nickname_form->setFormAction($DIC->ctrl()->getLinkTarget($this, 'checkNickname'));
+        $nickname_form->addCommandButton('checkNickname', $this->txt('voter_send'));
+
+        $te = new ilTextInputGUI($this->txt('voter_nickname_input'), 'nickname_input');
+        $te->setMaxLength(50);
+        $te->setTitle("Nickname"); // Debemos usar internacionalización
+        $nickname_form->addItem($te);
+
+        $tpl->setVariable('TITLE', $this->txt('player_start_voting'));
+        $tpl->setVariable('FORM', $nickname_form->getHTML());
+
+
+        $this->setVoterPlayerTemplate($tpl);
+
+        $this->prepareFrameworkTemplate();
+        $this->setVoterPlayerTemplate($tpl);
+
+        $this->showVotingTemplate();
+    }
+
+    protected function collectNickname(): void
+    {
+        global $DIC;
+
+        // TODO: Use Ilias API to get and validate post data
+
+        $nickname = filter_input(INPUT_POST, 'nickname_input'); // Debemos validar el nickname primero
+
+        LiveVotingParticipant::getInstance()->setNickname($nickname, $this->live_voting->getPlayer()->getId());
+
+        $DIC->ctrl()->redirect($this, 'startVoterPlayer');
     }
 
     /**
