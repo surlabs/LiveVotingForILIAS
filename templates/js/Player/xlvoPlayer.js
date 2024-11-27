@@ -41,6 +41,7 @@ var xlvoPlayer = {
         status_running: -1,
         use_mathjax: false,
         debug: false,
+        isChallenge: false
     },
     player: {
         is_first: true,
@@ -61,6 +62,10 @@ var xlvoPlayer = {
         xlvoPlayer.log("running player");
         this.registerElements();
         this.getPlayerData();
+
+        if (xlvoPlayer.config.isChallenge) {
+            xlvoPlayer.countdownCM(30);
+        }
     },
     handleFullScreen: function () {
         var jq_target = $("div.ilTabsContentOuter");
@@ -296,12 +301,7 @@ var xlvoPlayer = {
                         $("#xlvo-display-player").append(node);
 
                         //fade out old child and remove child afterwards
-                        oldNode.fadeOut(
-                            200,
-                            function () {
-                                oldNode.remove();
-                            }.bind(oldNode)
-                        );
+                        oldNode.remove();
 
                         if (xlvoPlayer.config.use_mathjax && !!MathJax) {
                             if (MathJax.version.charAt(0) === "3") {
@@ -497,6 +497,11 @@ var xlvoPlayer = {
      */
     countdown: function (e, seconds) {
         e.preventDefault();
+        xlvoPlayer.countdown_running = true;
+        xlvoPlayer.log("Countdown started: " + seconds);
+        xlvoPlayer.callPlayer("countdown", { seconds: seconds });
+    },
+    countdownCM: function (seconds) {
         xlvoPlayer.countdown_running = true;
         xlvoPlayer.log("Countdown started: " + seconds);
         xlvoPlayer.callPlayer("countdown", { seconds: seconds });

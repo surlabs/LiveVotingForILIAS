@@ -326,3 +326,4 @@ permission_denied#:#Permission denied
 voting_msg_all_reset#:#All results have been reset
 voting_msg_reset#:#Results have been reset
 sorting_msg_saved#:#Order has been saved
+end_time#:#End time

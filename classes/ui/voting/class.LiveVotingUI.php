@@ -227,7 +227,8 @@ class LiveVotingUI
             'status_running' => 1,
             'identifier' => 'xvi',
             'use_mathjax' => (bool)$mathJaxSetting->get("enable"),
-            'debug' => false
+            'debug' => false,
+            "isChallenge" => $this->liveVoting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE
         );
 
         LiveVotingJS::getInstance()->initMathJax();
@@ -300,35 +301,40 @@ class LiveVotingUI
      */
     protected function initToolbarDuringVoting()
     {
-
         global $DIC;
-        // Freeze
-        $suspendButton = ilLinkButton::getInstance();
-        $suspendButton->addCSSClass('btn-warning');
-        $suspendButton->setCaption('<span class="glyphicon glyphicon-pause"></span> ' . $this->pl->txt('player_freeze'), false);
-        $suspendButton->setUrl('#');
-        $suspendButton->setId('btn-freeze');
-        $DIC->toolbar()->addButtonInstance($suspendButton);
+        if ($this->liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
+            // Freeze
+            $suspendButton = ilLinkButton::getInstance();
+            $suspendButton->addCSSClass('btn-warning');
+            $suspendButton->setCaption(
+                '<span class="glyphicon glyphicon-pause"></span> ' . $this->pl->txt('player_freeze'), false
+            );
+            $suspendButton->setUrl('#');
+            $suspendButton->setId('btn-freeze');
+            $DIC->toolbar()->addButtonInstance($suspendButton);
 
-        // Unfreeze
-        $playButton = ilLinkButton::getInstance();
-        $playButton->setPrimary(true);
-        $playButton->setCaption('<span class="glyphicon glyphicon-play"></span> ' . $this->pl->txt('player_unfreeze'), false);
-        $playButton->setUrl('#');
-        $playButton->setId('btn-unfreeze');
+            // Unfreeze
+            $playButton = ilLinkButton::getInstance();
+            $playButton->setPrimary(true);
+            $playButton->setCaption(
+                '<span class="glyphicon glyphicon-play"></span> ' . $this->pl->txt('player_unfreeze'), false
+            );
+            $playButton->setUrl('#');
+            $playButton->setId('btn-unfreeze');
 
-        $split = ilSplitButtonGUI::getInstance();
-        $split->setDefaultButton($playButton);
-        foreach (array(10, 30, 90, 120, 180, 240, 300) as $seconds) {
-            $cd = ilLinkButton::getInstance();
-            $cd->setUrl('#');
-            $cd->setCaption($seconds . ' ' . $this->pl->txt('player_seconds'), false);
-            $cd->setOnClick("xlvoPlayer.countdown(event, $seconds);");
-            $ilSplitButtonMenuItem = new ilButtonToSplitButtonMenuItemAdapter($cd);
-            $split->addMenuItem($ilSplitButtonMenuItem);
+            $split = ilSplitButtonGUI::getInstance();
+            $split->setDefaultButton($playButton);
+            foreach (array(10, 30, 90, 120, 180, 240, 300) as $seconds) {
+                $cd = ilLinkButton::getInstance();
+                $cd->setUrl('#');
+                $cd->setCaption($seconds . ' ' . $this->pl->txt('player_seconds'), false);
+                $cd->setOnClick("xlvoPlayer.countdown(event, $seconds);");
+                $ilSplitButtonMenuItem = new ilButtonToSplitButtonMenuItemAdapter($cd);
+                $split->addMenuItem($ilSplitButtonMenuItem);
+            }
+
+            $DIC->toolbar()->addStickyItem($split);
         }
-
-        $DIC->toolbar()->addStickyItem($split);
 
         // Hide
         $suspendButton = ilLinkButton::getInstance();
@@ -345,70 +351,63 @@ class LiveVotingUI
         $DIC->toolbar()->addButtonInstance($suspendButton);
 
         // Reset
+        if ($this->liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
+            $suspendButton = ilLinkButton::getInstance();
+            $suspendButton->setCaption('<span class="glyphicon glyphicon-remove"></span> ' . $this->pl->txt('player_reset'), false);
+            $suspendButton->setUrl('#');
+            $suspendButton->setId('btn-reset');
+            $DIC->toolbar()->addButtonInstance($suspendButton);
+        }
+
+        if ($this->liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
+            $DIC->toolbar()->addSeparator();
+
+            $param_manager = ParamManager::getInstance();
+            if (!$param_manager->isPpt()) {
+                $prevBtn = ilLinkButton::getInstance();
+                $prevBtn->setCaption(ilGlyphGUI::get(ilGlyphGUI::PREVIOUS), false);
+                $prevBtn->setId('btn-previous');
+                $prevBtn->setDisabled(true);
+                $DIC->toolbar()->addButtonInstance($prevBtn);
+
+                $nextBtn = ilLinkButton::getInstance();
+                $nextBtn->setCaption(ilGlyphGUI::get(ilGlyphGUI::NEXT), false);
+                $nextBtn->setId('btn-next');
+                $nextBtn->setDisabled(true);
+                $DIC->toolbar()->addButtonInstance($nextBtn);
+
+                $current_selection_list = $this->getVotingSelectionList();
+                $DIC->toolbar()->addText($current_selection_list->getHTML());
+            }
+
+            $DIC->toolbar()->addSeparator();
+        }
+
         $suspendButton = ilLinkButton::getInstance();
-        $suspendButton->setCaption('<span class="glyphicon glyphicon-remove"></span> ' . $this->pl->txt('player_reset'), false);
+        $suspendButton->setCaption('<span class="glyphicon glyphicon-fullscreen"></span>', false);
         $suspendButton->setUrl('#');
-        $suspendButton->setId('btn-reset');
+        $suspendButton->setId('btn-start-fullscreen');
         $DIC->toolbar()->addButtonInstance($suspendButton);
 
-        //
-        //
-        $DIC->toolbar()->addSeparator();
-        //
-        //
-        $param_manager = ParamManager::getInstance();
-        if (!$param_manager->isPpt()) {
-            $prevBtn = ilLinkButton::getInstance();
-            $prevBtn->setCaption(ilGlyphGUI::get(ilGlyphGUI::PREVIOUS), false);
-            $prevBtn->setId('btn-previous');
-            $prevBtn->setDisabled(true);
-            $DIC->toolbar()->addButtonInstance($prevBtn);
-
-            $nextBtn = ilLinkButton::getInstance();
-            $nextBtn->setCaption(ilGlyphGUI::get(ilGlyphGUI::NEXT), false);
-            $nextBtn->setId('btn-next');
-            $nextBtn->setDisabled(true);
-            $DIC->toolbar()->addButtonInstance($nextBtn);
-
-            $current_selection_list = $this->getVotingSelectionList();
-            $DIC->toolbar()->addText($current_selection_list->getHTML());
-        }
-
-
-        $DIC->toolbar()->addSeparator();
-
-        $player = $this->liveVoting->getPlayer();
-
-        // Fullscreen
-        //dump($player->isFullScreen());exit;
-        if (true) {
-            $suspendButton = ilLinkButton::getInstance();
-            $suspendButton->setCaption('<span class="glyphicon glyphicon-fullscreen"></span>', false);
-            $suspendButton->setUrl('#');
-            $suspendButton->setId('btn-start-fullscreen');
-            $DIC->toolbar()->addButtonInstance($suspendButton);
-
-            $suspendButton = ilLinkButton::getInstance();
-            $suspendButton->setCaption('<span class="glyphicon glyphicon-resize-small"></span>', false);
-            $suspendButton->setUrl('#');
-            $suspendButton->setId('btn-close-fullscreen');
-            $DIC->toolbar()->addButtonInstance($suspendButton);
-        }
-
-        // END
         $suspendButton = ilLinkButton::getInstance();
-        $suspendButton->setCaption(ilGlyphGUI::get(ilGlyphGUI::CLOSE) . $this->pl->txt('player_terminate'), false);
-        $suspendButton->setUrl($DIC->ctrl()->getLinkTarget(new ilObjLiveVotingGUI(), 'terminate'));
-        $suspendButton->setId('btn-terminate');
+        $suspendButton->setCaption('<span class="glyphicon glyphicon-resize-small"></span>', false);
+        $suspendButton->setUrl('#');
+        $suspendButton->setId('btn-close-fullscreen');
         $DIC->toolbar()->addButtonInstance($suspendButton);
-        /*        if (false) {
-                    // PAUSE PULL
-                    $suspendButton = ilLinkButton::getInstance();
-                    $suspendButton->setCaption('Toogle Pulling', false);
-                    $suspendButton->setUrl('#');
-                    $suspendButton->setId('btn-toggle-pull');
-                    $DIC->toolbar()->addButtonInstance($suspendButton);
-                }*/
+
+        if ($this->liveVoting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
+            $endTime = ilLinkButton::getInstance();
+            $endTime->setCaption($this->pl->txt("end_time"), false);
+            $endTime->setId('btn-end_time');
+            $endTime->setDisabled(true);
+            $DIC->toolbar()->addButtonInstance($endTime);
+        } else {
+            $suspendButton = ilLinkButton::getInstance();
+            $suspendButton->setCaption(ilGlyphGUI::get(ilGlyphGUI::CLOSE) . $this->pl->txt('player_terminate'), false);
+            $suspendButton->setUrl($DIC->ctrl()->getLinkTarget(new ilObjLiveVotingGUI(), 'terminate'));
+            $suspendButton->setId('btn-terminate');
+            $DIC->toolbar()->addButtonInstance($suspendButton);
+        }
     }
 
     /**
