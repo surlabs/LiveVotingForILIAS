@@ -997,11 +997,14 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $liveVotingUI = new LiveVotingUI($this->object->getLiveVoting());
 
+        $countdownFinished = $liveVotingPlayer->remainingCountDown() <= 0;
+
         try {
             $results = array(
                 'player' => $this->object->getLiveVoting()->getPlayer()->getPlayerData(),
                 'player_html' => $liveVotingUI->getPlayerHTML(true),
-                'buttons_html' => $this->getButtonsHTML()
+                'buttons_html' => $this->getButtonsHTML(),
+                'countdown_finished' => $countdownFinished
             );
 
             LiveVotingJs::sendResponse($results);
