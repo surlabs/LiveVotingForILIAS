@@ -767,4 +767,32 @@ if (!$db->tableColumnExists("rep_robj_xlvo_voting_n", "score")) {
 
     $db->manipulate("UPDATE rep_robj_xlvo_voting_n SET score = 0 WHERE score IS NULL");
 }
+
+if (!$db->tableExists("xlvo_points")) {
+    $fields = [
+        "identifier" => [
+            "type" => "text",
+            "length" => 256,
+            "notnull" => true
+        ],
+        "voting_id" => [
+            "type" => "integer",
+            "length" => 8,
+            "notnull" => false
+        ],
+        "round_id" => [
+            "type" => "integer",
+            "length" => 8,
+            "notnull" => false
+        ],
+        "points" => [
+            "type" => "integer",
+            "length" => 8,
+            "notnull" => false
+        ]
+    ];
+
+    $db->createTable("xlvo_points", $fields);
+    $db->addPrimaryKey("xlvo_points", ["identifier", "voting_id", "round_id"]);
+}
 ?>
