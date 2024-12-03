@@ -27,6 +27,7 @@ use ilException;
 use ilLiveVotingPlugin;
 use ilObjLiveVotingGUI;
 use ilTable2GUI;
+use LiveVoting\objects\modes\LiveVotingMode;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
 use LiveVoting\votings\LiveVotingParticipant;
@@ -85,6 +86,9 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
         if ($this->isShowHistory()) {
             $this->addColumn(ilLiveVotingPlugin::getInstance()->txt('common_history'), "", 'auto');
         }
+        if ($this->parent_obj->getObject()->getLiveVoting()->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
+            $this->addColumn(ilLiveVotingPlugin::getInstance()->txt('common_points'), 'points', 'auto');
+        }
     }
 
 
@@ -132,7 +136,8 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
                     "answer_ids" => $this->concatAnswersIds($answers),
                     "voting_id" => $question->getId(),
                     "round_id" => $round_id,
-                    "id" => $vote->getId()
+                    "id" => $vote->getId(),
+                    "points" => $vote->getPoints()
                 );
             }
         }
@@ -155,6 +160,9 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
         $this->tpl->setVariable("QUESTION", $this->shorten($a_set['question']));
         $this->tpl->setVariable("TITLE", $this->shorten($a_set['title']));
         $this->tpl->setVariable("ANSWER", $this->shorten($a_set['answer'], 100));
+        if ($this->parent_obj->getObject()->getLiveVoting()->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
+            $this->tpl->setVariable("POINTS", $a_set['points']);
+        }
         if ($this->isShowHistory()) {
             $this->tpl->setVariable("ACTION", ilLiveVotingPlugin::getInstance()->txt("common_show_history"));
             $DIC->ctrl()->setParameter($this->parent_obj, 'round_id', $a_set['round_id']);
