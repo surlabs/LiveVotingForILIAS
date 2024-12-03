@@ -830,6 +830,19 @@ class LiveVotingPlayer
         return $result;
     }
 
+    public static function getPlayerPoints(string $identifier, int $obj_id, int $voting_id, int $round_id): int
+    {
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("xlvo_points", ["identifier" => $identifier, "obj_id" => $obj_id, "voting_id" => $voting_id, "round_id" => $round_id], ["points"]);
+
+        if (isset($result[0])) {
+            return (int)$result[0]["points"];
+        } else {
+            return 0;
+        }
+    }
+
     /**
      * @throws LiveVotingException
      */

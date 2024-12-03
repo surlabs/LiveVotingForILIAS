@@ -31,6 +31,7 @@ use LiveVoting\objects\modes\LiveVotingMode;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
 use LiveVoting\votings\LiveVotingParticipant;
+use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingVote;
 
 /**
@@ -137,7 +138,7 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
                     "voting_id" => $question->getId(),
                     "round_id" => $round_id,
                     "id" => $vote->getId(),
-                    "points" => $vote->getPoints()
+                    "points" => LiveVotingPlayer::getPlayerPoints($vote->getUserIdType() == 1 ? $vote->getUserId() : $vote->getUserIdentifier(), $obj_id, $question->getId(), $round_id)
                 );
             }
         }

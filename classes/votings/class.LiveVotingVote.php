@@ -601,27 +601,4 @@ class LiveVotingVote
     {
         return self::countVotes($voting_id, $round_id) > 0;
     }
-
-    public function getPoints(): int
-    {
-        $identifier = $this->getUserIdentifier();
-
-        if ($this->getUserIdType() == 1 && $this->getUserId()) {
-            $identifier = $this->getUserId();
-        }
-
-        $database = new LiveVotingDatabase();
-
-        $result = $database->select("xlvo_points", [
-            "identifier" => $identifier,
-            "voting_id" => $this->getVotingId(),
-            "round_id" => $this->getRoundId()
-        ], ["points"]);
-
-        if (isset($result[0])) {
-            return (int)$result[0]["points"];
-        }
-
-        return 0;
-    }
 }
