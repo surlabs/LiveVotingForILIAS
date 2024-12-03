@@ -129,6 +129,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'confirmDeleteQuestion':
             case 'deleteQuestion':
             case 'saveSorting':
+            case 'endTime':
                 $this->{$cmd}();
                 break;
             case 'edit':
@@ -986,7 +987,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $liveVotingPlayer = LiveVotingPlayer::loadFromObjId($this->object->getLiveVoting()->getId());
 
-        $liveVotingPlayer->attend();
+        $liveVotingPlayer->attend($this->object->getLiveVoting()->getMode());
 
         $param_manager = ParamManager::getInstance();
 
@@ -997,14 +998,11 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $liveVotingUI = new LiveVotingUI($this->object->getLiveVoting());
 
-        $countdownFinished = $liveVotingPlayer->remainingCountDown() <= 0;
-
         try {
             $results = array(
                 'player' => $this->object->getLiveVoting()->getPlayer()->getPlayerData(),
                 'player_html' => $liveVotingUI->getPlayerHTML(true),
-                'buttons_html' => $this->getButtonsHTML(),
-                'countdown_finished' => $countdownFinished
+                'buttons_html' => $this->getButtonsHTML()
             );
 
             LiveVotingJs::sendResponse($results);
@@ -1163,6 +1161,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     {
         $return_value = true;
 
+        /** @var LiveVoting $liveVoting */
         $liveVoting = $this->object->getLiveVoting();
         switch ($_POST['call']) {
             case 'toggle_freeze':
@@ -1267,6 +1266,13 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $xlvoQuestionTypesGUI->handleButtonCall($_POST['button_id'], $_POST['button_data']);
                 $return_value = new stdClass();
                 $return_value->buttons_html = $this->getButtonsHTML();
+                break;
+            case 'end_time':
+                $liveVoting->getPlayer()->setCountdown(0);
+                $liveVoting->getPlayer()->save();
+                break;
+            case 'next-cm':
+                $liveVoting->getPlayer()->nextQuestionCM();
                 break;
             default:
                 $return_value = false;

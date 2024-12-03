@@ -775,6 +775,11 @@ if (!$db->tableExists("xlvo_points")) {
             "length" => 256,
             "notnull" => true
         ],
+        "obj_id" => [
+            "type" => "integer",
+            "length" => 8,
+            "notnull" => false
+        ],
         "voting_id" => [
             "type" => "integer",
             "length" => 8,
@@ -793,6 +798,6 @@ if (!$db->tableExists("xlvo_points")) {
     ];
 
     $db->createTable("xlvo_points", $fields);
-    $db->addPrimaryKey("xlvo_points", ["identifier", "voting_id", "round_id"]);
+    $db->addPrimaryKey("xlvo_points", ["identifier", "obj_id", "voting_id", "round_id"]);
 }
 ?>

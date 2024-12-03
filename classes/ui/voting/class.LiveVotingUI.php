@@ -399,8 +399,12 @@ class LiveVotingUI
             $endTime = ilLinkButton::getInstance();
             $endTime->setCaption($this->pl->txt("end_time"), false);
             $endTime->setId('btn-end_time');
-            $endTime->setDisabled(true);
             $DIC->toolbar()->addButtonInstance($endTime);
+
+            $nextBtn = ilLinkButton::getInstance();
+            $nextBtn->setCaption("Next", false);
+            $nextBtn->setId('btn-next_cm');
+            $DIC->toolbar()->addButtonInstance($nextBtn);
         } else {
             $suspendButton = ilLinkButton::getInstance();
             $suspendButton->setCaption(ilGlyphGUI::get(ilGlyphGUI::CLOSE) . $this->pl->txt('player_terminate'), false);

@@ -177,7 +177,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         sort($correct_options);
         sort($user_votes);
 
-        if (count(array_diff($correct_options, $user_votes)) > 0) {
+        if (count(array_diff($correct_options, $user_votes)) > 0 || count(array_diff($user_votes, $correct_options)) > 0) {
             $points = 0;
         }
 
@@ -187,6 +187,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
 
         $database->insertOnDuplicatedKey("xlvo_points", [
             'identifier' => $participant->getIdentifier(),
+            'obj_id' => $this->player->getObjId(),
             'voting_id' => $this->player->getActiveVoting(),
             'round_id' => $this->player->getRoundId(),
             'points' => $points

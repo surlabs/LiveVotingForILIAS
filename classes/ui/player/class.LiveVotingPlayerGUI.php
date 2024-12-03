@@ -281,9 +281,31 @@ class LiveVotingPlayerGUI
 
                     break;
                 case LiveVotingPlayer::STAT_END_VOTING:
-                    $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_end'));
-                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_end'));;
-                    $this->getVotingTemplate()->setVariable('GLYPH', '<span class="glyphicon glyphicon-stop"></span>');
+                    if ($this->getLiveVoting()->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
+                        $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_end'));
+                        $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_end'));;
+                        $this->getVotingTemplate()->setVariable('GLYPH', '<span class="glyphicon glyphicon-stop"></span>');
+                    } else {
+                        $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_end'));
+                        $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_end'));;
+
+                        $tpl_scoreboard = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard.html', true, false);
+
+                        $players = LiveVotingPlayer::getPlayersForScoreboard($this->live_voting->getPlayer());
+
+                        $html = '';
+                        foreach ($players as $player) {
+                            $tpl_scoreboard_points = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score.html', true    , false);
+                            $tpl_scoreboard_points->setVariable('PLAYER', $player['nickname']);
+                            $tpl_scoreboard_points->setVariable('POINTS', $player['points']);
+                            $html .= $tpl_scoreboard_points->get();
+                        }
+
+                        $tpl_scoreboard->setVariable('POINTS', $html);
+
+                        $this->getVotingTemplate()->setVariable('QUESTION', $tpl_scoreboard->get());
+                    }
+
                     break;
                 case LiveVotingPlayer::STAT_FROZEN:
                     $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_frozen'));
@@ -298,18 +320,12 @@ class LiveVotingPlayerGUI
 
                     $tpl_scoreboard = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard.html', true, false);
 
-                    $players = array(
-                        array('player' => 'Player 1', 'points' => 10),
-                        array('player' => 'Player 2', 'points' => 20),
-                        array('player' => 'Player 3', 'points' => 30),
-                        array('player' => 'Player 4', 'points' => 40),
-                        array('player' => 'Player 5', 'points' => 50),
-                    );
+                    $players = LiveVotingPlayer::getPlayersForScoreboard($this->live_voting->getPlayer());
 
                     $html = '';
                     foreach ($players as $player) {
                         $tpl_scoreboard_points = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score.html', true    , false);
-                        $tpl_scoreboard_points->setVariable('PLAYER', $player['player']);
+                        $tpl_scoreboard_points->setVariable('PLAYER', $player['nickname']);
                         $tpl_scoreboard_points->setVariable('POINTS', $player['points']);
                         $html .= $tpl_scoreboard_points->get();
                     }
