@@ -397,8 +397,8 @@ class LiveVotingPlayerGUI
         $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Voter/tpl.nickname.html', true, false);
         $DIC->ui()->mainTemplate()->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Voter/pin.css'); // Por ahora usamos el mismo css que el de pin
         $nickname_form = new ilPropertyFormGUI();
-        $nickname_form->setFormAction($DIC->ctrl()->getLinkTarget($this, 'checkNickname'));
-        $nickname_form->addCommandButton('checkNickname', $this->txt('voter_send'));
+        $nickname_form->setFormAction($DIC->ctrl()->getLinkTarget($this, 'requestNickname'));
+        $nickname_form->addCommandButton('requestNickname', $this->txt('voter_send'));
 
         $te = new ilTextInputGUI($this->txt('voter_nickname_input'), 'nickname_input');
         $te->setMaxLength(50);
