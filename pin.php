@@ -44,9 +44,28 @@ try {
     global $DIC;
 
     $DIC->ctrl()->setTargetScript(LiveVotingConfig::getFullApiUrl());
-
+    
     if (!empty($pin)) {
-        $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
+        $live_voting = LiveVoting::getLiveVotingFromPin($pin);
+        if ($live_voting && $live_voting->isAnonymous()) {
+            $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
+        } else if ($live_voting) {
+            $base_url = parse_url(ILIAS_HTTP_PATH, PHP_URL_SCHEME) . "://" . parse_url(ILIAS_HTTP_PATH, PHP_URL_HOST);
+
+            $obj_id = LiveVoting::getObjIdFromPin($pin, false);
+            $refs = ilObject::_getAllReferences($obj_id);
+
+            if (empty($refs)) {
+                throw new Exception("No references found for pin: {$pin}");
+            }
+
+            $ref_id = key($refs);
+            $non_anonymous_voting_link = "{$base_url}/goto.php/xlvo/{$ref_id}/pin_{$pin}";
+
+            $DIC->ctrl()->redirectToURL($non_anonymous_voting_link);
+        } else {
+            $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'requestPin');
+        }
     } else {
         $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'requestPin');
     }
