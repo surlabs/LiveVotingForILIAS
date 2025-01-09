@@ -28,9 +28,9 @@ use ilTemplateException;
 class LiveVotingBarPercentageUI implements LiveVotingGeneralBarUI
 {
     /**
-     * @var int
+     * @var float
      */
-    protected int $votes = 0;
+    protected float $votes = 0;
     /**
      * @var int
      */
@@ -108,7 +108,7 @@ class LiveVotingBarPercentageUI implements LiveVotingGeneralBarUI
     /**
      * @return int
      */
-    public function getVotes(): int
+    public function getVotes(): float
     {
         return $this->votes;
     }
@@ -117,7 +117,7 @@ class LiveVotingBarPercentageUI implements LiveVotingGeneralBarUI
     /**
      * @param int $votes
      */
-    public function setVotes(int $votes)
+    public function setVotes(int|float $votes)
     {
         $this->votes = $votes;
     }

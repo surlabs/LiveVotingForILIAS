@@ -88,7 +88,7 @@ class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
             if ($total_voters == 0) {
                 $xlvoBarPercentageGUI->setVotes($total_voters);
             } else {
-                $xlvoBarPercentageGUI->setVotes((int)($option_weight[$xlvoOption->getId()] / $total_voters));
+                $xlvoBarPercentageGUI->setVotes(($option_weight[$xlvoOption->getId()] / $total_voters));
             }
             $xlvoBarPercentageGUI->setOptionLetter($xlvoOption->getCipher());
 

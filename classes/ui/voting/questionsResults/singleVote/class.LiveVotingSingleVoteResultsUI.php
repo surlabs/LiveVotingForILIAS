@@ -69,7 +69,7 @@ class LiveVotingSingleVoteResultsUI extends LiveVotingInputResultsGUI
             $xlvoBarPercentageGUI->setOptionLetter($xlvoOption->getCipher());
             $xlvoBarPercentageGUI->setTitle($xlvoOption->getTextForPresentation());
             $xlvoBarPercentageGUI->setVotes(count(LiveVotingVote::getVotesOfOption($xlvoOption->getId(), $this->player->getRoundId())));
-            $xlvoBarPercentageGUI->setMaxVotes($total_votes);
+            $xlvoBarPercentageGUI->setMaxVotes($voters);
             $xlvoBarPercentageGUI->setShowInPercent(!$this->isShowAbsolute());
             $bars->addBar($xlvoBarPercentageGUI);
         }
