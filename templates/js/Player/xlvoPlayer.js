@@ -62,10 +62,6 @@ var xlvoPlayer = {
         xlvoPlayer.log("running player");
         this.registerElements();
         this.getPlayerData();
-
-        if (xlvoPlayer.config.isChallenge) {
-            xlvoPlayer.countdownCM(30);
-        }
     },
     handleFullScreen: function () {
         var jq_target = $("div.ilTabsContentOuter");

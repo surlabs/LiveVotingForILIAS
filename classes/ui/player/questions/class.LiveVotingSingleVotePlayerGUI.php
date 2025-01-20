@@ -156,6 +156,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
 
     /**
      * @throws LiveVotingException
+     * @throws Exception
      */
     private function calculateReachedPoints(): void
     {
@@ -180,6 +181,14 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         if (count(array_diff($correct_options, $user_votes)) > 0 || count(array_diff($user_votes, $correct_options)) > 0) {
             $points = 0;
         }
+
+        $time_to_answer = $this->player->getCountdown();
+
+        $time_remaining = $this->player->remainingCountDown();
+
+        $score_mult = 1 - (($time_to_answer - $time_remaining)/$time_to_answer)/2;
+
+        $points = round($points * $score_mult);
 
         $participant = LiveVotingParticipant::getInstance();
 

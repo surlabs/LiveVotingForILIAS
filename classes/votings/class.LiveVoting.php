@@ -544,6 +544,21 @@ class LiveVoting
     }
 
     /**
+     * @throws LiveVotingException
+     */
+    public static function getModeFromObjId(int $obj_id): int
+    {
+        $database = new LiveVotingDatabase();
+        $result = $database->select("rep_robj_xlvo_config_n", array("obj_id" => $obj_id), array("mode"));
+
+        if (isset($result[0])) {
+            return (int) $result[0]["mode"];
+        }
+
+        return 0;
+    }
+
+    /**
      * Count questions
      */
     public function countQuestions(): int

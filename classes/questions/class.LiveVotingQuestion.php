@@ -53,6 +53,7 @@ abstract class LiveVotingQuestion
     protected array $options = array();
     private LiveVotingQuestionOption $first_option;
     private int $score = 0;
+    private int $countdown = 30;
 
     public function __construct(?array $data = null)
     {
@@ -65,6 +66,7 @@ abstract class LiveVotingQuestion
             $this->voting_status = (int)$data["voting_status"];
             $this->options = $data["options"];
             $this->score = (int)$data["score"];
+            $this->countdown = (int)$data["countdown"];
 
             if (!empty($this->options)) {
                 $this->setFirstOption($this->options[0]);
@@ -229,7 +231,8 @@ abstract class LiveVotingQuestion
                 "question" => $this->question,
                 "voting_status" => $this->voting_status,
                 "position" => $this->position,
-                "score" => $this->score
+                "score" => $this->score,
+                "countdown" => $this->countdown
             ), array(
                 "id" => $this->id
             ));
@@ -248,7 +251,8 @@ abstract class LiveVotingQuestion
                 "voting_type" => $this->getQuestionTypeId(),
                 "voting_status" => $this->voting_status,
                 "position" => $this->position,
-                "score" => $this->score
+                "score" => $this->score,
+                "countdown" => $this->countdown
             ));
         } else {
             throw new LiveVotingException("Invalid object id");
@@ -504,5 +508,15 @@ abstract class LiveVotingQuestion
         }
 
         return false;
+    }
+
+    public function getCountdown(): int
+    {
+        return $this->countdown;
+    }
+
+    public function setCountdown(int $countdown): void
+    {
+        $this->countdown = $countdown;
     }
 }

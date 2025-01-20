@@ -268,7 +268,7 @@ xlvo_copy#:#Copy LiveVoting
 xlvo_visible#:#LiveVotings visible
 xlvo_write#:#Present and edit LiveVoting
 xlvo_mode#:#Mode
-xlvo_mode_basic#:#Basic
+xlvo_mode_basic#:#Standard
 xlvo_mode_basic_info#:#The classic LiveVoting mode
 xlvo_mode_challenge#:#Challenge
 xlvo_mode_challenge_info#:#With the Challenge mode, the participants play a game raching points for answering questions correctly.
@@ -332,3 +332,5 @@ score_form_header#:#Score
 voting_score#:#Question Score
 voting_score_info#:#The score of the question, to reach the maximum score the user must answer exactly the correct answer
 voter_header_scoreboard#:#Scoreboard
+voting_countdown#:#Time to answer
+voting_countdown_info#:#Time to answer the question, this also affects to question score

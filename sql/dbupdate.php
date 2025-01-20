@@ -768,6 +768,16 @@ if (!$db->tableColumnExists("rep_robj_xlvo_voting_n", "score")) {
     $db->manipulate("UPDATE rep_robj_xlvo_voting_n SET score = 0 WHERE score IS NULL");
 }
 
+if (!$db->tableColumnExists("rep_robj_xlvo_voting_n", "countdown")) {
+    $db->addTableColumn("rep_robj_xlvo_voting_n", "countdown", [
+        "type" => "integer",
+        "length" => 8,
+        "notnull" => false
+    ]);
+
+    $db->manipulate("UPDATE rep_robj_xlvo_voting_n SET countdown = 30 WHERE countdown IS NULL");
+}
+
 if (!$db->tableExists("xlvo_points")) {
     $fields = [
         "identifier" => [

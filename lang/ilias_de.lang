@@ -269,7 +269,7 @@ xlvo_copy#:#LiveVoting kopieren
 xlvo_visible#:#LiveVoting sichtbar
 xlvo_write#:#LiveVoting präsentieren und bearbeiten
 xlvo_mode#:#Modus
-xlvo_mode_basic#:#Grundlegend
+xlvo_mode_basic#:#Standard
 xlvo_mode_basic_info#:#Der klassische LiveVoting-Modus
 xlvo_mode_challenge#:#Herausforderung
 xlvo_mode_challenge_info#:#Im Challenge-Modus spielen die Teilnehmer ein Spiel, bei dem sie für die richtige Beantwortung von Fragen Punkte sammeln können.
@@ -331,3 +331,5 @@ score_form_header#:#Score
 voting_score#:#Question Score
 voting_score_info#:#Die Punktzahl der Frage, um die maximale Punktzahl zu erreichen, muss der Benutzer genau die richtige Antwort geben
 voter_header_scoreboard#:#Scoreboard
+voting_countdown#:#Zeit bis zur Antwort
+voting_countdown_info#:#Zeit bis zur Beantwortung der Frage, dies wirkt sich auch auf die Punktzahl der Frage aus

@@ -845,13 +845,14 @@ class LiveVotingPlayer
 
     /**
      * @throws LiveVotingException
+     * @throws Exception
      */
     public function nextQuestionCM(): void
     {
         if ($this->nextQuestion()) {
             $this->setStatus(LiveVotingPlayer::STAT_RUNNING);
 
-            $this->startCountDown(30);
+            $this->startCountDown($this->getActiveVotingObject()->getCountdown());
         } else {
             $this->setStatus(self::STAT_END_VOTING);
 

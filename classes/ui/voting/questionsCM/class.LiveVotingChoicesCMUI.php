@@ -120,14 +120,17 @@ class LiveVotingChoicesCMUI
                                                   ->withValue(isset($this->question) ? $this->question->getScore() : 0)
                                                   ->withRequired(true);
 
+            $form_score["countdown"] = $this->factory->input()->field()->select(
+                $this->plugin->txt('voting_countdown'),
+                [10 => "10s", 20 => "20s", 30 => "30s", 40 => "40s", 50 => "50s", 60 => "60s"],
+                $this->plugin->txt('voting_countdown_info'))
+                                                  ->withValue(isset($this->question) ? $this->question->getCountdown() : 30)
+                                                  ->withRequired(true);
+
             $section_score = $this->factory->input()->field()->section($form_score, $this->plugin->txt("score_form_header"), "");
 
             //Answers section
             $form_answers = [];
-
-            /*   $form_answers["selection"] = $this->factory->input()->field()->checkbox(
-                   $this->plugin->txt('qtype_1_multi_selection'),
-                   $this->plugin->txt('qtype_1_multi_selection_info'))->withValue(isset($this->question) ? $this->question->isMultiSelection() : false);*/
 
             if (isset($this->question)) {
                 $options = $this->question->getOptions();
@@ -257,8 +260,9 @@ class LiveVotingChoicesCMUI
                 $question->setTitle($question_data["title"] ?? null);
                 $question->setQuestion($_POST["form/input_0/input_2"] ? ilRTE::_replaceMediaObjectImageSrc($_POST["form/input_0/input_2"]) : null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
-                $question->setMultiSelection($answers_data["selection"] ?? false);
+                $question->setMultiSelection(true);
                 $question->setScore((int)($scoring_data["points"] ?? 0));
+                $question->setCountdown((int)($scoring_data["countdown"] ?? 30));
 
                 $old_options = $question->getOptions();
 
@@ -307,6 +311,10 @@ class LiveVotingChoicesCMUI
 
                         if (isset($option_data->text)) {
                             $option->setText($option_data->text);
+                        }
+
+                        if (isset($option_data->isCorrect)) {
+                            $option->setIsCorrect($option_data->isCorrect);
                         }
 
                         $option->setPosition($index + 1);

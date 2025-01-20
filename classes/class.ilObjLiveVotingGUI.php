@@ -976,7 +976,12 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $param_manager = ParamManager::getInstance();
 
-        $this->object->getLiveVoting()->getPlayer()->unfreeze($param_manager->getVoting());
+        if ($this->object->getLiveVoting()->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
+            $this->object->getLiveVoting()->getPlayer()->startCountDown($this->object->getLiveVoting()->getPlayer()->getActiveVotingObject()->getCountdown());
+        } else {
+            $this->object->getLiveVoting()->getPlayer()->unfreeze($param_manager->getVoting());
+
+        }
     }
 
     /**
