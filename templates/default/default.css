@@ -37,6 +37,23 @@ div.xlvo_shortlink {
   word-wrap: break-word;
   margin-bottom:10px;
 }
+div.xlvo_list_nickname{
+  position: relative;
+  margin-bottom: 20px;
+}
+button.button-remove-voter {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  color: #f74d4d;
+  border: 1px solid #dddddd;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 div.xlvo_cm_qr {
   height: 98%;
   margin: 0;

@@ -433,7 +433,24 @@ var xlvoPlayer = {
         xlvoPlayer.startRequest();
         $.get(xlvoPlayer.config.base_url, { cmd: "getAttendees" })
             .done(function (data) {
-                $("#xlvo-attendees").html(data);
+                $("#xlvo-attendees").html(data.count);
+
+                let nicknames = "";
+
+                Object.entries(data.nicknames).forEach(([identifier, nickname]) => {
+                    nicknames += `
+                        <div class="col-md-3">
+                            <div class="well text-center xlvo_list_nickname">
+                                ${nickname}
+                                <button data-player="${identifier}" class="button-remove-voter" onclick="xlvoPlayer.removeVoter(this)">X</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                $("#xlvo-nickname-list").html(nicknames);
+
+
                 xlvoPlayer.timeout = setTimeout(
                     xlvoPlayer.updateAttendees,
                     1000
@@ -443,6 +460,15 @@ var xlvoPlayer = {
                 xlvoPlayer.endRequest();
             });
     },
+
+    removeVoter: function (element) {
+        let $element = $(element);
+
+        $element.parent().remove();
+
+        $.post(xlvoPlayer.config.base_url + "&cmd=removeVoter", { player: $element.data("player") });
+    },
+
     /**
      * Handles some special functionality on startscreen
      */

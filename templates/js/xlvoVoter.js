@@ -50,6 +50,11 @@ var xlvoVoter = {
 			.done(function (data) {
 				xlvoVoter.log(data);
 
+				if (data.redirect) {
+					window.location.href = data.redirect;
+					return;
+				}
+
 				//kill timer if running
 				if (xlvoVoter.interval) {
 					clearInterval(xlvoVoter.interval);

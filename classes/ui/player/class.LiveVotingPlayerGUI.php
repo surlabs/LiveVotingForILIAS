@@ -510,6 +510,20 @@ class LiveVotingPlayerGUI
      */
     protected function getVotingData(): void
     {
+        global $DIC;
+
+        if ($this->live_voting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
+            $player = $this->live_voting->getPlayer();
+
+            if ($this->live_voting->isNicknames() && LiveVotingParticipant::getInstance()->getNickname($player->getId()) == "") {
+                LiveVotingJs::sendResponse([
+                    'redirect' => $DIC->ctrl()->getLinkTargetByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'requestNickname')
+                ]);
+
+                return;
+            }
+        }
+
         if ($this->live_voting->isShowAttendees()) {
             LiveVotingVoter::register($this->live_voting->getPlayer()->getId());
         }

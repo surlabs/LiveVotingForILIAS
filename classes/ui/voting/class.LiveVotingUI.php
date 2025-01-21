@@ -169,7 +169,6 @@ class LiveVotingUI
                 if ($this->liveVoting->isShowAttendees()) {
                     $js->call('updateAttendees');
                     $template->setVariable("ONLINE_TEXT", vsprintf($this->pl->txt("start_online"), [LiveVotingVoter::countVoters($this->liveVoting->getPlayer()->getId())]));
-
                 }
 
                 $js->call('handleStartButton');

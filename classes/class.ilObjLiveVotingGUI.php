@@ -102,6 +102,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'startPlayerAnUnfreeze':
             case 'getPlayerData':
             case 'getAttendees':
+            case 'removeVoter':
             case 'manage':
             case 'results':
             case 'selectType':
@@ -1294,7 +1295,18 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     {
         $player = $this->object->getLiveVoting()->getPlayer();
 
-        LiveVotingJs::sendResponse(vsprintf($this->plugin->txt("start_online"), [LiveVotingVoter::countVoters($player->getId())]));
+        LiveVotingJs::sendResponse([
+            "count" => vsprintf($this->plugin->txt("start_online"), [LiveVotingVoter::countVoters($player->getId())]),
+            "nicknames" => LiveVotingVoter::getVotersNicknames($player->getId())
+        ]);
+    }
+
+    public function removeVoter() {
+        $user_identifier = $_POST['player'];
+
+        $player_id = $this->object->getLiveVoting()->getPlayer()->getId();
+
+        LiveVotingVoter::removeVoter($player_id, $user_identifier);
     }
 
     /**
