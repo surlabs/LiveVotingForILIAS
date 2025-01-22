@@ -58,6 +58,7 @@ var xlvoPlayer = {
         xlvo_ppt: false,
     },
     player_html: null,
+    freeze_nickname_list: false,
     run: function () {
         xlvoPlayer.log("running player");
         this.registerElements();
@@ -433,8 +434,6 @@ var xlvoPlayer = {
         xlvoPlayer.startRequest();
         $.get(xlvoPlayer.config.base_url, { cmd: "getAttendees" })
             .done(function (data) {
-                $("#xlvo-attendees").html(data.count);
-
                 let nicknames = "";
 
                 Object.entries(data.nicknames).forEach(([identifier, nickname]) => {
@@ -448,8 +447,11 @@ var xlvoPlayer = {
                     `;
                 });
 
-                $("#xlvo-nickname-list").html(nicknames);
+                if (!xlvoPlayer.freeze_nickname_list) {
+                    $("#xlvo-attendees").html(data.count);
 
+                    $("#xlvo-nickname-list").html(nicknames);
+                }
 
                 xlvoPlayer.timeout = setTimeout(
                     xlvoPlayer.updateAttendees,
@@ -462,11 +464,17 @@ var xlvoPlayer = {
     },
 
     removeVoter: function (element) {
+        xlvoPlayer.freeze_nickname_list = true;
+
         let $element = $(element);
 
-        $element.parent().remove();
+        $element.parent().css("opacity", "0.3");
 
         $.post(xlvoPlayer.config.base_url + "&cmd=removeVoter", { player: $element.data("player") });
+
+        setTimeout(() => {
+            xlvoPlayer.freeze_nickname_list = false;
+        }, 1000);
     },
 
     /**
