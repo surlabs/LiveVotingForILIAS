@@ -96,6 +96,10 @@ class LiveVoting
 
         if ($loadPlayer && $this->getId() !== 0) {
             $this->player = LiveVotingPlayer::loadFromObjId($this->getId());
+
+            if ($this->getMode()->getMode() === LiveVotingMode::CHALLENGE_MODE) {
+                $this->player->setFrozen(false);
+            }
         }
     }
 

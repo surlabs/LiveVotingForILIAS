@@ -227,7 +227,7 @@ class LiveVotingVoter
             $voter->setUserIdentifier(LiveVotingParticipant::getInstance()->getIdentifier());
         }
 
-        $voter->setLastAccess(LiveVotingUtils::getTime());
+        $voter->setLastAccess(LiveVotingUtils::getTime() + 2);
         $voter->save();
     }
 

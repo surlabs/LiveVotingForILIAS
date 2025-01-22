@@ -567,6 +567,8 @@ class LiveVotingPlayer
      */
     public function getPlayerDataForVoter(): array
     {
+        $plugin = ilLiveVotingPlugin::getInstance();
+
         return array(
             "status" => $this->getStatus(),
             "force_reload" => false,
@@ -577,6 +579,7 @@ class LiveVotingPlayer
             "frozen" => $this->isFrozen(),
             "show_results" => $this->isShowResults(),
             "show_correct_order" => false,
+            "online_voters" => vsprintf($plugin->txt("start_online"), [LiveVotingVoter::countVoters($this->getId())])
         );
     }
 

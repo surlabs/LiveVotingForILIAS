@@ -184,6 +184,10 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
 
         $time_to_answer = $this->player->getCountdown();
 
+        if ($time_to_answer == 0) {
+            $time_to_answer = 1;
+        }
+
         $time_remaining = $this->player->remainingCountDown();
 
         $score_mult = 1 - (($time_to_answer - $time_remaining)/$time_to_answer)/2;

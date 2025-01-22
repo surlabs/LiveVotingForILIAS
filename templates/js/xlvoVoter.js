@@ -61,6 +61,10 @@ var xlvoVoter = {
 					xlvoVoter.interval = null;
 				}
 
+				if (data.online_voters) {
+					$('#xlvo-attendees').html(data.online_voters);
+				}
+
 				var voting_has_changed = (xlvoVoter.player.active_voting_id !== data.active_voting_id), // Voting has changed
 
 					status_has_changed = (xlvoVoter.player.status !== data.status), // Status of player has changed
