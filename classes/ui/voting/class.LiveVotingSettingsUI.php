@@ -25,6 +25,7 @@ use ilCtrlInterface;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use ilLiveVotingPlugin;
+use ilObjectListGUIFactory;
 use ilObjLiveVoting;
 use ilPlugin;
 
@@ -178,6 +179,9 @@ class LiveVotingSettingsUI
 
     }
 
+    /**
+     * @throws \ilObjectException
+     */
     public function renderForm(string $form_action, array $sections): string
     {
         global $DIC;
@@ -197,6 +201,11 @@ class LiveVotingSettingsUI
             $result = $form->getData();
             if ($result) {
                 $saving_info = $this->saveProperties();
+
+                $l_gui = ilObjectListGUIFactory::_getListGUIByType($this->object->getType());
+                $l_gui->initItem($this->object->getRefId(), $this->object->getId(), $this->object->getType());
+                $DIC["tpl"]->setAlertProperties($l_gui->getAlertProperties());
+
             }
         }
 
