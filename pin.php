@@ -60,7 +60,7 @@ try {
             }
 
             $ref_id = key($refs);
-            $non_anonymous_voting_link = "{$base_url}/goto.php/xlvo/{$ref_id}/pin_{$pin}";
+            $non_anonymous_voting_link = "{$base_url}/goto.php?target=xlvo_1_pin_" . $pin;
 
             $DIC->ctrl()->redirectToURL($non_anonymous_voting_link);
         } else {

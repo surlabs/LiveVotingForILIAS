@@ -55,4 +55,17 @@ class ilObjLiveVotingAccess extends ilObjectPluginAccess
         $liveVoting = new LiveVoting($obj_id);
         return !$liveVoting->isOnline();
     }
+
+    public static function _checkGoto(string $target): bool
+    {
+        global $DIC;
+
+        $user_id = $DIC->user()->getId();
+
+        if ($user_id != 0 && $user_id != ANONYMOUS_USER_ID) {
+            return true;
+        }
+
+        return false;
+    }
 }
