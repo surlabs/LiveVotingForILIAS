@@ -268,7 +268,7 @@ class liveVotingTableGUI extends ilTable2GUI
 
             if (isset($this->filter['title']) && $this->filter['title'] != "") {
                 foreach ($collection as $item) {
-                    if (str_contains($item['title'], $this->filter['title'])) {
+                    if (strpos($item['title'], $this->filter['title']) !== false) {
                         $filtered[] = $item;
                     }
                 }
@@ -276,7 +276,7 @@ class liveVotingTableGUI extends ilTable2GUI
 
             if (isset($this->filter['question']) && $this->filter['question'] != "") {
                 foreach ($collection as $item) {
-                    if (str_contains($item['question'], $this->filter['question'])) {
+                    if (strpos($item['question'], $this->filter['question']) !== false) {
                         $filtered[] = $item;
                     }
                 }

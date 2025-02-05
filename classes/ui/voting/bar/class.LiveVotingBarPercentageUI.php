@@ -117,7 +117,7 @@ class LiveVotingBarPercentageUI implements LiveVotingGeneralBarUI
     /**
      * @param int $votes
      */
-    public function setVotes(int|float $votes)
+    public function setVotes($votes)
     {
         $this->votes = $votes;
     }
