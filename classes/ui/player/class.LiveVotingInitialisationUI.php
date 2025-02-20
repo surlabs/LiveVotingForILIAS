@@ -233,8 +233,6 @@ class LiveVotingInitialisationUI
         $tpl->addCss('./templates/default/delos.css');
         $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/css/old_delos.css');
         $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/default.css');
-        $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/css/new_style.css');
-
         //$tpl->addCss('/templates/default/030-tools/legacy-bootstrap-mixins/_nav-divider.scss');
 
         $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", "Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting");
