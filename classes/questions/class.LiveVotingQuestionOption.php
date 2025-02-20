@@ -176,7 +176,7 @@ class LiveVotingQuestionOption
 
     public function getTextForPresentation(): string
     {
-        return ilLegacyFormElementsUtil::prepareTextareaOutput($this->text, true);
+        return ilLegacyFormElementsUtil::prepareTextareaOutput(htmlentities($this->text), true);
     }
 
     public function setText(?string $text): void

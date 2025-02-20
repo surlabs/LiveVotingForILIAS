@@ -191,6 +191,10 @@ class LiveVotingDatabase {
                     }, array_values($where))));
             }
 
+            if (strpos(strtoupper($extra), "DROP") !== false || strpos(strtoupper($extra), "DELETE") !== false || strpos(strtoupper($extra), "UPDATE") !== false || strpos(strtoupper($extra), "INSERT") !== false || strpos(strtoupper($extra), "ALTER") !== false || strpos(strtoupper($extra), "CREATE") !== false || strpos(strtoupper($extra), "TRUNCATE") !== false || strpos(strtoupper($extra), ";") !== false) {
+                throw new LiveVotingException("You can't modify the query with this extra");
+            }
+
             $query .= " " . $extra;
 
             $result = $this->db->query($query);
