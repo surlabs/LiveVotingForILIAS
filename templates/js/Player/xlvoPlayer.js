@@ -292,6 +292,10 @@ var xlvoPlayer = {
             $('.panel-heading').html(newHeading.html());
           }
 
+          if ($('.xlvo-question').html() !== newQuestion.html()) {
+            $('.xlvo-question').html(newQuestion.html());
+          }
+
           if ($('#xlvo-votes').html() !== newVotes.html()) {
             $('#xlvo-votes').html(newVotes.html());
           }
@@ -302,7 +306,6 @@ var xlvoPlayer = {
 
           if ($('#xlvo-display-options').html() !== rowOptions.html()) {
             $('#xlvo-display-options').html(rowOptions.html());
-            $(".xlvo-question").html(newQuestion.html());
           }
 
           if ($('#xlvo-display-results').html() !== newResults.html()) {
