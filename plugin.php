@@ -19,7 +19,7 @@
 
 $id = 'xlvo';
 
-$version = '9.1.16';
+$version = '9.1.17';
 
 $ilias_min_version = '9.0';
 $ilias_max_version = '9.999';
