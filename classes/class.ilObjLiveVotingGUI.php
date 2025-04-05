@@ -88,6 +88,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     public function performCommand(string $cmd): void
     {
         global $DIC;
+        $this->checkPermission("read");
         $this->setTitleAndDescription();
         $DIC->help()->setScreenIdComponent(ilLiveVotingPlugin::PLUGIN_ID);
 
