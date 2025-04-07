@@ -435,15 +435,24 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     public function editProperties(): void
     {
         global $DIC;
-        $this->tabs->activateTab("tab_edit");
+        if (!ilObjLiveVotingAccess::hasWriteAccess()) {
+            $this->tpl->setContent(
+                $this->renderer->render($this->factory->messageBox()->failure($this->plugin->txt("permission_denied")))
+            );
+        }
+         else {
+             $this->tabs->activateTab("tab_edit");
 
-        $liveVotingSettingsUI = new LiveVotingSettingsUI($this->getRefId());
+             $liveVotingSettingsUI = new LiveVotingSettingsUI($this->getRefId());
 
-        $sections = $liveVotingSettingsUI->initPropertiesForm();
-        $form_action = $DIC->ctrl()->getLinkTargetByClass(ilObjLiveVotingGUI::class, "editProperties");
-        $rendered = $liveVotingSettingsUI->renderForm($form_action, $sections);
+             $sections = $liveVotingSettingsUI->initPropertiesForm();
+             $form_action = $DIC->ctrl()->getLinkTargetByClass(ilObjLiveVotingGUI::class, "editProperties");
+             $rendered = $liveVotingSettingsUI->renderForm($form_action, $sections);
 
-        $this->tpl->setContent($rendered);
+             $this->tpl->setContent($rendered);
+         }
+
+
     }
 
     /**
