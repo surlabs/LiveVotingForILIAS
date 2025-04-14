@@ -404,12 +404,12 @@ class LiveVoting
     public static function generatePin(): string
     {
         $database = new LiveVotingDatabase();
-        $pin = LiveVoting::generateCode(4);
+        $pin = LiveVoting::generateCode(4, true);
 
         $result = $database->select("rep_robj_xlvo_config_n", ["pin" => $pin]);
 
         while (isset($result[0])) {
-            $pin = LiveVoting::generateCode(4);
+            $pin = LiveVoting::generateCode(4, true);
             $result = $database->select("rep_robj_xlvo_config_n", ["pin" => $pin]);
         }
 
@@ -441,13 +441,18 @@ class LiveVoting
      * @param int $lenght
      * @return string
      */
-    private static function generateCode(int $lenght): string
+    private static function generateCode(int $lenght, bool $start_with_letter = false): string
     {
         $characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         $pin = "";
 
-        for ($i = 0; $i < $lenght; $i++) {
+        for ($i = 0; $i < ($start_with_letter ? $lenght - 1 : $lenght); $i++) {
             $pin .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        if ($start_with_letter) {
+            $letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            $pin = $letters[rand(0, strlen($letters) - 1)] . $pin;
         }
 
         return $pin;
