@@ -84,13 +84,11 @@ class liveVotingTableGUI extends ilTable2GUI
         $this->setId(self::TBL_ID);
         $this->setPrefix(self::TBL_ID);
         $this->setFormName(self::TBL_ID);
-        $DIC->ctrl()->saveParameter($a_parent_obj, $this->getNavParameter());
 
         parent::__construct($a_parent_obj, $a_parent_cmd);
 
         $this->setRowTemplate('tpl.tbl_voting.html', $this->pl->getDirectory());
         $this->setExternalSorting(true);
-        $this->setExternalSegmentation(true);
         $this->initColums();
         $this->addFilterItems();
         $this->parseData();
@@ -231,23 +229,12 @@ class liveVotingTableGUI extends ilTable2GUI
         $this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
     }
 
-
     /**
      * @throws LiveVotingException
      */
     protected function parseData()
     {
-        // Filtern
-        $this->determineOffsetAndOrder();
-        $this->determineLimit();
-
         $database = new LiveVotingDatabase();
-        $sorting_column = $this->getOrderField() ? $this->getOrderField() : 'position';
-        $offset = $this->getOffset() ? $this->getOffset() : 0;
-
-        $sorting_direction = $this->getOrderDirection();
-        $num = $this->getLimit();
-
 
         $where = array(
             "obj_id" => $this->voting_gui->getObjId(),
@@ -261,7 +248,7 @@ class liveVotingTableGUI extends ilTable2GUI
             $where['voting_type'] = $this->filter['voting_type'];
         }
 
-        $collection = $database->select("rep_robj_xlvo_voting_n", $where, null, "ORDER BY " . $sorting_column . " " . $sorting_direction . " LIMIT " . $offset . ", " . $num);
+        $collection = $database->select("rep_robj_xlvo_voting_n", $where);
 
         if (isset($this->filter['question']) && isset($this->filter['title']) && $this->filter['title'] != "" || (isset($this->filter['question']) && $this->filter['question'] != "")) {
             $filtered = array();
