@@ -300,8 +300,12 @@ abstract class LiveVotingQuestion
         $this->title = $title;
     }
 
-    public function getQuestion(): string
+    public function getQuestion(bool $forInput = false): string
     {
+        if ($forInput) {
+            return ilLegacyFormElementsUtil::prepareTextareaOutput(ilRTE::_replaceMediaObjectImageSrc($this->question), true);
+        }
+
         return $this->question;
     }
 
