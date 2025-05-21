@@ -136,6 +136,11 @@ class LiveVotingDisplayPlayerUI
             //add options to player
             $xlvoOptions = LiveVotingQuestionOption::loadAllOptionsByVotingId($question->getId());
 
+
+            if($question->getQuestionTypeId() == LiveVotingQuestion::QUESTION_TYPES_IDS["CorrectOrder"] && $question->isRandomiseOptionSequence()) {
+                $xlvoOptions = $this->randomizeWithoutCorrectSequence($xlvoOptions);
+            }
+
             foreach ($xlvoOptions as $item) {
                 $this->addOption($item);
             }
@@ -207,5 +212,66 @@ class LiveVotingDisplayPlayerUI
         $this->tpl->parseCurrentBlock();
     }
 
+    private function randomizeWithoutCorrectSequence(array &$options): array
+    {
+        if (count($options) < 2) {
+            return $options;
+        }
 
+        //shuffle array items (can't use the PHP shuffle function because the keys are not preserved.)
+        $optionsClone = $this->shuffleArray($options);
+
+        foreach ($optionsClone as $key => $option) {
+            $option->setPosition($key + 1);
+        }
+
+        $lastCorrectPosition = 0;
+
+        /**
+         * @var LiveVotingQuestionOption $option
+         */
+        foreach ($optionsClone as $option) {
+            //get correct item position
+            $currentCurrentPosition = $option->getCorrectPosition();
+
+            //calculate the difference
+            $difference = $lastCorrectPosition - $currentCurrentPosition;
+            $lastCorrectPosition = $currentCurrentPosition;
+
+            //check if we shuffled the correct answer by accident.
+            //the correct answer would always produce a difference of -1.
+            //1 - 2 = -1, 2 - 3 = -1, 3 - 4 = -1 ...
+            if ($difference !== -1) {
+                return $optionsClone;
+            }
+        }
+
+        //try to shuffle again because we got the right answer by accident.
+        //we pass the original array, this should enable php to drop the array clone out of the memory.
+        return $this->randomizeWithoutCorrectSequence($options);
+    }
+
+    private function shuffleArray(array &$array): array
+    {
+        $clone = $this->cloneArray($array);
+        $shuffledArray = [];
+
+        while (count($clone) > 0) {
+            $key = array_rand($clone);
+            $shuffledArray[] = &$clone[$key];
+            unset($clone[$key]);
+        }
+
+        return $shuffledArray;
+    }
+
+    private function cloneArray(array &$array): array
+    {
+        $clone = [];
+        foreach ($array as $key => $value) {
+            $clone[$key] = &$array[$key]; //get the ref on the array value not the foreach value.
+        }
+
+        return $clone;
+    }
 }
