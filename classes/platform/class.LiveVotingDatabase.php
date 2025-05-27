@@ -39,7 +39,9 @@ class LiveVotingDatabase {
         "rep_robj_xlvo_vote_n",
         "rep_robj_xlvo_voting_n",
         "xlvo_config",
-        "xlvo_voter"
+        "xlvo_voter",
+        "xlvo_nicknames",
+        "xlvo_points",
     );
 
     public function __construct()

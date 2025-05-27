@@ -73,22 +73,208 @@ var xlvoPlayer = {
         if (screenfull.enabled) {
           screenfull.request(target);
         }
-      });
-      this.btn_close_fullscreen.click((e) => {
-        e.preventDefault();
-        if (screenfull.enabled) {
-          screenfull.exit(target);
+    },
+    mathjax_config: {
+        "HTML-CSS": { scale: 80 },
+    },
+    buttons_handled: false,
+    toolbar_loaded: false,
+    delay: 1000,
+    counter: 1,
+    timeout: null,
+    request_pending: false,
+    forced_update_interval: 10,
+    countdown_running: false,
+    config: {
+        base_url: "",
+        voter_count_element_id: "",
+        lng: {
+            voting_confirm_reset: "Reset?",
+        },
+        status_running: -1,
+        use_mathjax: false,
+        debug: false,
+        isChallenge: false
+    },
+    player: {
+        is_first: true,
+        is_last: false,
+        status: -1,
+        active_voting_id: -1,
+        show_results: false,
+        frozen: true,
+        votes: 0,
+        last_update: 0,
+        attendees: 0,
+        countdown: 0,
+        has_countdown: false,
+        xlvo_ppt: false,
+    },
+    player_html: null,
+    freeze_nickname_list: false,
+    run: function () {
+        xlvoPlayer.log("running player");
+        this.registerElements();
+        this.getPlayerData();
+    },
+    handleFullScreen: function () {
+        var jq_target = $("div.ilTabsContentOuter");
+        if (xlvoPlayer.config.xlvo_ppt == false) {
+            this.btn_close_fullscreen.parent().hide();
+            var target = jq_target[0];
+            var self = this;
+            this.btn_start_fullscreen.click(function (e) {
+                e.preventDefault();
+                if (screenfull.enabled) {
+                    screenfull.request(target);
+                }
+            });
+            this.btn_close_fullscreen.click(function (e) {
+                e.preventDefault();
+                if (screenfull.enabled) {
+                    screenfull.exit(target);
+                }
+            });
+
+            if (screenfull.enabled) {
+                document.addEventListener(
+                    screenfull.raw.fullscreenchange,
+                    function () {
+                        if (!screenfull.isFullscreen) {
+                            jq_target.removeClass("xlvo-fullscreen");
+                            self.btn_start_fullscreen.parent().show();
+                            self.btn_close_fullscreen.parent().hide();
+                        } else {
+                            jq_target.addClass("xlvo-fullscreen");
+                            self.btn_start_fullscreen.parent().hide();
+                            self.btn_close_fullscreen.parent().show();
+                        }
+
+                    }
+                );
+            }
+        } else {
+            this.btn_start_fullscreen.parent().hide();
+            this.btn_close_fullscreen.parent().hide();
+            jq_target.addClass("xlvo-fullscreen");
+        }
+    },
+    registerElements: function () {
+        if (xlvoPlayer.config.xlvo_ppt == false) {
+            $(document).keydown(function (e) {
+                switch (e.which) {
+                    case xlvoPlayer.config.keyboard.toggle_results:
+                        xlvoPlayer.callPlayer("toggle_results");
+                        break;
+                    case xlvoPlayer.config.keyboard.toggle_freeze:
+                        xlvoPlayer.callPlayer("toggle_freeze");
+                        break;
+                    case 66: // b
+                        if ($(":focus").prop("tagName") !== "INPUT") {
+                            // don't use hotkey when an input is focused
+                            xlvoPlayer.callPlayer("toggle_freeze");
+                        } else {
+                            return; // to avoid preventDefault()
+                        }
+                        break;
+                    case 33: // page up
+                    case xlvoPlayer.config.keyboard.previous:
+                        xlvoPlayer.callPlayer("previous");
+                        break;
+                    case 34: // page down
+                    case xlvoPlayer.config.keyboard.next:
+                        xlvoPlayer.callPlayer("next");
+                        break;
+                    default:
+                        return;
+                }
+                e.preventDefault();
+            });
         }
       });
 
-      if (screenfull.enabled) {
-        document.addEventListener(
-          screenfull.raw.fullscreenchange,
-          () => {
-            if (!screenfull.isFullscreen) {
-              jq_target.removeClass('xlvo-fullscreen');
-              self.btn_start_fullscreen.parent().show();
-              self.btn_close_fullscreen.parent().hide();
+        this.btn_freeze = $("#btn-freeze");
+        this.btn_previous = $("#btn-previous");
+        this.btn_next = $("#btn-next");
+        this.btn_unfreeze = $("#btn-unfreeze");
+        this.btn_unfreeze.closest(".btn-group").hide();
+        this.btn_reset = $("#btn-reset");
+        this.btn_end_time = $("#btn-end_time");
+        this.btn_end_time.hide();
+        this.btn_next_cm = $("#btn-next_cm");
+        this.btn_next_cm.hide();
+        this.btn_terminate = $("#btn-terminate");
+        this.btn_terminate.parent().hide();
+        this.btn_reset.parent().attr("disabled", true);
+        this.btn_hide_results = $("#btn-hide-results");
+        this.btn_show_results = $("#btn-show-results");
+        this.btn_toggle_pull = $("#btn-toggle-pull");
+        this.btn_show_results.parent().hide();
+        this.btn_start_fullscreen = $("#btn-start-fullscreen");
+        this.btn_close_fullscreen = $("#btn-close-fullscreen");
+        this.div_display_results = $("#xlvo-display-results");
+        this.toolbar = $(".l-bar__space-keeper");
+        this.toolbar.prepend(
+            '<div id="xlvo_player_loading"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>'
+        );
+        this.toolbar_loader = $("#xlvo_player_loading");
+        this.toolbar_loader.show();
+        this.btn_freeze.click(function () {
+            xlvoPlayer.callPlayer("toggle_freeze");
+            return false;
+        });
+
+        this.btn_unfreeze.click(function () {
+            xlvoPlayer.callPlayer("toggle_freeze");
+            return false;
+        });
+
+        this.btn_hide_results.click(function () {
+            xlvoPlayer.callPlayer("toggle_results");
+            return false;
+        });
+
+        this.btn_show_results.click(function () {
+            xlvoPlayer.callPlayer("toggle_results");
+            return false;
+        });
+
+        this.btn_reset.click(function () {
+            if (window.confirm(xlvoPlayer.config.lng.voting_confirm_reset)) {
+                xlvoPlayer.callPlayer("reset");
+            }
+            return false;
+        });
+        this.btn_next.click(function () {
+            xlvoPlayer.callPlayer("next");
+            return false;
+        });
+        this.btn_previous.click(function () {
+            xlvoPlayer.callPlayer("previous");
+            return false;
+        });
+        if (this.btn_toggle_pull) {
+            this.btn_toggle_pull.click(function () {
+                xlvoPlayer.togglePull();
+            });
+        }
+        this.btn_end_time.click(function () {
+            xlvoPlayer.callPlayer("end_time");
+            return false;
+        });
+        this.btn_next_cm.click(function () {
+            xlvoPlayer.callPlayer("next-cm");
+            return false;
+        });
+        this.handleFullScreen();
+    },
+    initElements: function () {
+        if (this.player.frozen) {
+            this.btn_freeze.parent().hide();
+
+            this.btn_unfreeze.closest(".btn-group").show();
+            if (this.player.votes > 0) {
+                this.btn_reset.removeAttr("disabled");
             } else {
               jq_target.addClass('xlvo-fullscreen');
               self.btn_start_fullscreen.parent().hide();
@@ -136,42 +322,47 @@ var xlvoPlayer = {
       });
     }
 
-    this.btn_freeze = $('#btn-freeze');
-    this.btn_previous = $('#btn-previous');
-    this.btn_next = $('#btn-next');
-    this.btn_unfreeze = $('#btn-unfreeze');
-    this.btn_unfreeze.closest('.btn-group').hide();
-    this.btn_reset = $('#btn-reset');
-    this.btn_terminate = $('#btn-terminate');
-    this.btn_terminate.parent().hide();
-    this.btn_reset.parent().attr('disabled', true);
-    this.btn_hide_results = $('#btn-hide-results');
-    this.btn_show_results = $('#btn-show-results');
-    this.btn_toggle_pull = $('#btn-toggle-pull');
-    this.btn_show_results.parent().hide();
-    this.btn_start_fullscreen = $('#btn-start-fullscreen');
-    this.btn_close_fullscreen = $('#btn-close-fullscreen');
-    this.div_display_results = $('#xlvo-display-results');
-    this.toolbar = $('.l-bar__space-keeper');
-    this.toolbar.prepend(
-      '<div id="xlvo_player_loading"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>',
-    );
-    this.toolbar_loader = $('#xlvo_player_loading');
-    this.toolbar_loader.show();
-    this.btn_freeze.click(() => {
-      xlvoPlayer.callPlayer('toggle_freeze');
-      return false;
-    });
+                if (xlvoPlayer.player.has_countdown) {
+                    xlvoPlayer.btn_end_time.show();
+                } else {
+                    xlvoPlayer.btn_end_time.hide();
+                }
+
+                if (data.player.status === 5) {
+                    xlvoPlayer.btn_next_cm.show();
+                } else {
+                    xlvoPlayer.btn_next_cm.hide();
+                }
+
+                if (
+                    xlvoPlayer.counter > xlvoPlayer.forced_update_interval || // Forced update of HTML
+                    data.player.last_update !== xlvoPlayer.player.last_update || // Player is out of sync
+                    data.player.show_results !==
+                        xlvoPlayer.player.show_results || // Show Results has changed
+                    data.player.status !== xlvoPlayer.player.status || // player status has changed
+                    data.player.active_voting_id !==
+                        xlvoPlayer.player.active_voting_id || //Voting has changed
+                    xlvoPlayer.player.has_countdown
+                ) {
+                    // countdown is running
+                    var playerHtml = data.player_html;
+                    if (
+                        xlvoPlayer.player_html !== null &&
+                        xlvoPlayer.player_html !== playerHtml
+                    ) {
+                        // Only change html if changed (Try prevent blinking images) (Not work because countdown text and/or token links)
+                        //create new jquery node
+                        var node = $(playerHtml);
+                        //get list of old childs
+                        var oldNode = $("#xlvo-display-player").children();
 
     this.btn_unfreeze.click(() => {
       xlvoPlayer.callPlayer('toggle_freeze');
       return false;
     });
 
-    this.btn_hide_results.click(() => {
-      xlvoPlayer.callPlayer('toggle_results');
-      return false;
-    });
+                        //fade out old child and remove child afterwards
+                        oldNode.remove();
 
     this.btn_show_results.click(() => {
       xlvoPlayer.callPlayer('toggle_results');
@@ -417,24 +608,57 @@ var xlvoPlayer = {
   /**
      * gets the current amount of attendees
      */
-  updateAttendees() {
-    if (xlvoPlayer.isRequestPending()) {
-      return;
-    }
-    xlvoPlayer.startRequest();
-    $.get(xlvoPlayer.config.base_url, { cmd: 'getAttendees' })
-      .done((data) => {
-        $('#xlvo-attendees').html(data);
-        xlvoPlayer.timeout = setTimeout(
-          xlvoPlayer.updateAttendees,
-          1000,
-        );
-      })
-      .always(() => {
-        xlvoPlayer.endRequest();
-      });
-  },
-  /**
+    updateAttendees: function () {
+        if (xlvoPlayer.isRequestPending()) {
+            return;
+        }
+        xlvoPlayer.startRequest();
+        $.get(xlvoPlayer.config.base_url, { cmd: "getAttendees" })
+            .done(function (data) {
+                let nicknames = "";
+
+                Object.entries(data.nicknames).forEach(([identifier, nickname]) => {
+                    nicknames += `
+                        <div class="col-md-3">
+                            <div class="well text-center xlvo_list_nickname">
+                                ${nickname}
+                                <button data-player="${identifier}" class="button-remove-voter" onclick="xlvoPlayer.removeVoter(this)">X</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                if (!xlvoPlayer.freeze_nickname_list) {
+                    $("#xlvo-attendees").html(data.count);
+
+                    $("#xlvo-nickname-list").html(nicknames);
+                }
+
+                xlvoPlayer.timeout = setTimeout(
+                    xlvoPlayer.updateAttendees,
+                    1000
+                );
+            })
+            .always(function () {
+                xlvoPlayer.endRequest();
+            });
+    },
+
+    removeVoter: function (element) {
+        xlvoPlayer.freeze_nickname_list = true;
+
+        let $element = $(element);
+
+        $element.parent().css("opacity", "0.3");
+
+        $.post(xlvoPlayer.config.base_url + "&cmd=removeVoter", { player: $element.data("player") });
+
+        setTimeout(() => {
+            xlvoPlayer.freeze_nickname_list = false;
+        }, 1000);
+    },
+
+    /**
      * Handles some special functionality on startscreen
      */
   handleStartButton() {
@@ -506,22 +730,27 @@ var xlvoPlayer = {
      * @param e
      * @param seconds
      */
-  countdown(e, seconds) {
-    e.preventDefault();
-    xlvoPlayer.countdown_running = true;
-    xlvoPlayer.log(`Countdown started: ${seconds}`);
-    xlvoPlayer.callPlayer('countdown', { seconds });
-  },
-  togglePull() {
-    if (xlvoPlayer.timeout) {
-      alert('Pull stopped');
-      xlvoPlayer.clearTimeout();
-      xlvoPlayer.timeout = false;
-    } else {
-      alert('Pull started');
-      xlvoPlayer.getPlayerData();
-    }
-  },
+    countdown: function (e, seconds) {
+        e.preventDefault();
+        xlvoPlayer.countdown_running = true;
+        xlvoPlayer.log("Countdown started: " + seconds);
+        xlvoPlayer.callPlayer("countdown", { seconds: seconds });
+    },
+    countdownCM: function (seconds) {
+        xlvoPlayer.countdown_running = true;
+        xlvoPlayer.log("Countdown started: " + seconds);
+        xlvoPlayer.callPlayer("countdown", { seconds: seconds });
+    },
+    togglePull: function () {
+        if (xlvoPlayer.timeout) {
+            alert("Pull stopped");
+            xlvoPlayer.clearTimeout();
+            xlvoPlayer.timeout = false;
+        } else {
+            alert("Pull started");
+            xlvoPlayer.getPlayerData();
+        }
+    },
 
   /**
      * @param data

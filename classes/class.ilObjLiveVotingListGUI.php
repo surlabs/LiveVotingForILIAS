@@ -19,6 +19,7 @@ declare(strict_types=1);
  *
  */
 
+use LiveVoting\objects\modes\LiveVotingMode;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\votings\LiveVoting;
 
@@ -90,6 +91,19 @@ class ilObjLiveVotingListGUI extends ilObjectPluginListGUI
             'newline' => true,
             "property" => $this->txt("voter_pin_input"),
             "value" => LiveVoting::getPinFromObjId($this->obj_id)
+        );
+
+        $mode = LiveVoting::getModeFromObjId($this->obj_id);
+
+        $mode = match ($mode) {
+            LiveVotingMode::CHALLENGE_MODE => $this->txt("xlvo_mode_challenge"),
+            default => $this->txt("xlvo_mode_basic"),
+        };
+
+        $props[] = array(
+            'newline' => true,
+            "property" => $this->txt("xlvo_mode"),
+            "value" => $mode
         );
 
         return $props;

@@ -18,30 +18,26 @@ declare(strict_types=1);
  *
  */
 
-namespace LiveVoting\votings;
+namespace LiveVoting\objects\modes;
 
 /**
  * Class LiveVotingMode
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-class LiveVotingMode
+class LiveVotingBasicMode extends LiveVotingMode
 {
-    const BASIC_MODE = 0;
-
-    private int $mode = self::BASIC_MODE;
-
-    public function __construct(int $mode)
-    {
-        $this->mode = $mode;
-    }
-
     public function getMode(): int
     {
-        return $this->mode;
+        return self::BASIC_MODE;
     }
 
-    public function setMode(int $mode): void
+    public function getStartTemplate(): string
     {
-        $this->mode = $mode;
+        return "start";
+    }
+
+    public function getInnerTemplate(): string
+    {
+        return "inner_screen";
     }
 }

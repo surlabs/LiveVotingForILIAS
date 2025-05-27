@@ -181,6 +181,10 @@ results_title#:#Resultate
 root_create_xlvo#:#LiveVoting erstellen
 show_attendees#:#Anzahl Teilnehmende (Online)
 show_attendees_info#:#Die Anzahl der aktuell teilnehmenden Personen wird im Präsentationsmodus angezeigt. Diese Funktion hat einen Einfluss auf die Geschwindigkeit des Systems und sollte nur bei LiveVotings mit geringer Anzahl Teilnehmenden (abhängig von der Installationsgröße) verwendet werden.
+nicknames#:#Spitznamen
+nicknames_info#:#Diese Option ermöglicht es den Teilnehmern, vor der Abstimmung einen Spitznamen einzugeben; nur im Challenge-Modus verfügbar.
+scoreboard#:#Scoreboard
+scoreboard_info#:#Zeigt die Punktetafel nach jeder Frage an, nur im Challenge-Modus verfügbar.
 subtab_show#:#Zeigen
 tab_content#:#Inhalt
 tab_manage#:#Verwalten
@@ -264,6 +268,11 @@ xlvo_read#:#Leserecht (nur im nicht-anonymen Modus verwendet)
 xlvo_copy#:#LiveVoting kopieren
 xlvo_visible#:#LiveVoting sichtbar
 xlvo_write#:#LiveVoting präsentieren und bearbeiten
+xlvo_mode#:#Modus
+xlvo_mode_basic#:#Standard
+xlvo_mode_basic_info#:#Der klassische LiveVoting-Modus
+xlvo_mode_challenge#:#Herausforderung
+xlvo_mode_challenge_info#:#Im Challenge-Modus spielen die Teilnehmer ein Spiel, bei dem sie für die richtige Beantwortung von Fragen Punkte sammeln können.
 cat_create_xlobj_results_behaviour#:#MISSING cat_create_xlobj_results_behaviour
 rminable_select_start_time#:#MISSING rminable_select_start_time
 vqtype_1_options#:#MISSING vqtype_1_options
@@ -318,3 +327,11 @@ voting_msg_reset#:#Resultate wurden zurückgesetzt
 sorting_msg_saved#:#Reihenfolge gespeichert
 voting_msg_duplicated_failed#:#Fehler beim Kopieren der Frage
 voting_msg_duplicated_success#:#Frage wurde kopiert
+end_time#:#Endzeit
+common_points#:#Punkte
+score_form_header#:#Score
+voting_score#:#Question Score
+voting_score_info#:#Die Punktzahl der Frage, um die maximale Punktzahl zu erreichen, muss der Benutzer genau die richtige Antwort geben
+voter_header_scoreboard#:#Scoreboard
+voting_countdown#:#Zeit bis zur Antwort
+voting_countdown_info#:#Zeit bis zur Beantwortung der Frage, dies wirkt sich auch auf die Punktzahl der Frage aus

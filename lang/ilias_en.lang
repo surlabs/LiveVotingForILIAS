@@ -179,6 +179,10 @@ rminable_select_start_time#:#Start
 root_create_xlvo#:#Create LiveVoting
 show_attendees#:#Show Attendees (Online)
 show_attendees_info#:#Show the count of attendees, this has an impact on performance and should only be activated for a small live voting.
+nicknames#:#Nicknames
+nicknames_info#:#This option allows the participants to enter a nickname before voting, only available in challenge mode.
+scoreboard#:#Scoreboard
+scoreboard_info#:#Show the scoreboard after each question, only available in challenge mode.
 subtab_show#:#Show
 tab_content#:#Content
 tab_manage#:#Manage
@@ -263,6 +267,11 @@ xlvo_read#:#Read (used only in non-anonymous-mode)
 xlvo_copy#:#Copy LiveVoting
 xlvo_visible#:#LiveVotings visible
 xlvo_write#:#Present and edit LiveVoting
+xlvo_mode#:#Mode
+xlvo_mode_basic#:#Standard
+xlvo_mode_basic_info#:#The classic LiveVoting mode
+xlvo_mode_challenge#:#Challenge
+xlvo_mode_challenge_info#:#With the Challenge mode, the participants play a game raching points for answering questions correctly.
 qtype_1_total_obj_results_alway_on_info#:#MISSING qtype_1_total_obj_results_alway_on_info
 obj_frozen_alway_ofxlvo_edit#:#MISSING obj_frozen_alway_ofxlvo_edit
 playplayer_msg_no_start_2#:#MISSING playplayer_msg_no_start_2
@@ -319,3 +328,11 @@ voting_msg_reset#:#Results have been reset
 sorting_msg_saved#:#Order has been saved
 voting_msg_duplicated_failed#:#Question could not be duplicated
 voting_msg_duplicated_success#:#Question has been duplicated
+end_time#:#End time
+common_points#:#Points
+score_form_header#:#Score
+voting_score#:#Question Score
+voting_score_info#:#The score of the question, to reach the maximum score the user must answer exactly the correct answer
+voter_header_scoreboard#:#Scoreboard
+voting_countdown#:#Time to answer
+voting_countdown_info#:#Time to answer the question, this also affects to question score

@@ -141,7 +141,7 @@ class LiveVotingResultsUI
         $votes = LiveVotingVote::getVotesForRound($round_id);
         $options = array(0 => $plugin->txt("common_all"));
         foreach ($votes as $vote) {
-            $options[$vote->getUserIdentifier() ?? $vote->getUserId()] = $vote->getParticipantName($vote);
+            $options[$vote->getUserIdentifier() ?? $vote->getUserId()] = $vote->getParticipantName($table->getPlayerId());
         }
         $filter->setOptions($options);
         $table->addFilterItem($filter);

@@ -147,9 +147,8 @@ class LiveVotingVoter
 
     /**
      * @throws LiveVotingException
-     * @throws Exception
      */
-    public static function countVoters(int $player_id): int
+    private static function getVoters(int $player_id): array
     {
         $delay = LiveVotingConfig::get("request_frequency");
 
@@ -167,9 +166,44 @@ class LiveVotingVoter
 
         $database = new LiveVotingDatabase();
 
-        return count($database->select("xlvo_voter", [
+        return $database->select("xlvo_voter", [
             "player_id" => $player_id
-        ], ["id"], "AND last_access > '$formatted_cutoff_time'"));
+        ], ["user_identifier"], "AND last_access > '$formatted_cutoff_time'");
+    }
+
+    /**
+     * @throws LiveVotingException
+     * @throws Exception
+     */
+    public static function countVoters(int $player_id): int
+    {
+        return count(self::getVoters($player_id));
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public static function getVotersNicknames(int $player_id): array
+    {
+        $voters = self::getVoters($player_id);
+
+        $database = new LiveVotingDatabase();
+
+        $nicknames = $database->select("xlvo_nicknames", [
+            "player_id" => $player_id
+        ], ["identifier", "nickname"]);
+
+        $nicknames_map = array_column($nicknames, "nickname", "identifier");
+
+        $voters_nicknames = [];
+
+        foreach ($voters as $voter) {
+            if (isset($nicknames_map[$voter["user_identifier"]])) {
+                $voters_nicknames[$voter["user_identifier"]] = $nicknames_map[$voter["user_identifier"]];
+            }
+        }
+
+        return $voters_nicknames;
     }
 
     /**
@@ -193,7 +227,22 @@ class LiveVotingVoter
             $voter->setUserIdentifier(LiveVotingParticipant::getInstance()->getIdentifier());
         }
 
-        $voter->setLastAccess(LiveVotingUtils::getTime());
+        $voter->setLastAccess(LiveVotingUtils::getTime() + 2);
         $voter->save();
+    }
+
+    public static function removeVoter(int $player_id, string $identifier): void
+    {
+        $database = new LiveVotingDatabase();
+
+        $database->delete("xlvo_voter", [
+            "player_id" => $player_id,
+            "user_identifier" => $identifier
+        ]);
+
+        $database->delete("xlvo_nicknames", [
+            "player_id" => $player_id,
+            "identifier" => $identifier
+        ]);
     }
 }

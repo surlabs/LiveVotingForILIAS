@@ -27,12 +27,14 @@ use ilLiveVotingPlugin;
 use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
+use LiveVoting\objects\modes\LiveVotingMode;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
 use LiveVoting\questions\LiveVotingQuestionOption;
 use LiveVoting\UI\QuestionsResults\LiveVotingInputResultsGUI;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
+use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingVote;
 use LiveVoting\votings\LiveVotingVoter;
 
@@ -88,7 +90,12 @@ class LiveVotingDisplayPlayerUI
         $this->factory = $DIC->ui()->factory();
 
         try {
-            $this->tpl = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.player.html", true, true);
+            if ($this->liveVoting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
+                $this->buildTpl();
+            } else {
+                $this->tpl = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.player.html", true, true);
+            }
+
             $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/default/default.css');
         } catch (ilSystemStyleException|ilTemplateException $e) {
             $DIC->ui()->mainTemplate()->setContent($this->renderer->render($this->factory->messageBox()->failure($e->getMessage())));
@@ -105,7 +112,12 @@ class LiveVotingDisplayPlayerUI
      */
     public function getHTML(bool $inner = false): string
     {
-        $this->render();
+        if ($this->liveVoting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
+            $this->renderTpl();
+        } else {
+            $this->render();
+        }
+
         $open = '<div id="xlvo-display-player" class="display-player panel panel-primary">';
         $close = '</div>';
 
@@ -212,6 +224,56 @@ class LiveVotingDisplayPlayerUI
         $this->tpl->parseCurrentBlock();
     }
 
+    /**
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     */
+    private function buildTpl(): void
+    {
+        $this->tpl = match ($this->liveVoting->getPlayer()->getStatus()) {
+            LiveVotingPlayer::STAT_END_VOTING, LiveVotingPlayer::STAT_SCOREBOARD => new ilTemplate($this->pl->getDirectory() . "/templates/default/Voter/tpl.scoreboard.html", true, false),
+            default => new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.player.html", true, true),
+        };
+    }
+
+    /**
+     * @throws LiveVotingException
+     * @throws ilException
+     */
+    private function renderTpl(): void
+    {
+        switch ($this->liveVoting->getPlayer()->getStatus()) {
+            case LiveVotingPlayer::STAT_SCOREBOARD:
+            case LiveVotingPlayer::STAT_END_VOTING:
+                $this->renderScoreboard();
+                break;
+            default:
+                $this->render();
+                break;
+        }
+    }
+
+    /**
+     * @throws LiveVotingException
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     */
+    private function renderScoreboard(): void
+    {
+        $players = LiveVotingPlayer::getPlayersForScoreboard($this->liveVoting->getPlayer());
+
+        $html = '';
+
+        foreach ($players as $player) {
+            $tpl_scoreboard_points = new ilTemplate($this->pl->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score.html', true    , false);
+            $tpl_scoreboard_points->setVariable('PLAYER', $player['nickname']);
+            $tpl_scoreboard_points->setVariable('POINTS', $player['points']);
+            $html .= $tpl_scoreboard_points->get();
+        }
+
+        $this->tpl->setVariable('POINTS', $html);
+    }
+    
     private function randomizeWithoutCorrectSequence(array &$options): array
     {
         if (count($options) < 2) {
