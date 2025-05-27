@@ -137,13 +137,13 @@ class LiveVotingChoicesCMUI
             }
 
             $form_answers["hidden"] = $this->factory->input()->field()->hidden()
-                                                    ->withValue(isset($options) ? htmlspecialchars(str_replace('"', "\'", json_encode(array_map(function ($option) {
+                                                    ->withValue(isset($options) ? str_replace('"', "\'", json_encode(array_map(function ($option) {
                                                         return [
                                                             "text" => $option->getText(),
                                                             "id" => $option->getId(),
                                                             "isCorrect" => $option->isCorrect()
                                                         ];
-                                                    }, $options), JSON_UNESCAPED_UNICODE))) : "")
+                                                    }, $options), JSON_UNESCAPED_UNICODE)) : "")
                                                     ->withOnLoadCode(function ($id) {
                                                         return "xlvoForms.initHiddenInput('" . $id . "')";
                                                     })
