@@ -256,7 +256,7 @@ class LiveVotingCorrectOrderUI
             }
 
             foreach ($options_data as $option_data) {
-                if (empty($option_data->text)) {
+                if (empty($option_data->text) && $option_data->text !== "0") {
                     return 0;
                 }
             }
