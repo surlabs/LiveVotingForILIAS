@@ -545,7 +545,8 @@ span[data-action='addFirstLine'] a{
 }
 
 .navbar-btn {
-    margin:0 !important;
+    margin:0;
+    min-width: 200px;
 }
 
 .navbar-header {
@@ -573,5 +574,17 @@ h1.label {
     100% {
         transform: scale(1);
         opacity: 1;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .pull-right {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .navbar-btn {
+        margin-top: 2px !important;
+        margin-bottom: 2px !important;
     }
 }
