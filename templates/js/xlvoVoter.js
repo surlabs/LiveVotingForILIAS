@@ -50,10 +50,19 @@ var xlvoVoter = {
 			.done(function (data) {
 				xlvoVoter.log(data);
 
+				if (data.redirect) {
+					window.location.href = data.redirect;
+					return;
+				}
+
 				//kill timer if running
 				if (xlvoVoter.interval) {
 					clearInterval(xlvoVoter.interval);
 					xlvoVoter.interval = null;
+				}
+
+				if (data.online_voters) {
+					$('#xlvo-attendees').html(data.online_voters);
 				}
 
 				var voting_has_changed = (xlvoVoter.player.active_voting_id !== data.active_voting_id), // Voting has changed

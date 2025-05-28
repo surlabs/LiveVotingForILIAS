@@ -33,8 +33,8 @@ config_msg_success#:#Gespeichert
 config_request_frequency#:#Klienten-Aktualisierungsfrequenz
 config_request_frequency_info#:#Die Aktualisierungsfrequenz der LiveVoting-Klienten, angegeben in Sekunden. Umso kleiner die Zahl ist, desto schneller reagieren die Clients (z.B. Smartphones der Benutzer) während eines LiveVotings, allerdings erhöht sich die Last auf den Server merklich. Richtwert: 2-5 Sekunden.
 config_update#:#Speichern
-config_result_api#:#Resultate-API aktivieren
-config_result_api_info#:#Resultate eines Votings können als JSON via Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/api.php?xlvo_pin=XXXX?token=XXXXX abgerufen werden
+config_result_api#:#Ergebnisse-API aktivieren
+config_result_api_info#:#Ergebnisse eines Votings können als JSON via Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/api.php?xlvo_pin=XXXX?token=XXXXX abgerufen werden
 config_api_token#:#API-Token
 config_api_type#:#Typ
 config_regenerate_token#:#Token neu generieren
@@ -75,10 +75,10 @@ obj_msg_properties_form_saved#:#Einstellungen gespeichert
 obj_offline#:#Offline
 obj_online#:#Online
 obj_results_alway_off#:#nach Wechsel immer ausgeblendet
-obj_results_alway_off_info#:#Administratoren müssen das Einblenden der Resultate manuell starten.
+obj_results_alway_off_info#:#Administratoren müssen das Einblenden der Ergebnisse manuell starten.
 obj_results_alway_on#:#nach Wechsel immer eingeblendet
-obj_results_alway_on_info#:#Nach einem Wechsel der Frage sind die Resultate immer sichtbar.
-obj_results_behaviour#:#Resultate einblenden
+obj_results_alway_on_info#:#Nach einem Wechsel der Frage sind die Ergebnisse immer sichtbar.
+obj_results_behaviour#:#Ergebnisse einblenden
 obj_results_reuse#:#Status beibehalten
 obj_results_reuse_info#:#Der Status wird beim Wechsel der Frage beibehalten.
 obj_reuse_status#:#Player-Status übernehmen
@@ -96,7 +96,7 @@ objs_xlvo#:#LiveVotings
 objs_xlvo_duplicate#:#Bestehendes LiveVoting kopieren
 player_close_modal#:#Schließen
 player_freeze#:#Pausieren
-player_hide_results#:#Resultate ausblenden
+player_hide_results#:#Ergebnisse ausblenden
 player_msg_no_start_1#:#Sie können das LiveVoting nicht starten! Das LiveVoting ist offline.
 player_msg_no_start_2#:#Das LiveVoting kann nicht gestartet werden, da noch keine Votings vorhanden sind.
 player_msg_no_votings#:#Es sind keine Fragen vorhanden, das Voting kann nicht gestartet werden.
@@ -104,7 +104,7 @@ player_msg_voting_not_available#:#Das ausgewählte Voting ist nicht vorhanden
 player_player_countdown#:#Countdown
 player_reset#:#Zurücksetzen
 player_seconds#:#s
-player_show_results#:#Resultate einblenden
+player_show_results#:#Ergebnisse einblenden
 player_start_voting#:#LiveVoting beginnen
 player_start_voting_and_unfreeze#:#LiveVoting beginnen und direkt freigeben
 player_terminate#:#Beenden
@@ -116,11 +116,11 @@ playplayer_msg_no_start_2#:#Das LiveVoting kann nicht gestartet werden, da noch 
 qtype_1_colors#:#Unterschiedliche Farben
 qtype_1_info_latex#:#LaTeX kann mit [tex] ... [/tex] formatiert werden.
 qtype_1_multi_selection#:#Mehrfachauswahl
-qtype_1_multi_selection_info#:#Ein Nutzer kann mehrere Antworten wählen. Beim Einblenden der Resultate wird für jede Antwortmöglichkeit das Verhältnis separat berechnet (Anzahl erhaltener Stimmen / Anzahl Abstimmende).
+qtype_1_multi_selection_info#:#Ein Nutzer kann mehrere Antworten wählen. Beim Einblenden der Ergebnisse wird für jede Antwortmöglichkeit das Verhältnis separat berechnet (Anzahl erhaltener Stimmen / Anzahl Abstimmende).
 qtype_1_options#:#Mögliche Antworten
 qtype_1_option_text#:#Options-Text
 qtype_1_optmsg_success_voting_updated#:#Frage wurde gespeichert
-qtype_1_total_obj_results_alway_on_info#:#Die Resultate werden nach einem Wechsel der Frage automatisch eingeblendet.
+qtype_1_total_obj_results_alway_on_info#:#Die Ergebnisse werden nach einem Wechsel der Frage automatisch eingeblendet.
 qtype_1_total_voters#:#Anzahl Abstimmende
 qtype_1_total_votes#:#Anzahl Stimmen
 qtype_1_unvote#:#Zurücksetzen
@@ -177,15 +177,19 @@ qtype_4_option_randomise_option_after_save_info#:#Bei der Präsentation werden d
 qtype_6_display_mode_nr_0#:#Effektive Schätzwerte (in aufsteigender Reihenfolge)
 qtype_6_display_mode_nr_2#:#Effektive Schätzwerte inkl. Mittelwert, Median und Modus
 qtype_6_display_mode_nr_1#:#Balkendiagramm
-results_title#:#Resultate
+results_title#:#Ergebnisse
 root_create_xlvo#:#LiveVoting erstellen
 show_attendees#:#Anzahl Teilnehmende (Online)
 show_attendees_info#:#Die Anzahl der aktuell teilnehmenden Personen wird im Präsentationsmodus angezeigt. Diese Funktion hat einen Einfluss auf die Geschwindigkeit des Systems und sollte nur bei LiveVotings mit geringer Anzahl Teilnehmenden (abhängig von der Installationsgröße) verwendet werden.
+nicknames#:#Spitznamen
+nicknames_info#:#Diese Option ermöglicht es den Teilnehmern, vor der Abstimmung einen Spitznamen einzugeben; nur im Challenge-Modus verfügbar.
+scoreboard#:#Scoreboard
+scoreboard_info#:#Zeigt die Punktetafel nach jeder Frage an, nur im Challenge-Modus verfügbar.
 subtab_show#:#Zeigen
 tab_content#:#Inhalt
 tab_manage#:#Verwalten
 tab_edit#:#Einstellungen
-tab_results#:#Resultate
+tab_results#:#Ergebnisse
 voter_answer#:#Eingabe
 voter_delete#:#Löschen
 voter_header_frozen#:#Abstimmung noch nicht freigegeben
@@ -213,8 +217,8 @@ voting_add#:#Frage hinzufügen
 voting_cancel#:#Abbrechen
 voting_columns#:#Spalten für Antwortmöglichkeiten
 voting_confirm_number_of_votes#:#Anzahl Benutzer-Eingaben:
-voting_confirm_reset#:#Möchten Sie die Resultate dieser Frage zurücksetzen? Alle Benutzer-Eingaben werden gelöscht.
-voting_confirm_reset_all#:#Möchten Sie die Resultate aller Fragen zurücksetzen? Alle Benutzer-Eingaben werden gelöscht.
+voting_confirm_reset#:#Möchten Sie die Ergebnisse dieser Frage zurücksetzen? Alle Benutzer-Eingaben werden gelöscht.
+voting_confirm_reset_all#:#Möchten Sie die Ergebnisse aller Fragen zurücksetzen? Alle Benutzer-Eingaben werden gelöscht.
 voting_create#:#Erstellen
 voting_delete#:#Löschen
 voting_delete_confirm#:#Möchten Sie die Abstimmung wirklich löschen?
@@ -232,7 +236,7 @@ voting_msg_duplicated#:#Frage wurde dupliziert
 voting_msg_sorting_saved#:#Reihenfolge gespeichert
 voting_question#:#Frage
 voting_reset#:#Zurücksetzen
-voting_reset_all#:#Alle Resultate zurücksetzen
+voting_reset_all#:#Alle Ergebnisse zurücksetzen
 voting_save_sorting#:#Reihenfolge speichern
 voting_select_type#:#Typ auswählen
 voting_status#:#Status
@@ -264,6 +268,11 @@ xlvo_read#:#Leserecht (nur im nicht-anonymen Modus verwendet)
 xlvo_copy#:#LiveVoting kopieren
 xlvo_visible#:#LiveVoting sichtbar
 xlvo_write#:#LiveVoting präsentieren und bearbeiten
+xlvo_mode#:#Modus
+xlvo_mode_basic#:#Standard
+xlvo_mode_basic_info#:#Der klassische LiveVoting-Modus
+xlvo_mode_challenge#:#Challenge
+xlvo_mode_challenge_info#:#Im Challenge-Modus spielen die Teilnehmer ein Spiel, bei dem sie für die richtige Beantwortung von Fragen Punkte sammeln können.
 cat_create_xlobj_results_behaviour#:#MISSING cat_create_xlobj_results_behaviour
 rminable_select_start_time#:#MISSING rminable_select_start_time
 vqtype_1_options#:#MISSING vqtype_1_options
@@ -313,8 +322,17 @@ btn_add_answer#:#Eingabe hinzufügen
 category_title#:#Titel der Kategorie
 add_type_error#:#Bitte wählen Sie einen Typen aus.
 permission_denied#:#Berechtigungen verweigert
-voting_msg_all_reset#:#Alle Resultate wurden zurückgesetzt
-voting_msg_reset#:#Resultate wurden zurückgesetzt
+voting_msg_all_reset#:#Alle Ergebnisse wurden zurückgesetzt
+voting_msg_reset#:#Ergebnisse wurden zurückgesetzt
 sorting_msg_saved#:#Reihenfolge gespeichert
 voting_msg_duplicated_failed#:#Fehler beim Kopieren der Frage
 voting_msg_duplicated_success#:#Frage wurde kopiert
+end_time#:#Endzeit
+common_points#:#Punkte
+score_form_header#:#Score
+voting_score#:#Question Score
+voting_score_info#:#Die Punktzahl der Frage, um die maximale Punktzahl zu erreichen, muss der Benutzer genau die richtige Antwort geben
+voter_header_scoreboard#:#Scoreboard
+voting_countdown#:#Zeit bis zur Antwort
+voting_countdown_info#:#Zeit bis zur Beantwortung der Frage, dies wirkt sich auch auf die Punktzahl der Frage aus
+form_input_not_valid_cm#:#Eine der eingegebenen Informationen ist unvollständig oder ungültig. Bitte korrigieren Sie Ihre Eingabe. (Denken Sie daran, dass Sie mindestens eine richtige Option angeben müssen und die Punktzahl größer als 0 sein muss)

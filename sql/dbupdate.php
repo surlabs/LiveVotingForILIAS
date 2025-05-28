@@ -689,3 +689,125 @@ if ($db->tableExists('rep_robj_xlvo_voting_n')) {
     $db->manipulate("ALTER TABLE rep_robj_xlvo_voting_n MODIFY COLUMN question LONGTEXT");
 }
 ?>
+<#45>
+<?php
+global $DIC;
+$db = $DIC->database();
+if ($db->tableExists('rep_robj_xlvo_config_n')) {
+    if (!$db->tableColumnExists('rep_robj_xlvo_config_n', 'mode')) {
+        $db->addTableColumn('rep_robj_xlvo_config_n', 'mode', [
+            'type' => 'integer',
+            'length' => 4,
+            'notnull' => false
+        ]);
+
+        $db->manipulate("UPDATE rep_robj_xlvo_config_n SET mode = 0 WHERE mode IS NULL");
+    }
+
+    if (!$db->tableColumnExists('rep_robj_xlvo_config_n', 'nicknames')) {
+        $db->addTableColumn("rep_robj_xlvo_config_n", "nicknames", [
+            "type" => "integer",
+            "length" => 4,
+            "notnull" => false
+        ]);
+
+        $db->manipulate("UPDATE rep_robj_xlvo_config_n SET nicknames = 0 WHERE nicknames IS NULL");
+    }
+
+    if (!$db->tableColumnExists('rep_robj_xlvo_config_n', 'scoreboard')) {
+        $db->addTableColumn("rep_robj_xlvo_config_n", "scoreboard", [
+            "type" => "integer",
+            "length" => 4,
+            "notnull" => false
+        ]);
+
+        $db->manipulate("UPDATE rep_robj_xlvo_config_n SET scoreboard = 0 WHERE scoreboard IS NULL");
+    }
+}
+
+if (!$db->tableExists("xlvo_nicknames")) {
+    $fields = [
+        "identifier" => [
+            "type" => "text",
+            "length" => 256,
+            "notnull" => true
+        ],
+        "player_id" => [
+            "type" => "integer",
+            "length" => 8,
+            "notnull" => false
+        ],
+        "nickname" => [
+            "type" => "text",
+            "length" => 256,
+            "notnull" => true
+        ]
+    ];
+
+    $db->createTable("xlvo_nicknames", $fields);
+    $db->addPrimaryKey("xlvo_nicknames", ["identifier", "player_id"]);
+}
+
+if (!$db->tableColumnExists("rep_robj_xlvo_option_n", "is_correct")) {
+    $db->addTableColumn("rep_robj_xlvo_option_n", "is_correct", [
+        "type" => "integer",
+        "length" => 4,
+        "notnull" => false
+    ]);
+
+    $db->manipulate("UPDATE rep_robj_xlvo_option_n SET is_correct = 0 WHERE is_correct IS NULL");
+}
+
+if (!$db->tableColumnExists("rep_robj_xlvo_voting_n", "score")) {
+    $db->addTableColumn("rep_robj_xlvo_voting_n", "score", [
+        "type" => "integer",
+        "length" => 8,
+        "notnull" => false
+    ]);
+
+    $db->manipulate("UPDATE rep_robj_xlvo_voting_n SET score = 0 WHERE score IS NULL");
+}
+
+if (!$db->tableColumnExists("rep_robj_xlvo_voting_n", "countdown")) {
+    $db->addTableColumn("rep_robj_xlvo_voting_n", "countdown", [
+        "type" => "integer",
+        "length" => 8,
+        "notnull" => false
+    ]);
+
+    $db->manipulate("UPDATE rep_robj_xlvo_voting_n SET countdown = 30 WHERE countdown IS NULL");
+}
+
+if (!$db->tableExists("xlvo_points")) {
+    $fields = [
+        "identifier" => [
+            "type" => "text",
+            "length" => 256,
+            "notnull" => true
+        ],
+        "obj_id" => [
+            "type" => "integer",
+            "length" => 8,
+            "notnull" => false
+        ],
+        "voting_id" => [
+            "type" => "integer",
+            "length" => 8,
+            "notnull" => false
+        ],
+        "round_id" => [
+            "type" => "integer",
+            "length" => 8,
+            "notnull" => false
+        ],
+        "points" => [
+            "type" => "integer",
+            "length" => 8,
+            "notnull" => false
+        ]
+    ];
+
+    $db->createTable("xlvo_points", $fields);
+    $db->addPrimaryKey("xlvo_points", ["identifier", "obj_id", "voting_id", "round_id"]);
+}
+?>

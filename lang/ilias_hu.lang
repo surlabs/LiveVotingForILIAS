@@ -256,6 +256,11 @@ xlvo_new#:#Új Élőszavazás létrehozása
 xlvo_read#:#Olvasás (csak nem-anonim módban hasznresetálható)
 xlvo_visible#:#Élőszavazások látható
 xlvo_write#:#Élőszavazás indítása és módosítása
+xlvo_mode#:#Mód
+xlvo_mode_basic_info#:#A klasszikus LiveVoting mód
+xlvo_mode_basic#:#Alapvető
+xlvo_mode_challenge#:#Kihívás
+xlvo_mode_challenge_info#:#A Kihívás módban a résztvevők egy játékot játszanak, amelyben pontokat kapnak a kérdések helyes megválaszolásáért.
 qtype_1_total_obj_results_alway_on_info#:#MISSING qtype_1_total_obj_results_alway_on_info
 config_request_frequency#:#MISSING config_request_frequency
 obj_frozen_alway_ofxlvo_edit#:#MISSING obj_frozen_alway_ofxlvo_edit
@@ -305,3 +310,4 @@ voting_msg_reset#:#Válasz törölve
 sorting_msg_saved#:#Sorrend mentve
 voting_msg_duplicated_failed#:#Kérdés duplikálása sikertelen
 voting_msg_duplicated_success#:#Kérdés duplikálása sikeres
+form_input_not_valid_cm#:#A megadott adatok egy része hiányos vagy érvénytelen. Kérjük, javítsa ki a bejegyzést. (Ne feledje, hogy legalább egy helyes opcióra van szükség, és a pontszámnak nagyobbnak kell lennie 0-nál.)

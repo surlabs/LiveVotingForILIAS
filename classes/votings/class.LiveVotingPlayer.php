@@ -27,6 +27,7 @@ use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
 use LiveVoting\questions\LiveVotingQuestionOption;
 use LiveVoting\Utils\LiveVotingUtils;
+use LiveVoting\objects\modes\LiveVotingMode;
 
 /**
  * Class LiveVotingPlayer
@@ -39,6 +40,7 @@ class LiveVotingPlayer
     const STAT_START_VOTING = 2;
     const STAT_END_VOTING = 3;
     const STAT_FROZEN = 4;
+    const STAT_SCOREBOARD = 5;
 
     private int $id;
     private int $obj_id;
@@ -314,6 +316,17 @@ class LiveVotingPlayer
         $this->save();
     }
 
+    /**
+     * @throws LiveVotingException
+     */
+    public function showScoreboard(): void
+    {
+        $this->resetCountDown(false);
+
+        $this->setStatus(self::STAT_SCOREBOARD);
+        $this->save();
+    }
+
 
     /**
      * @param int $question_id
@@ -444,7 +457,7 @@ class LiveVotingPlayer
      */
     public function isCountDownRunning(): bool
     {
-        return ($this->remainingCountDown() > 0 || $this->getCountdownStart() > 0);
+        return ($this->remainingCountDown() > 0 && $this->getCountdownStart() > 0);
     }
 
 
@@ -498,14 +511,18 @@ class LiveVotingPlayer
      * @throws LiveVotingException
      * @throws Exception
      */
-    public function attend(): void
+    public function attend(LiveVotingMode $mode): void
     {
         $this->setStatus(self::STAT_RUNNING);
 
         $this->setTimestampRefresh(LiveVotingUtils::getTime());
 
         if ($this->remainingCountDown() <= 0 && $this->getCountdownStart() > 0) {
-            $this->freeze();
+            if ($mode->getMode() == LiveVotingMode::CHALLENGE_MODE) {
+                $this->showScoreboard();
+            } else {
+                $this->freeze();
+            }
         }
     }
 
@@ -550,6 +567,8 @@ class LiveVotingPlayer
      */
     public function getPlayerDataForVoter(): array
     {
+        $plugin = ilLiveVotingPlugin::getInstance();
+
         return array(
             "status" => $this->getStatus(),
             "force_reload" => false,
@@ -560,6 +579,7 @@ class LiveVotingPlayer
             "frozen" => $this->isFrozen(),
             "show_results" => $this->isShowResults(),
             "show_correct_order" => false,
+            "online_voters" => vsprintf($plugin->txt("start_online"), [LiveVotingVoter::countVoters($this->getId())])
         );
     }
 
@@ -599,16 +619,20 @@ class LiveVotingPlayer
                 break;
         }
 
-        switch ($liveVoting->getFrozenBehaviour()) {
-            case 1:
-                $this->setFrozen(false);
-                break;
-            case 0:
-                $this->setFrozen(true);
-                break;
-            case 2:
-                $this->setFrozen($this->isFrozen());
-                break;
+        if ($liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
+            switch ($liveVoting->getFrozenBehaviour()) {
+                case 1:
+                    $this->setFrozen(false);
+                    break;
+                case 0:
+                    $this->setFrozen(true);
+                    break;
+                case 2:
+                    $this->setFrozen($this->isFrozen());
+                    break;
+            }
+        } else {
+            $this->setFrozen(false);
         }
     }
 
@@ -648,12 +672,12 @@ class LiveVotingPlayer
     /**
      * @throws LiveVotingException
      */
-    public function nextQuestion(): void
+    public function nextQuestion(): bool
     {
         $active_voting = $this->getActiveVotingObject();
 
         if ($active_voting->isLast()) {
-            return;
+            return false;
         }
 
         $liveVoting = new LiveVoting($this->obj_id, false);
@@ -667,7 +691,7 @@ class LiveVotingPlayer
                 $this->handleQuestionSwitching($liveVoting);
                 $this->setActiveVoting($question->getId());
                 $this->save();
-                return;
+                return true;
             }
             if ($question->getId() == $active_voting->getId()) {
                 $next = true;
@@ -790,6 +814,55 @@ class LiveVotingPlayer
 
         if ($liveVoting->isVotingHistory()) {
             LiveVotingVote::createHistoryObject(LiveVotingParticipant::getInstance(), $this->getActiveVoting(), $this->getRoundId());
+        }
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public static function getPlayersForScoreboard(LiveVotingPlayer $player): array
+    {
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("xlvo_points", ["obj_id" => $player->getObjId(), "round_id" => $player->getRoundId()], ["identifier", "SUM(points) AS points"], "GROUP BY identifier, obj_id, round_id ORDER BY points DESC");
+
+        foreach ($result as $key => $item) {
+            $result[$key]["nickname"] = LiveVotingParticipant::getNicknameFromDatabase($item["identifier"], $player->getId());
+        }
+
+        return $result;
+    }
+
+    public static function getPlayerPoints(string $identifier, int $obj_id, int $voting_id, int $round_id): int
+    {
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("xlvo_points", ["identifier" => $identifier, "obj_id" => $obj_id, "voting_id" => $voting_id, "round_id" => $round_id], ["points"]);
+
+        if (isset($result[0])) {
+            return (int)$result[0]["points"];
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * @throws LiveVotingException
+     * @throws Exception
+     */
+    public function nextQuestionCM(): void
+    {
+        if ($this->nextQuestion()) {
+            $this->setStatus(LiveVotingPlayer::STAT_RUNNING);
+
+            $this->startCountDown($this->getActiveVotingObject()->getCountdown());
+        } else {
+            $this->setStatus(self::STAT_END_VOTING);
+
+            $this->setButtonStates([]);
+            $this->resetCountDown(false);
+            $this->setTimestampRefresh(LiveVotingUtils::getTime() + 30);
+            $this->save();
         }
     }
 }

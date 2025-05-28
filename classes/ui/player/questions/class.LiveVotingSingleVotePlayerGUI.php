@@ -20,11 +20,14 @@ declare(strict_types=1);
  */
 
 
+use LiveVoting\objects\modes\LiveVotingMode;
+use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingParticipant;
+use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingVote;
 
 
@@ -75,6 +78,10 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         }
         if (!$this->player->getActiveVotingObject()->isMultiSelection()) {
             $this->player->unvoteAll($vote_id);
+        }
+
+        if ($liveVoting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
+            $this->calculateReachedPoints();
         }
 
         $this->player->createHistoryObject();
@@ -145,5 +152,58 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         }
 
         return $tpl->get() . LiveVotingJs::getInstance()->name('SingleVote')->category('QuestionTypes/SingleVote')->getRunCode();
+    }
+
+    /**
+     * @throws LiveVotingException
+     * @throws Exception
+     */
+    private function calculateReachedPoints(): void
+    {
+        $points = $this->player->getActiveVotingObject()->getScore();
+
+        $correct_options = array();
+        $user_votes = array();
+
+        foreach ($this->player->getActiveVotingObject()->getOptions() as $option) {
+            if ($option->isCorrect()) {
+                $correct_options[] = $option->getId();
+            }
+        }
+
+        foreach ($this->player->getVotesOfUser() as $vote) {
+            $user_votes[] = $vote->getOptionId();
+        }
+
+        sort($correct_options);
+        sort($user_votes);
+
+        if (count(array_diff($correct_options, $user_votes)) > 0 || count(array_diff($user_votes, $correct_options)) > 0) {
+            $points = 0;
+        }
+
+        $time_to_answer = $this->player->getCountdown();
+
+        if ($time_to_answer == 0) {
+            $time_to_answer = 1;
+        }
+
+        $time_remaining = $this->player->remainingCountDown();
+
+        $score_mult = 1 - (($time_to_answer - $time_remaining)/$time_to_answer)/2;
+
+        $points = round($points * $score_mult);
+
+        $participant = LiveVotingParticipant::getInstance();
+
+        $database = new LiveVotingDatabase();
+
+        $database->insertOnDuplicatedKey("xlvo_points", [
+            'identifier' => $participant->getIdentifier(),
+            'obj_id' => $this->player->getObjId(),
+            'voting_id' => $this->player->getActiveVoting(),
+            'round_id' => $this->player->getRoundId(),
+            'points' => $points
+        ]);
     }
 }
