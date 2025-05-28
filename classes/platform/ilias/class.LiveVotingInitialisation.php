@@ -27,6 +27,7 @@ use ilInitialisation;
 use iljQueryUtil;
 use ilLiveVotingPlugin;
 use ilLoggerFactory;
+use ilObject;
 use ilObjectDefinition;
 use ilTemplateException;
 use ilTree;
@@ -34,6 +35,8 @@ use ilUIFramework;
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\player\LiveVotingContextUI;
+use LiveVoting\Utils\ParamManager;
+use LiveVoting\votings\LiveVoting;
 
 /**
  * Class LiveVotingConfig
@@ -177,7 +180,10 @@ class LiveVotingInitialisation extends ilInitialisation
         $tpl->addCss('./templates/default/delos.css');
         $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/css/old_delos.css');
         $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/default.css');
-        $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/css/new_style.css');
+
+        if (self::getLiveVotingStyle() == "new") {
+            $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/css/new_style.css');
+        }
 
         //$tpl->addCss('/templates/default/030-tools/legacy-bootstrap-mixins/_nav-divider.scss');
 
@@ -210,5 +216,25 @@ class LiveVotingInitialisation extends ilInitialisation
     public static function setContext(int $context): void
     {
         self::$context = $context;
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    private static function getLiveVotingStyle(): string
+    {
+        $param_manager = ParamManager::getInstance();
+
+        if (!empty($param_manager->getPin())) {
+            $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
+        } elseif ($param_manager->getRefId()) {
+            $liveVoting = new LiveVoting(ilObject::_lookupObjId($param_manager->getRefId()), false);
+        }
+
+        if (isset($liveVoting)) {
+            return $liveVoting->getVotingStyle();
+        }
+
+        return "classic";
     }
 }

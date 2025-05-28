@@ -58,6 +58,7 @@ use ilLoggerFactory;
 use ilMailMimeSenderFactory;
 use ilMailMimeTransportFactory;
 use ilNavigationHistory;
+use ilObject;
 use ilObjectDataCache;
 use ilObjectDefinition;
 use ilRbacReview;
@@ -81,6 +82,7 @@ use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\ilias\LiveVotingContext;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\platform\ilias\LiveVotingInitialisation;
+use LiveVoting\votings\LiveVoting;
 
 class LiveVotingInitialisationUI
 {
@@ -233,7 +235,10 @@ class LiveVotingInitialisationUI
         $tpl->addCss('./templates/default/delos.css');
         $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/css/old_delos.css');
         $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/default.css');
-        $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/css/new_style.css');
+
+        if (self::getLiveVotingStyle() == "new") {
+            $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/css/new_style.css');
+        }
 
         //$tpl->addCss('/templates/default/030-tools/legacy-bootstrap-mixins/_nav-divider.scss');
 
@@ -544,6 +549,26 @@ class LiveVotingInitialisationUI
     {
         $ilErr = new ilErrorHandling();
         $this->makeGlobal("ilErr", $ilErr);
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    private static function getLiveVotingStyle(): string
+    {
+        $param_manager = ParamManager::getInstance();
+
+        if (!empty($param_manager->getPin())) {
+            $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
+        } elseif ($param_manager->getRefId()) {
+            $liveVoting = new LiveVoting(ilObject::_lookupObjId($param_manager->getRefId()), false);
+        }
+
+        if (isset($liveVoting)) {
+            return $liveVoting->getVotingStyle();
+        }
+
+        return "classic";
     }
 
     /**
