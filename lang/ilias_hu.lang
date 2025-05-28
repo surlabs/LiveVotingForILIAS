@@ -311,3 +311,8 @@ sorting_msg_saved#:#Sorrend mentve
 voting_msg_duplicated_failed#:#Kérdés duplikálása sikertelen
 voting_msg_duplicated_success#:#Kérdés duplikálása sikeres
 form_input_not_valid_cm#:#A megadott adatok egy része hiányos vagy érvénytelen. Kérjük, javítsa ki a bejegyzést. (Ne feledje, hogy legalább egy helyes opcióra van szükség, és a pontszámnak nagyobbnak kell lennie 0-nál.)
+styles#:#Styles
+voting_style#:#Voting Style
+voting_style_info#:#Select the style of the voting
+voting_style_classic#:#Classic style
+voting_style_new#:#New style

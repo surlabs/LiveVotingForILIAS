@@ -336,3 +336,8 @@ voter_header_scoreboard#:#Scoreboard
 voting_countdown#:#Zeit bis zur Antwort
 voting_countdown_info#:#Zeit bis zur Beantwortung der Frage, dies wirkt sich auch auf die Punktzahl der Frage aus
 form_input_not_valid_cm#:#Eine der eingegebenen Informationen ist unvollständig oder ungültig. Bitte korrigieren Sie Ihre Eingabe. (Denken Sie daran, dass Sie mindestens eine richtige Option angeben müssen und die Punktzahl größer als 0 sein muss)
+styles#:#Stil
+voting_style#:#Abstimmungsstil
+voting_style_info#:#Wählen Sie den Stil der Abstimmung
+voting_style_classic#:#Klassischer Stil
+voting_style_new#:#Neuer Stil
