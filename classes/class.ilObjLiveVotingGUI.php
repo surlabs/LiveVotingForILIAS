@@ -250,13 +250,13 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
             $id = $liveVotingChoicesCMUI->save($form->withRequest($DIC->http()->request())->getData());
 
-            if ($id !== 0) {
+            if ($id != 0) {
                 $DIC->ctrl()->setParameter($this, "question_id", $id);
                 $DIC->ctrl()->setParameter($this, "show_success", true);
                 $DIC->ctrl()->redirect($this, "edit");
 
             } else {
-                $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
+                $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($this->plugin->txt("form_input_not_valid_cm")));
                 $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
             }
         } else {
@@ -708,7 +708,8 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                             $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_updated')));
                             $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form));
                         } else {
-                            $this->tpl->setContent($DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+                            $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($this->plugin->txt("form_input_not_valid_cm")));
+                            $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
                         }
 
                     } else {

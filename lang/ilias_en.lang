@@ -336,3 +336,4 @@ voting_score_info#:#The score of the question, to reach the maximum score the us
 voter_header_scoreboard#:#Scoreboard
 voting_countdown#:#Time to answer
 voting_countdown_info#:#Time to answer the question, this also affects to question score
+form_input_not_valid_cm#:#Some of the information entered is incomplete or invalid. Please correct your entry. (Remember you need at least one correct option and the score must be greater than 0)

@@ -117,7 +117,7 @@ class LiveVotingChoicesCMUI
             $form_score["points"] = $this->factory->input()->field()->numeric(
                 $this->plugin->txt('voting_score'),
                 $this->plugin->txt('voting_score_info'))
-                                                  ->withValue(isset($this->question) ? $this->question->getScore() : 0)
+                                                  ->withValue(isset($this->question) ? $this->question->getScore() : 10)
                                                   ->withRequired(true);
 
             $form_score["countdown"] = $this->factory->input()->field()->select(
@@ -322,6 +322,10 @@ class LiveVotingChoicesCMUI
                     }
                 }
 
+                if (!$this->checkCorrect($old_options)) {
+                    return 0;
+                }
+
                 $question->setOptions($old_options);
                 $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
                 $question->setObjId($id);
@@ -334,5 +338,16 @@ class LiveVotingChoicesCMUI
         } else {
             return 0;
         }
+    }
+
+    private function checkCorrect(array $old_options): bool
+    {
+        foreach ($old_options as $option) {
+            if ($option->isCorrect()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
