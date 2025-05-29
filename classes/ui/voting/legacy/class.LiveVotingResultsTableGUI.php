@@ -138,7 +138,7 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
                     "voting_id" => $question->getId(),
                     "round_id" => $round_id,
                     "id" => $vote->getId(),
-                    "points" => LiveVotingPlayer::getPlayerPoints($vote->getUserIdType() == 1 ? $vote->getUserId() : $vote->getUserIdentifier(), $obj_id, $question->getId(), $round_id)
+                    "points" => LiveVotingPlayer::getPlayerPoints($vote->getUserIdType() == 1 ? (string) $vote->getUserId() : (string) $vote->getUserIdentifier(), $obj_id, $question->getId(), $round_id)
                 );
             }
         }

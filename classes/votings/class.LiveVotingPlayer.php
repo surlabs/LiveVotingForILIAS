@@ -827,7 +827,7 @@ class LiveVotingPlayer
         $result = $database->select("xlvo_points", ["obj_id" => $player->getObjId(), "round_id" => $player->getRoundId()], ["identifier", "SUM(points) AS points"], "GROUP BY identifier, obj_id, round_id ORDER BY points DESC");
 
         foreach ($result as $key => $item) {
-            $result[$key]["nickname"] = LiveVotingParticipant::getNicknameFromDatabase($item["identifier"], $player->getId());
+            $result[$key]["nickname"] = LiveVotingParticipant::getNicknameOrName($item["identifier"], $player->getId());
         }
 
         return $result;

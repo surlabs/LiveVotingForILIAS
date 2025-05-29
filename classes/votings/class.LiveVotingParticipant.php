@@ -20,6 +20,8 @@ declare(strict_types=1);
 
 namespace LiveVoting\votings;
 
+use ilLiveVotingPlugin;
+use ilObjUser;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 
@@ -159,5 +161,27 @@ class LiveVotingParticipant
         ]);
 
         return $this;
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public static function getNicknameOrName(string $identifier, int $player): string
+    {
+        $nickname = LiveVotingParticipant::getNicknameFromDatabase($identifier, $player);
+
+        if (!empty($nickname)) {
+            return $nickname;
+        }
+
+        if ((int) $identifier != ANONYMOUS_USER_ID) {
+            $name = ilObjUser::_lookupName((int) $identifier);
+
+            if (!empty($name) && !empty($name['firstname']) && !empty($name['lastname'])) {
+                return $name['firstname'] . ' ' . $name['lastname'] . " (" . $name["login"] . ")";
+            }
+        }
+
+        return ilLiveVotingPlugin::getInstance()->txt("common_participant") . " " . substr($identifier, 0, 4);
     }
 }
