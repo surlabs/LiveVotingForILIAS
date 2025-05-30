@@ -125,18 +125,6 @@ class LiveVotingChoicesUI
                 $options = $this->question->getOptions();
             }
 
-//            $form_answers["hidden"] = $this->factory->Input()->field()->hidden()
-//                ->withValue(isset($options) ? str_replace('"', "\'", json_encode(array_map(function ($option) {
-//                    return [
-//                        "text" => $option->getText(),
-//                        "id" => $option->getId()
-//                    ];
-//                }, $options), JSON_UNESCAPED_UNICODE)) : "")
-//                ->withOnLoadCode(function ($id) {
-//                    return "xlvoForms.initHiddenInput('" . $id . "')";
-//                })
-//                ->withLabel('options');
-
             $form_answers["hidden"] = $this->customFactory->multipleOptions($this->plugin->txt('qtype_1_options'))
                 ->withValue(isset($options) ? str_replace('"', "\'", json_encode(array_map(function ($option) {
                     return [
@@ -144,16 +132,6 @@ class LiveVotingChoicesUI
                         "id" => $option->getId()
                     ];
                 }, $options), JSON_UNESCAPED_UNICODE)) : "");
-
-
-//            $form_answers["Input"] = $this->factory->Input()->field()->text(
-//                $this->plugin->txt('qtype_1_options'))
-//                ->withOnLoadCode(function ($id) {
-//                    return "xlvoForms.initMultipleInputs('" . $id . "')";
-//                })
-//                ->withMaxLength(255)
-//                ->withRequired(true);
-
 
             $section_answers = $this->factory->input()->field()->section($form_answers, $this->plugin->txt("qtype_form_header"), "");
 
@@ -170,10 +148,7 @@ class LiveVotingChoicesUI
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedChoices");
             }
 
-            $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvoForms.js");
-
             $DIC->ui()->mainTemplate()->addCss($this->plugin->getDirectory() . "/templates/css/livevoting.css");
-
 
             return $this->createForm($form_action, $sections);
         } catch (Exception $e) {

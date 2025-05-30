@@ -49,8 +49,8 @@ class Renderer extends RendererILIAS
         global $DIC;
 
         $plugin_base_path = 'Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/';
-        $DIC->ui()->mainTemplate()->addJavaScript($plugin_base_path . 'templates/customUI/Input/js/multiple_options.js');
-        $DIC->ui()->mainTemplate()->addCss($plugin_base_path . 'templates/customUI/Input/css/multiple_options.css');
+        $DIC->ui()->mainTemplate()->addJavaScript($plugin_base_path . 'templates/customUI/input/js/multiple_options.js');
+        $DIC->ui()->mainTemplate()->addCss($plugin_base_path . 'templates/customUI/input/css/multiple_options.css');
 
         if (isset($default_renderer)) {
             $this->default_renderer = $default_renderer;
