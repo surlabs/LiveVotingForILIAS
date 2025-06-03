@@ -32,7 +32,7 @@ const xlvoForms = {
 
     initMultipleInputs: function (id) {
         this.inputSelector = "#" + id;
-        //this.hiddenId = this.inputSelector;
+        this.hiddenId = this.inputSelector;
         this.parent = $(this.inputSelector).parent();
 
         $(this.inputSelector).addClass('xlvo-template');
@@ -63,7 +63,6 @@ const xlvoForms = {
         const newId = baseId + '_' + index;
 
         const newInput = originalInput.clone();
-        console.log(newInput);
         newInput.attr('id', newId);
         newInput.attr('name', (originalInput.attr('name') || baseId) + '_' + index);
         newInput.val('');
