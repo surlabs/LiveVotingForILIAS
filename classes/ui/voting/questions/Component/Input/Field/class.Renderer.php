@@ -25,7 +25,6 @@ use ILIAS\UI\Component\Input\Container\Form\FormInput;
 use ILIAS\UI\Implementation\Component\Input\Field\Renderer as RendererILIAS;
 use ILIAS\UI\Implementation\Render\Template;
 use ilTemplate;
-use ilTemplateException;
 
 /**
  * Class Renderer
@@ -37,20 +36,13 @@ class Renderer extends RendererILIAS
     protected function getComponentInterfaceName(): array
     {
         return [
-            MultipleOptions::class,
+            MultipleOptions::class, CorrectOrder::class
         ];
     }
 
-    /**
-     * @throws ilTemplateException
-     */
     public function render(Component $component, ?\ILIAS\UI\Renderer $default_renderer = null): string
     {
         global $DIC;
-
-        $plugin_base_path = 'Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/';
-        $DIC->ui()->mainTemplate()->addJavaScript($plugin_base_path . 'templates/customUI/input/js/multiple_options.js');
-        $DIC->ui()->mainTemplate()->addCss($plugin_base_path . 'templates/customUI/input/css/multiple_options.css');
 
         if (isset($default_renderer)) {
             $this->default_renderer = $default_renderer;
@@ -60,13 +52,11 @@ class Renderer extends RendererILIAS
 
         return match (true) {
             $component instanceof MultipleOptions => $this->renderMultipleOptions($component),
+            $component instanceof CorrectOrder => $this->renderCorrectOrder($component),
             default => $this->default_renderer->render($component),
         };
     }
 
-    /**
-     * @throws ilTemplateException
-     */
     protected function wrapInFormContext(
         FormInput $component,
         string    $input_html,
@@ -146,12 +136,40 @@ class Renderer extends RendererILIAS
         return new ilTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/customUI/input/templates/$name", true, true);
     }
 
-    /**
-     * @throws ilTemplateException
-     */
     private function renderMultipleOptions(MultipleOptions $component): string
     {
+        global $DIC;
+
         $tpl = $this->getTemplateCustom("tpl.multiple_options.html");
+        $plugin_base_path = 'Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/';
+
+        $DIC->ui()->mainTemplate()->addJavaScript($plugin_base_path . 'templates/customUI/input/js/multiple_options.js');
+//        $DIC->ui()->mainTemplate()->addJavaScript($plugin_base_path . 'templates/customUI/input/js/xlvo_multiple_inputs.js');
+        $DIC->ui()->mainTemplate()->addCss($plugin_base_path . 'templates/customUI/input/css/multiple_options.css');
+
+        $this->applyName($component, $tpl);
+        $this->maybeDisable($component, $tpl);
+        $id = $this->bindJSandApplyId($component, $tpl);
+
+        $tpl->setVariable("LABEL", $component->getLabel());
+        $tpl->setVariable("BYLINE", $component->getByline());
+
+        $this->applyValue($component, $tpl);
+
+        return $this->wrapInFormContext($component, $tpl->get(), $id);
+    }
+
+    private function renderCorrectOrder(CorrectOrder $component): string
+    {
+        global $DIC;
+
+        $tpl = $this->getTemplateCustom("tpl.correct_order.html");
+        $plugin_base_path = 'Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/';
+
+        $DIC->ui()->mainTemplate()->addJavaScript($plugin_base_path . 'templates/customUI/input/js/multiple_options.js');
+//      $DIC->ui()->mainTemplate()->addJavaScript($plugin_base_path . 'templates/customUI/input/js/xlvo_base.js');
+//        $DIC->ui()->mainTemplate()->addJavaScript($plugin_base_path . 'templates/customUI/input/js/xlvo_correct_order.js');
+        $DIC->ui()->mainTemplate()->addCss($plugin_base_path . 'templates/customUI/input/css/correct_order.css');
 
         $this->applyName($component, $tpl);
         $this->maybeDisable($component, $tpl);

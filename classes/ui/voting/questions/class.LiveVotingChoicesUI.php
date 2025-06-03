@@ -125,7 +125,9 @@ class LiveVotingChoicesUI
                 $options = $this->question->getOptions();
             }
 
-            $form_answers["hidden"] = $this->customFactory->multipleOptions($this->plugin->txt('qtype_1_options'))
+            $form_answers["hidden"] = $this->customFactory->multipleOptions($this->plugin->txt('qtype_1_options'))->withOnLoadCode(function ($id) {
+                return "xlvoForms.initMultipleInputs('" . $id . "');";
+            })
                 ->withValue(isset($options) ? str_replace('"', "\'", json_encode(array_map(function ($option) {
                     return [
                         "text" => $option->getText(),

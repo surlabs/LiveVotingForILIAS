@@ -1,0 +1,18 @@
+.correct-order {
+    display: flex;
+    width: 100%;
+    margin-bottom: 10px;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.correct-order .btn-group {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.correct-order .btn-group .btn {
+    height: 26px;
+}

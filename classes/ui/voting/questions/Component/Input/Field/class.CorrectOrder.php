@@ -34,7 +34,7 @@ use Throwable;
 /**
  * Class MultipleOptions
  */
-class MultipleOptions extends Input implements FormInput
+class CorrectOrder extends Input implements FormInput
 {
     use JavaScriptBindable;
     use Triggerer;

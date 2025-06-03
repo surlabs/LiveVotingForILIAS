@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component;
 
 use Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\Input\Field\MultipleOptions;
+use Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\Input\Field\CorrectOrder;
 
 /**
  * Class CustomFactory
@@ -32,5 +33,9 @@ class CustomFactory
     public function multipleOptions(string $label, ?string $byline = null): MultipleOptions
     {
         return new MultipleOptions($label, $byline);
+    }
+    public function correctOrder(string $label, ?string $byline = null): CorrectOrder
+    {
+        return new CorrectOrder($label, $byline);
     }
 }

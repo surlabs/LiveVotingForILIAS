@@ -27,7 +27,6 @@ const xlvoForms = {
         if (Array.isArray(this.inputs) && this.inputs.length > 0) {
             jsonString = JSON.stringify(this.inputs);
         }
-        $(this.hiddenId).html();
         $(this.hiddenId).val(jsonString);
     },
 
@@ -176,6 +175,7 @@ const xlvoForms = {
         newInputHtml.attr('id', newTextId);
         newInputHtml.attr('name', (originalInput.attr('name') || baseId) + '_text_' + index);
         newInputHtml.val('');
+        newInputHtml.removeAttr('value');
         newInputHtml.addClass("option-input form-control");
         newInputHtml.removeAttr('required');
         newInputHtml.css('display', '');
@@ -185,20 +185,32 @@ const xlvoForms = {
         }
 
         return `
-            <div class="order-input-container d-flex gap-1 mb-2 align-items-center">
-                <div class="inputs d-flex gap-1 flex-grow-1">
-                    <div class="flex-col shrink-0" style="width: 80px;">
-                        <label for="${newOrderId}" class="form-label small">${number_input_label}</label>
-                        <input type="number" class="form-control form-control-sm order-input" id="${newOrderId}" name="${baseId}_order_val_${index}" size="3" min="1" max="999" value="${current_order_value}">
-                    </div>
-                    <div class="flex-col flex-grow-1">
-                        <label for="${newTextId}" class="form-label small">${text_input_label}</label>
-                        ${newInputHtml.prop("outerHTML")}
+            <div class="order-input-container gap-1"> 
+                <div class="inputs">
+                    <div class="d-flex gap-1">
+                        <div class="flex-col shrink-0"> 
+                            ${number_input_label} 
+                            <input type="number" class="form-control form-control-sm order-input" 
+                                   id="${newOrderId}" name="${baseId}_order_val_${index}" 
+                                   size="2" min="1" max="999" value="${current_order_value}"> 
+                        </div>
+                        <div class="flex-col term-input"> 
+                            ${text_input_label} 
+                            ${newInputHtml.prop("outerHTML")} 
+                        </div>
                     </div>
                 </div>
-                <div class="action-buttons shrink-0 d-flex align-self-end">
-                    <button type="button" class="btn btn-link p-1" onclick="xlvoForms.manageCorrectOrder('add', $(this).closest('.order-input-container'), '${number_input_label}', '${text_input_label}')" title="Add"><span class="sr-only">Add</span><span class="glyphicon glyphicon-plus"></span></button>
-                    <button type="button" class="btn btn-link p-1" onclick="xlvoForms.manageCorrectOrder('remove', $(this).closest('.order-input-container'))" title="Remove"><span class="sr-only">Remove</span><span class="glyphicon glyphicon-minus"></span></button>
+                <div class="action-buttons shrink-0">
+                    <button type="button" name="Add" class="btn btn-link" 
+                            onclick="xlvoForms.manageCorrectOrder('add', $(this).closest('.order-input-container'), '${number_input_label}', '${text_input_label}')" 
+                            title="Add"> 
+                        <span class="sr-only">Add</span><span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                    <button type="button" name="Remove" class="btn btn-link" 
+                            onclick="xlvoForms.manageCorrectOrder('remove', $(this).closest('.order-input-container') ${(typeof number_input_label !== 'undefined' && typeof text_input_label !== 'undefined') ? `, '${number_input_label}', '${text_input_label}'` : ''})" 
+                            title="Remove"> 
+                        <span class="sr-only">Remove</span><span class="glyphicon glyphicon-minus"></span>
+                    </button>
                 </div>
             </div>
         `;
@@ -376,26 +388,3 @@ const xlvoForms = {
         return this.inputs;
     }
 };
-
-$(document).ready(function () {
-    $(".multiple-options-input").each(function () {
-        const id = $(this).attr("id");
-        if (id) {
-            xlvoForms.initMultipleInputs(id);
-        }
-    });
-
-    $(".correct-order-input").each(function () {
-        const id = $(this).attr("id");
-        if (id) {
-            xlvoForms.initCorrectOrder(id);
-        }
-    });
-
-    $(".multiple-options-cm-input").each(function () {
-        const id = $(this).attr("id");
-        if (id) {
-            xlvoForms.initMultipleInputsCM(id);
-        }
-    });
-});
