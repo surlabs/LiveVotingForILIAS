@@ -56,7 +56,6 @@ class CorrectOrder extends Input implements FormInput
 
         parent::__construct(new Factory(), $DIC->refinery());
     }
-
     public function getUpdateOnLoadCode(): Closure
     {
         return fn($id) => "$('#$id').on('Input change', function(event) {
@@ -64,7 +63,6 @@ class CorrectOrder extends Input implements FormInput
 			});
 			il.UI.Input.onFieldUpdate(null, '$id', $('#$id').val());";
     }
-
     public function withValue($value): Input
     {
         $this->checkArg("value", $this->isClientSideValueOk($value), "Display value does not match Input type. Expected array of items with numeric 'id' or a JSON string representing it.");
@@ -179,5 +177,4 @@ class CorrectOrder extends Input implements FormInput
     {
         return $this->appendTriggeredSignal($signal, 'update');
     }
-
 }
