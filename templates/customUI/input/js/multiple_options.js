@@ -32,9 +32,10 @@ const xlvoForms = {
 
     initMultipleInputs: function (id) {
         this.inputSelector = "#" + id;
-        this.hiddenId = this.inputSelector;
+        //this.hiddenId = this.inputSelector;
         this.parent = $(this.inputSelector).parent();
 
+        $(this.inputSelector).addClass('xlvo-template');
         this._parseInitialData();
 
         this.parent.find(".multiple-input").remove();
@@ -57,11 +58,12 @@ const xlvoForms = {
     },
 
     addMultipleInput: function (index, option_id) {
-        const originalInput = $(this.inputSelector);
+        const originalInput = this.parent.find('.xlvo-template').first();
         const baseId = originalInput.attr('id') || 'xlvo_mi';
         const newId = baseId + '_' + index;
 
         const newInput = originalInput.clone();
+        console.log(newInput);
         newInput.attr('id', newId);
         newInput.attr('name', (originalInput.attr('name') || baseId) + '_' + index);
         newInput.val('');
@@ -141,7 +143,9 @@ const xlvoForms = {
         this.inputSelector = "#" + id;
         this.hiddenId = this.inputSelector;
         this.parent = $(this.inputSelector).parent();
-        console.log("Initializing Correct Order Input with ID:", id);
+
+        $(this.inputSelector).addClass('xlvo-template');
+
         this._parseInitialData();
         this.parent.find(".order-input-container").remove();
 

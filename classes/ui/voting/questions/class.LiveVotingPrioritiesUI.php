@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace LiveVoting\UI;
 
+use Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\CustomFactory;
 use Exception;
 use ilCtrlInterface;
 use ilException;
@@ -65,6 +66,7 @@ class LiveVotingPrioritiesUI
     protected ilPlugin $plugin;
     protected renderer $renderer;
     protected $request;
+    private CustomFactory $customFactory;
 
     /**
      * @throws LiveVotingException
@@ -78,6 +80,7 @@ class LiveVotingPrioritiesUI
         $this->request = $DIC->http()->request();
         $this->factory = $DIC->ui()->factory();
         $this->renderer = $DIC->ui()->renderer();
+        $this->customFactory = new CustomFactory();
 
         if ($question_id) {
             $this->question = LiveVotingQuestion::loadQuestionById($question_id);
@@ -111,7 +114,6 @@ class LiveVotingPrioritiesUI
 
             $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_5"));
 
-
             //Answers section
             $form_answers = [];
 
@@ -119,26 +121,15 @@ class LiveVotingPrioritiesUI
                 $options = $this->question->getOptions();
             }
 
-            $form_answers["hidden"] = $this->factory->input()->field()->hidden()
-                ->withValue(isset($options) ? htmlspecialchars(str_replace('"', "\'", json_encode(array_map(function ($option) {
+            $form_answers["hidden"] = $this->customFactory->multipleOptions($this->plugin->txt('qtype_1_options'))->withOnLoadCode(function ($id) {
+                return "xlvoForms.initMultipleInputs('" . $id . "');";
+            })
+                ->withValue(isset($options) ? str_replace('"', "\'", json_encode(array_map(function ($option) {
                     return [
                         "text" => $option->getText(),
                         "id" => $option->getId()
                     ];
-                }, $options), JSON_UNESCAPED_UNICODE))) : "")
-                ->withOnLoadCode(function ($id) {
-                    return "xlvoForms.initHiddenInput('" . $id . "')";
-                })
-                ->withLabel('options');
-
-            $form_answers["input"] = $this->factory->input()->field()->text(
-                $this->plugin->txt('qtype_1_options'))
-                ->withOnLoadCode(function ($id) {
-                    return "xlvoForms.initMultipleInputs('" . $id . "')";
-                })
-                ->withMaxLength(255)
-                ->withRequired(true);
-
+                }, $options), JSON_UNESCAPED_UNICODE)) : "");
 
             $section_answers = $this->factory->input()->field()->section($form_answers, $this->plugin->txt("qtype_form_header"), "");
 
@@ -155,10 +146,7 @@ class LiveVotingPrioritiesUI
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedPriorities");
             }
 
-            $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvoForms.js");
-
             $DIC->ui()->mainTemplate()->addCss($this->plugin->getDirectory() . "/templates/css/livevoting.css");
-
 
             return $this->createForm($form_action, $sections);
         } catch (Exception $e) {
