@@ -333,7 +333,7 @@ class LiveVotingVote
         if ($this->getUserIdType() == 1 && $this->getUserId()) {
             $name = ilObjUser::_lookupName($this->getUserId());
 
-            return $name['firstname'] . " " . $name['lastname'];
+            return $name['firstname'] . " " . $name['lastname'] . " (" . $name["login"] . ")";
         }
 
 
@@ -351,7 +351,7 @@ class LiveVotingVote
             $identifier = $this->getUserId();
         }
 
-        $nickname = LiveVotingParticipant::getNicknameFromDatabase($identifier, $player);
+        $nickname = LiveVotingParticipant::getNicknameFromDatabase((string) $identifier, $player);
 
         if ($nickname != "") {
             return $nickname;
