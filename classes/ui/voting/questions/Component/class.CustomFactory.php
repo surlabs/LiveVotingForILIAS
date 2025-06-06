@@ -24,7 +24,7 @@ namespace Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVo
 
 use Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\Input\Field\MultipleOptions;
 use Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\Input\Field\CorrectOrder;
-
+use Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\Input\Field\MultipleCheck;
 /**
  * Class CustomFactory
  */
@@ -38,4 +38,9 @@ class CustomFactory
     {
         return new CorrectOrder($label, $byline);
     }
+    public function multipleCheck(string $label, ?string $byline = null): MultipleCheck
+    {
+        return new MultipleCheck($label, $byline);
+    }
+
 }

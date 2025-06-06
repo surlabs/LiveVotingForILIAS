@@ -152,7 +152,6 @@ class LiveVotingCorrectOrderUI
             } else {
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedCorrectOrder");
             }
-
             $DIC->ui()->mainTemplate()->addCss($this->plugin->getDirectory() . "/templates/css/livevoting.css");
 
             return $this->createForm($form_action, $sections);

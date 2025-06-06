@@ -149,7 +149,6 @@ class LiveVotingChoicesUI
             } else {
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedChoices");
             }
-
             $DIC->ui()->mainTemplate()->addCss($this->plugin->getDirectory() . "/templates/css/livevoting.css");
 
             return $this->createForm($form_action, $sections);

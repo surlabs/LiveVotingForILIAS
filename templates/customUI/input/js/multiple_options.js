@@ -203,7 +203,7 @@ const xlvoForms = {
                         </div>
                     </div>
                 </div>
-                <div class="action-buttons shrink-0">
+                <div class="action-buttons shrink-0 gap-1">
                     <button type="button" name="Add" class="btn btn-link" 
                             onclick="xlvoForms.manageCorrectOrder('add', $(this).closest('.order-input-container'), '${number_input_label}', '${text_input_label}')" 
                             title="Add"> 
@@ -264,34 +264,45 @@ const xlvoForms = {
     },
 
     initMultipleInputsCM: function (id, correct_label = "Correct") {
+
         this.inputSelector = "#" + id;
         this.hiddenId = this.inputSelector;
         this.parent = $(this.inputSelector).parent();
 
+        $(this.inputSelector).addClass('xlvo-template');
         this._parseInitialData();
-        this.parent.find(".multiple-input-cm").remove();
 
         if (this.inputs.length > 0) {
-            this.inputs.forEach((data, i) => {
+            for (let i = 0; i < this.inputs.length; i++) {
+                const data = this.inputs[i];
                 const optionId = parseInt(data.id) || 0;
                 const text = data.text || '';
                 const isCorrect = data.isCorrect || false;
+
                 const newInput = this.addMultipleInputCM(i + 1, optionId, isCorrect, correct_label);
                 this.parent.append(newInput);
-                const lastContainer = this.parent.find(".multiple-input-cm").last();
-                lastContainer.find(".option-input").val(text);
-                if (isCorrect) {
-                    lastContainer.find(".correct-checkbox").prop('checked', true);
-                }
-            });
+                newInput.find(".option-input").val(text);
+                newInput.find(".correct-checkbox").prop('checked', isCorrect);
+
+                const lastInput = this.parent.find(".multiple-input-cm").last();
+                lastInput.find(".option-input").val(text);
+                lastInput.find(".correct-checkbox").prop('checked', isCorrect);
+            }
         } else {
-            this.parent.append(this.addMultipleInputCM(1, 0, false, correct_label));
+            const newInput = xlvoForms.addMultipleInputCM(1, 0, false, correct_label);
+            this.parent.append(newInput);
         }
+
         this.parent.off('keyup.multipleInputsCM', ".multiple-input-cm .option-input");
         this.parent.off('change.multipleInputsCM', ".multiple-input-cm .correct-checkbox");
 
-        this.parent.on('keyup.multipleInputsCM', ".multiple-input-cm .option-input", () => this.updateMultipleInputsCM());
-        this.parent.on('change.multipleInputsCM', ".multiple-input-cm .correct-checkbox", () => this.updateMultipleInputsCM());
+        xlvoForms.parent.on('keyup.multipleInputsCM', ".multiple-input-cm .option-input", function () {
+            xlvoForms.updateMultipleInputsCM();
+        });
+
+        xlvoForms.parent.on('change.multipleInputsCM', ".multiple-input-cm .correct-checkbox", function () {
+            xlvoForms.updateMultipleInputsCM();
+        });
     },
 
     addMultipleInputCM: function (index, option_id, isCorrect, correct_label) {
@@ -304,7 +315,7 @@ const xlvoForms = {
         newInputHtml.attr('id', newTextId);
         newInputHtml.attr('name', (originalInput.attr('name') || baseId) + '_text_' + index);
         newInputHtml.val('');
-        newInputHtml.addClass("option-input");
+        newInputHtml.addClass("option-input form-control");
         newInputHtml.removeAttr('required');
         newInputHtml.css('display', '');
 
@@ -312,28 +323,35 @@ const xlvoForms = {
             newInputHtml.attr('data-option-id', option_id);
         }
 
-        return `
-        <div class="multiple-input-cm d-flex gap-1 mb-2 align-items-center" >
-            <div class="form-check shrink-0 me-2 align-self-center">
-                <input class="form-check-input correct-checkbox" 
-                       type="checkbox" 
-                       id="${newCheckboxId}" 
-                       name="${baseId}_correct_${index}"
-                       ${isCorrect ? 'checked' : ''}>
-                <label class="form-check-label" for="${newCheckboxId}">
-                    ${correct_label}
-                </label>
-            </div>
-            <div class="flex-col w-full">
-                ${newInputHtml.prop("outerHTML")}
-            </div>
-            <div class="action-buttons shrink-0 d-flex mt-2">
-                <button type="button" class="btn btn-link p-1" onclick="xlvoForms.manageMultipleInputsCM('add', $(this).closest('.multiple-input-cm'), '${correct_label}')" title="Add"><span class="sr-only">Add</span><span class="glyphicon glyphicon-plus"></span></button>
-                <button type="button" class="btn btn-link p-1" onclick="xlvoForms.manageMultipleInputsCM('remove', $(this).closest('.multiple-input-cm'))" title="Remove"><span class="sr-only">Remove</span><span class="glyphicon glyphicon-minus"></span></button>
-                <button type="button" class="btn btn-link p-1" onclick="xlvoForms.manageMultipleInputsCM('down', $(this).closest('.multiple-input-cm'))" title="Down"><span class="sr-only">Down</span><span class="glyphicon glyphicon-chevron-down"></span></button>
-                <button type="button" class="btn btn-link p-1" onclick="xlvoForms.manageMultipleInputsCM('up', $(this).closest('.multiple-input-cm'))" title="Up"><span class="sr-only">Up</span><span class="glyphicon glyphicon-chevron-up"></span></button>
-            </div>
-        </div>`;
+        const wrapper = $('<div class="multiple-input-cm d-flex gap-1 mb-2"></div>');
+
+        const checkboxDiv = $(`
+        <div class="form-check shrink-0">
+            <input class="form-check-input correct-checkbox" 
+                   type="checkbox" 
+                   id="${newCheckboxId}" 
+                   name="${baseId}_correct_${index}">
+            <label class="form-check-label" for="${newCheckboxId}">
+                ${correct_label}
+            </label>
+        </div>
+    `);
+        checkboxDiv.find("input").prop('checked', isCorrect);
+
+        const inputDiv = $('<div class="flex-col w-full"></div>').append(newInputHtml);
+
+        const actions = $(`
+        <div class="action-buttons shrink-0 d-flex">
+            <button type="button" class="btn btn-link p-1" onclick="xlvoForms.manageMultipleInputsCM('add', $(this).closest('.multiple-input-cm'), '${correct_label}')" title="Add"><span class="sr-only">Add</span><span class="glyphicon glyphicon-plus"></span></button>
+            <button type="button" class="btn btn-link p-1" onclick="xlvoForms.manageMultipleInputsCM('remove', $(this).closest('.multiple-input-cm'))" title="Remove"><span class="sr-only">Remove</span><span class="glyphicon glyphicon-minus"></span></button>
+            <button type="button" class="btn btn-link p-1" onclick="xlvoForms.manageMultipleInputsCM('down', $(this).closest('.multiple-input-cm'))" title="Down"><span class="sr-only">Down</span><span class="glyphicon glyphicon-chevron-down"></span></button>
+            <button type="button" class="btn btn-link p-1" onclick="xlvoForms.manageMultipleInputsCM('up', $(this).closest('.multiple-input-cm'))" title="Up"><span class="sr-only">Up</span><span class="glyphicon glyphicon-chevron-up"></span></button>
+        </div>
+    `);
+
+        wrapper.append(checkboxDiv, inputDiv, actions);
+
+        return wrapper;
     },
 
     manageMultipleInputsCM: function (action, currentElement, correct_label) {
@@ -371,12 +389,12 @@ const xlvoForms = {
 
     updateMultipleInputsCM: function () {
         this.inputs = [];
-        $(this.parent).find(".multiple-input-cm").each((i, element) => {
+        $(this.parent).find(".multiple-input-cm").not(".xlvo-template").each((i, element) => {
             const optionInput = $(element).find(".option-input");
             const checkboxInput = $(element).find(".correct-checkbox");
 
             const id = optionInput.attr("data-option-id") ?? 0;
-            const text = optionInput.val().trim();
+            const text = optionInput.val();
             const isCorrect = checkboxInput.prop('checked');
 
             if (text !== "") {

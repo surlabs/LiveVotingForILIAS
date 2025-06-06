@@ -36,7 +36,7 @@ class Renderer extends RendererILIAS
     protected function getComponentInterfaceName(): array
     {
         return [
-            MultipleOptions::class, CorrectOrder::class
+            MultipleOptions::class, CorrectOrder::class, MultipleCheck::class
         ];
     }
 
@@ -53,6 +53,7 @@ class Renderer extends RendererILIAS
         return match (true) {
             $component instanceof MultipleOptions => $this->renderMultipleOptions($component),
             $component instanceof CorrectOrder => $this->renderCorrectOrder($component),
+            $component instanceof MultipleCheck => $this->renderMultipleCheck($component),
             default => $this->default_renderer->render($component),
         };
     }
@@ -167,6 +168,28 @@ class Renderer extends RendererILIAS
 
         $DIC->ui()->mainTemplate()->addJavaScript($plugin_base_path . 'templates/customUI/input/js/multiple_options.js');
         $DIC->ui()->mainTemplate()->addCss($plugin_base_path . 'templates/customUI/input/css/correct_order.css');
+
+        $this->applyName($component, $tpl);
+        $this->maybeDisable($component, $tpl);
+        $id = $this->bindJSandApplyId($component, $tpl);
+
+        $tpl->setVariable("LABEL", $component->getLabel());
+        $tpl->setVariable("BYLINE", $component->getByline());
+
+        $this->applyValue($component, $tpl);
+
+        return $this->wrapInFormContext($component, $tpl->get(), $id);
+    }
+
+    private function renderMultipleCheck(MultipleCheck $component): string
+    {
+        global $DIC;
+
+        $tpl = $this->getTemplateCustom("tpl.multiple_check.html");
+        $plugin_base_path = 'Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/';
+
+        $DIC->ui()->mainTemplate()->addJavaScript($plugin_base_path . 'templates/customUI/input/js/multiple_options.js');
+        $DIC->ui()->mainTemplate()->addCss($plugin_base_path . 'templates/customUI/input/css/multiple_check.css');
 
         $this->applyName($component, $tpl);
         $this->maybeDisable($component, $tpl);

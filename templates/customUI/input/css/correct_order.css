@@ -1,18 +1,20 @@
-.correct-order {
+.order-input-container {
     display: flex;
     width: 100%;
     margin-bottom: 10px;
     gap: 0.5rem;
-    align-items: center;
+    align-items: flex-end;
 }
 
-.correct-order .btn-group {
+.order-input-container .inputs {
+    flex-grow: 1;
+}
+
+.order-input-container .action-buttons {
     flex-shrink: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    padding: 0;
 }
 
-.correct-order .btn-group .btn {
+.order-input-container .action-buttons .btn {
     height: 26px;
 }
