@@ -284,9 +284,6 @@ const xlvoForms = {
                 newInput.find(".option-input").val(text);
                 newInput.find(".correct-checkbox").prop('checked', isCorrect);
 
-                const lastInput = this.parent.find(".multiple-input-cm").last();
-                lastInput.find(".option-input").val(text);
-                lastInput.find(".correct-checkbox").prop('checked', isCorrect);
             }
         } else {
             const newInput = xlvoForms.addMultipleInputCM(1, 0, false, correct_label);
