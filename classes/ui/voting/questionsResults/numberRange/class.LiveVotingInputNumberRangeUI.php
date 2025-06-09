@@ -126,24 +126,21 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
         }
 
         $calculateMedian = function ($aValues) {
-            $aToCareAbout = array();
-            foreach ($aValues as $mValue) {
-                if ($mValue >= 0) {
-                    $aToCareAbout[] = $mValue;
-                }
-            }
+            $aToCareAbout = array_filter($aValues, function ($value) {
+                return $value >= 0; // Eliminar esta condición si quieres incluir todos los valores
+            });
+
             $iCount = count($aToCareAbout);
+            if ($iCount === 0) return 0;
+
             sort($aToCareAbout, SORT_NUMERIC);
-            if ($iCount > 2) {
-                if ($iCount % 2 == 0) {
-                    return ($aToCareAbout[floor($iCount / 2) - 1] + $aToCareAbout[floor($iCount / 2)]) / 2;
-                } else {
-                    return $aToCareAbout[$iCount / 2];
-                }
-            } elseif (isset($aToCareAbout[0])) {
-                return $aToCareAbout[0];
+
+            $middle = floor($iCount / 2);
+
+            if ($iCount % 2 === 0) {
+                return ($aToCareAbout[$middle - 1] + $aToCareAbout[$middle]) / 2;
             } else {
-                return 0;
+                return $aToCareAbout[$middle];
             }
         };
 
