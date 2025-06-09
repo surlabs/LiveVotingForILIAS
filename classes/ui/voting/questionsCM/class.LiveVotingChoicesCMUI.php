@@ -140,7 +140,7 @@ class LiveVotingChoicesCMUI
             }
 
             $form_answers["hidden"] = $this->customFactory->multipleCheck($this->plugin->txt('qtype_1_options'))->withOnLoadCode(function ($id) {
-                return "xlvoForms.initMultipleInputsCM('" . $id . "', '" . $this->plugin->txt('qtype_4_option_correct_position') . "', '" . $this->plugin->txt('qtype_4_option_text') . "')";
+                return "xlvoForms.initMultipleInputsCM('" . $id . "', '" . $this->plugin->txt('qtype_4_option_correct_answer') . "', '" . $this->plugin->txt('qtype_4_option_text') . "')";
             })
                 ->withValue(isset($options) ? str_replace('"', "\'", json_encode(array_map(function ($option) {
                     return [

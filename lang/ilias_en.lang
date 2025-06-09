@@ -140,6 +140,7 @@ qtype_4_hide_correct_order#:#Korrekte Reihenfolge verbergen
 qtype_4_id#:#ID
 qtype_4_options#:#Options
 qtype_4_option_correct_position#:#Correct Position
+qtype_4_option_correct_answer#:#Correct Order
 qtype_4_option_position#:#Position
 qtype_4_option_text#:#Term
 qtype_4_save#:#Send
