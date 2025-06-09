@@ -2,6 +2,7 @@ const xlvoForms = {
     inputs:  [],
     hiddenId: "",
     parent,
+    correct_label: "Correct",
     initMultipleInputs: function (id) {
         xlvoForms.parent = $("#" + id).parent();
         const input = $("#"+id);
@@ -233,10 +234,11 @@ const xlvoForms = {
                 break;
         }
     },
-    initMultipleInputsCM: function (id) {
+    initMultipleInputsCM: function (id, correct_label) {
         xlvoForms.parent = $("#" + id).parent();
         const input = $("#"+id);
         xlvoForms.parent.html("");  // Limpia el contenedor
+        this.correct_label = correct_label || this.correct_label;
 
         if(xlvoForms.inputs.length>0){
             for(let i = 0; i < xlvoForms.inputs.length; i++){
@@ -291,7 +293,7 @@ const xlvoForms = {
                                id="${checkboxId}" 
                                ${isCorrect ? 'checked' : ''}>
                         <label class="form-check-label" for="${checkboxId}">
-                            Correct
+                            ${this.correct_label}
                         </label>
                     </div>
                 </div>

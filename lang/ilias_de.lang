@@ -329,10 +329,12 @@ voting_msg_duplicated_failed#:#Fehler beim Kopieren der Frage
 voting_msg_duplicated_success#:#Frage wurde kopiert
 end_time#:#Endzeit
 common_points#:#Punkte
-score_form_header#:#Score
-voting_score#:#Question Score
+score_form_header#:#Punktestand
+voting_score#:#Punktzahl der Frage
 voting_score_info#:#Die Punktzahl der Frage, um die maximale Punktzahl zu erreichen, muss der Benutzer genau die richtige Antwort geben
 voter_header_scoreboard#:#Scoreboard
 voting_countdown#:#Zeit bis zur Antwort
 voting_countdown_info#:#Zeit bis zur Beantwortung der Frage, dies wirkt sich auch auf die Punktzahl der Frage aus
 form_input_not_valid_cm#:#Eine der eingegebenen Informationen ist unvollständig oder ungültig. Bitte korrigieren Sie Ihre Eingabe. (Denken Sie daran, dass Sie mindestens eine richtige Option angeben müssen und die Punktzahl größer als 0 sein muss)
+voter_header_end#:#Die Abstimmung ist geschlossen
+voter_info_end#:#Warten auf den Präsentator...

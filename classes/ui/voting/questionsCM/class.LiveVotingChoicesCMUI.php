@@ -152,7 +152,7 @@ class LiveVotingChoicesCMUI
             $form_answers["input"] = $this->factory->input()->field()->text(
                 $this->plugin->txt('qtype_1_options'))
                                                    ->withOnLoadCode(function ($id) {
-                                                       return "xlvoForms.initMultipleInputsCM('" . $id . "')";
+                                                       return "xlvoForms.initMultipleInputsCM('" . $id . "', '" . $this->plugin->txt("qtype_4_correct") . "')";
                                                    })
                                                    ->withMaxLength(255)
                                                    ->withRequired(true);
