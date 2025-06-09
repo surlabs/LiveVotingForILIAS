@@ -1445,6 +1445,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $mode->addOption(new ilRadioOption($this->plugin->txt('xlvo_mode_basic'), (string) LiveVotingMode::BASIC_MODE, $this->plugin->txt('xlvo_mode_basic_info')));
         $mode->addOption(new ilRadioOption($this->plugin->txt('xlvo_mode_challenge'), (string) LiveVotingMode::CHALLENGE_MODE, $this->plugin->txt('xlvo_mode_challenge_info')));
 
+        $mode->setValue((string) LiveVotingMode::BASIC_MODE);
         $mode->setRequired(true);
 
         $form->addItem($mode);
