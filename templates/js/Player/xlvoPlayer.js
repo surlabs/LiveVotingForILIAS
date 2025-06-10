@@ -54,6 +54,7 @@ var xlvoPlayer = {
         last_update: 0,
         attendees: 0,
         countdown: 0,
+        is_countdown_infinite: false,
         has_countdown: false,
         xlvo_ppt: false,
     },
@@ -284,7 +285,7 @@ var xlvoPlayer = {
             .done(function (data) {
                 xlvoPlayer.counter++;
 
-                if (xlvoPlayer.player.has_countdown) {
+                if (xlvoPlayer.player.has_countdown || (xlvoPlayer.player.is_countdown_infinite && data.player.status === 1)) {
                     xlvoPlayer.btn_end_time.show();
                 } else {
                     xlvoPlayer.btn_end_time.hide();

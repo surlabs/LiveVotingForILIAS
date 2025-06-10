@@ -313,3 +313,4 @@ voting_msg_duplicated_success#:#Kérdés duplikálása sikeres
 form_input_not_valid_cm#:#A megadott adatok egy része hiányos vagy érvénytelen. Kérjük, javítsa ki a bejegyzést. (Ne feledje, hogy legalább egy helyes opcióra van szükség, és a pontszámnak nagyobbnak kell lennie 0-nál.)
 voter_header_end#:#A szavazás lezárult
 voter_info_end#:#Várakozás az előadóra...
+no_countdown#:#Nincs visszaszámlálás

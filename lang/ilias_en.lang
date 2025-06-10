@@ -339,3 +339,4 @@ voting_countdown_info#:#Time to answer the question, this also affects to questi
 form_input_not_valid_cm#:#Some of the information entered is incomplete or invalid. Please correct your entry. (Remember you need at least one correct option and the score must be greater than 0)
 voter_header_end#:#The vote is closed
 voter_info_end#:#Waiting for the presenter...
+no_countdown#:#No countdown
