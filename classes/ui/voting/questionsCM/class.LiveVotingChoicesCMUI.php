@@ -122,7 +122,7 @@ class LiveVotingChoicesCMUI
 
             $form_score["countdown"] = $this->factory->input()->field()->select(
                 $this->plugin->txt('voting_countdown'),
-                [10 => "10s", 20 => "20s", 30 => "30s", 40 => "40s", 50 => "50s", 60 => "60s"],
+                [10 => "10s", 20 => "20s", 30 => "30s", 40 => "40s", 50 => "50s", 60 => "60s", 90 => "1m 30s", 120 => "2m", 150 => "2m 30s", 180 => "3m", 240 => "4m", 300 => "5m"],
                 $this->plugin->txt('voting_countdown_info'))
                                                   ->withValue(isset($this->question) ? $this->question->getCountdown() : 30)
                                                   ->withRequired(true);
