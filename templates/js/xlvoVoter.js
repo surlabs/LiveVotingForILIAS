@@ -44,6 +44,8 @@ var xlvoVoter = {
 	initElements: function () {
 		this.countdown_element = $('#xlvo_countdown');
 		this.player_element = $('#xlvo_voter_player');
+
+		$('.xlvo-nickname').attr('href', xlvoVoter.config.base_url + '&cmd=requestNickname');
 	},
 	loadVotingData: function () {
 		$.get(xlvoVoter.config.base_url, {cmd: 'getVotingData'})
@@ -61,6 +63,10 @@ var xlvoVoter = {
 					xlvoVoter.interval = null;
 				}
 
+				if (data.nickname) {
+					$('.xlvo-nickname').html(data.nickname);
+				}
+
 				if (data.online_voters) {
 					$('#xlvo-attendees').html(data.online_voters);
 				}
@@ -72,6 +78,15 @@ var xlvoVoter = {
 					frozen_changed = (xlvoVoter.player.frozen !== data.frozen), // frozen status has changed
 					show_results_changed = (xlvoVoter.player.show_results !== data.show_results), // Show Results has changed
 					show_correct_order_changed = (xlvoVoter.player.show_correct_order !== data.show_correct_order); // Show Correct Order has changed
+
+				if (status_has_changed) {
+					console.log("Status has changed: " + data.status);
+					if (data.status === 2 && data.is_challenge) {
+						$('.xlvo-nickname').removeClass('disabled');
+					} else {
+						$('.xlvo-nickname').addClass('disabled');
+					}
+				}
 
 				xlvoVoter.player = data;
 				if (status_has_changed || voting_has_changed || forced_update || frozen_changed || show_correct_order_changed) {

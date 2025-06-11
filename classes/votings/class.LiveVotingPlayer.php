@@ -580,7 +580,9 @@ class LiveVotingPlayer
             "frozen" => $this->isFrozen(),
             "show_results" => $this->isShowResults(),
             "show_correct_order" => false,
-            "online_voters" => vsprintf($plugin->txt("start_online"), [LiveVotingVoter::countVoters($this->getId())])
+            "online_voters" => vsprintf($plugin->txt("start_online"), [LiveVotingVoter::countVoters($this->getId())]),
+            "is_challenge" => LiveVoting::getModeFromObjId($this->getObjId()) == LiveVotingMode::CHALLENGE_MODE,
+            "nickname" => LiveVotingParticipant::getNicknameOrName(LiveVotingParticipant::getInstance()->getIdentifier(), $this->getId())
         );
     }
 
