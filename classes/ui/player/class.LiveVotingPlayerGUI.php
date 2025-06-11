@@ -174,7 +174,7 @@ class LiveVotingPlayerGUI
 
         LiveVotingJs::getInstance()->initMathJax();
 
-        $t = array('player_seconds');
+        $t = array('player_seconds', 'new_voting', 'new_voting_message');
 
         $delay = LiveVotingConfig::get('request_frequency');
         if (is_numeric($delay)) {

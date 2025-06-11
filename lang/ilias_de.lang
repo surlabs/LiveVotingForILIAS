@@ -339,3 +339,5 @@ form_input_not_valid_cm#:#Eine der eingegebenen Informationen ist unvollständig
 voter_header_end#:#Die Abstimmung ist geschlossen
 voter_info_end#:#Warten auf den Präsentator...
 no_countdown#:#Kein Countdown
+new_voting#:#Neue Abstimmung
+new_voting_message#:#Eine neue Abstimmung hat begonnen.

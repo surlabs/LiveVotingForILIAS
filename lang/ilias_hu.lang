@@ -314,3 +314,5 @@ form_input_not_valid_cm#:#A megadott adatok egy része hiányos vagy érvénytel
 voter_header_end#:#A szavazás lezárult
 voter_info_end#:#Várakozás az előadóra...
 no_countdown#:#Nincs visszaszámlálás
+new_voting#:#Új szavazás
+new_voting_message#:#Új szavazás indult.
