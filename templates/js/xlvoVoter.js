@@ -23,6 +23,7 @@ var xlvoVoter = {
 			player_seconds: 's',
 			new_voting: 'New Voting',
 			new_voting_message: 'A new voting has started.',
+			seconds_left: 'seconds left'
 		},
 		debug: false,
 		delay: 1000
@@ -164,6 +165,10 @@ var xlvoVoter = {
 			xlvoVoter.player.countdown--;
 			if (xlvoVoter.player.countdown > 0) {
 				xlvoVoter.countdown_element.text((xlvoVoter.player.countdown).toString() + ' ' + xlvoVoter.config.lng.player_seconds);
+
+				if (xlvoVoter.player.countdown === 10 || xlvoVoter.player.countdown === 5) {
+					$('[aria-live="assertive"]').text(xlvoVoter.player.countdown.toString() + ' ' + xlvoVoter.config.lng.seconds_left);
+				}
 			}
 		}
 	},
