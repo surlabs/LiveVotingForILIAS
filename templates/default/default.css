@@ -373,3 +373,7 @@ body {
     width: 200px;
   }
 }
+
+.panel-subtitle {
+    font-size: .9rem;
+}
