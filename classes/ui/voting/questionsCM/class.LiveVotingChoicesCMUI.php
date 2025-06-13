@@ -260,7 +260,6 @@ class LiveVotingChoicesCMUI
                 $question->setTitle($question_data["title"] ?? null);
                 $question->setQuestion($_POST["form/input_0/input_2"] ? ilRTE::_replaceMediaObjectImageSrc($_POST["form/input_0/input_2"]) : null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
-                $question->setMultiSelection(true);
                 $question->setScore((int)($scoring_data["points"] ?? 0));
                 $question->setCountdown((int)($scoring_data["countdown"] ?? 30));
 
@@ -322,10 +321,12 @@ class LiveVotingChoicesCMUI
                     }
                 }
 
-                if (!$this->checkCorrect($old_options)) {
+                $n_correct = $this->checkCorrect($old_options);
+                if ($n_correct < 1) {
                     return 0;
                 }
 
+                $question->setMultiSelection($n_correct > 1);
                 $question->setOptions($old_options);
                 $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
                 $question->setObjId($id);
@@ -340,14 +341,16 @@ class LiveVotingChoicesCMUI
         }
     }
 
-    private function checkCorrect(array $old_options): bool
+    private function checkCorrect(array $old_options): int
     {
+        $n_correct = 0;
+
         foreach ($old_options as $option) {
             if ($option->isCorrect()) {
-                return true;
+                $n_correct++;
             }
         }
 
-        return false;
+        return $n_correct;
     }
 }

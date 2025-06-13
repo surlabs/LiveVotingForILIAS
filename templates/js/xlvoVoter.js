@@ -23,7 +23,9 @@ var xlvoVoter = {
 			player_seconds: 's',
 			new_voting: 'New Voting',
 			new_voting_message: 'A new voting has started.',
-			seconds_left: 'seconds left'
+			seconds_left: 'seconds left',
+			qtype_1_unvote: 'Unvote',
+			qtype_1_vote: 'Vote',
 		},
 		debug: false,
 		delay: 1000

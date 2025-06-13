@@ -342,3 +342,5 @@ no_countdown#:#Kein Countdown
 new_voting#:#Neue Abstimmung
 new_voting_message#:#Eine neue Abstimmung hat begonnen.
 seconds_left#:#Verbleibende Sekunden
+single_choice#:#Einzelauswahl
+multiple_choice#:#Mehrfachauswahl

@@ -172,9 +172,6 @@ span.xlvo-label-url {
   font-size: 30px;
   line-height: 32px;
 }
-.single_vote_question {
-  font-size: 24px;
-}
 /* Serif font */
 .serif_font {
   font-family: "Times New Roman", Times, serif;
@@ -376,4 +373,40 @@ body {
 
 .panel-subtitle {
     font-size: .9rem;
+}
+
+.row > * {
+  flex-shrink: inherit !important;
+}
+
+.vote-option {
+  margin-bottom: 20px;
+}
+
+.vote-option .vote-label {
+  width: 100%;
+  padding: 5px;
+}
+
+.vote-option .vote-question {
+  margin-bottom: 10px;
+}
+
+.vote-checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  outline: none;
+}
+
+.vote-checkbox:focus + .vote-label {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.5);
+}
+
+.vote-checkbox:focus, .vote-checkbox:focus-visible {
+  position: absolute !important;;
+  outline: none !important;
+  outline-offset: 0 !important;;
 }

@@ -141,8 +141,10 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
             $tpl->setVariable('TITLE', $xlvoOption->getTextForPresentation());
             $tpl->setVariable('LINK', $DIC->ctrl()->getLinkTarget($this, 'submit'));
             $tpl->setVariable('OPTION_LETTER', chr($answer_count));
+            $tpl->setVariable('TYPE', $this->getPlayer()->getActiveVotingObject()->isMultiSelection() ? 'checkbox' : 'radio');
             if ($this->player->hasUserVotedForOption($xlvoOption->getId())) {
                 $tpl->setVariable('BUTTON_STATE', 'btn-primary');
+                $tpl->setVariable('CHECKBOX', 'checked');
                 $tpl->setVariable('ACTION', ilLiveVotingPlugin::getInstance()->txt('qtype_1_unvote'));
             } else {
                 $tpl->setVariable('BUTTON_STATE', 'btn-default');

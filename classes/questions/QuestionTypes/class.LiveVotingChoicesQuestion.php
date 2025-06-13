@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace LiveVoting\questions\QuestionTypes;
 
+use ilLiveVotingPlugin;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\questions\LiveVotingQuestion;
 
@@ -45,6 +46,15 @@ class LiveVotingChoicesQuestion extends LiveVotingQuestion
     public function getQuestionType(): string
     {
         return "Choices";
+    }
+
+    public function getQuestionTypeLabel(): string
+    {
+        if ($this->multi_selection) {
+            return ilLiveVotingPlugin::getInstance()->txt("multiple_choice");
+        } else {
+            return ilLiveVotingPlugin::getInstance()->txt("single_choice");
+        }
     }
 
     public function save(): int

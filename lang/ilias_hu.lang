@@ -317,3 +317,5 @@ no_countdown#:#Nincs visszaszámlálás
 new_voting#:#Új szavazás
 new_voting_message#:#Új szavazás indult.
 seconds_left#:#Hátralévő másodpercek
+single_choice#:#Egyszeres választás
+multiple_choice#:#Többszörös választás
