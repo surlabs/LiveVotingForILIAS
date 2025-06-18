@@ -248,7 +248,7 @@ class liveVotingTableGUI extends ilTable2GUI
             $where['voting_type'] = $this->filter['voting_type'];
         }
 
-        $collection = $database->select("rep_robj_xlvo_voting_n", $where);
+        $collection = $database->select("rep_robj_xlvo_voting_n", $where, null, "ORDER BY position ASC");
 
         if (isset($this->filter['question']) && isset($this->filter['title']) && $this->filter['title'] != "" || (isset($this->filter['question']) && $this->filter['question'] != "")) {
             $filtered = array();
