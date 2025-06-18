@@ -1,9 +1,4 @@
-<div alt style="text-align: center; transform: scale(.5);">
-	<picture>
-		<source media="(prefers-color-scheme: dark)" srcset="https://github.com/surlabs/LiveVotingRW/blob/ilias9/templates/images/GitBannerLiveVoting.png" />
-		<img alt="LiveVoting" src="https://github.com/surlabs/LiveVotingRW/blob/ilias9/templates/images/GitBannerLiveVoting.png" />
-	</picture>
-</div>
+![LiveVoting](https://github.com/user-attachments/assets/bb9eee67-47c1-4a78-bd6c-71a395b49b94)
 
 # LiveVoting Repository Object Plugin for ILIAS 9
 This plugin allows to create real time votings within ILIAS.
