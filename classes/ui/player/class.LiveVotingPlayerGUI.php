@@ -129,7 +129,9 @@ class LiveVotingPlayerGUI
         $this->initCssAndJs();
         $this->showVotingTemplate();
 
-        LiveVotingQuestionTypesUI::getInstance($player)->initJS();
+        if ($player->getActiveVotingObject() !== null) {
+            LiveVotingQuestionTypesUI::getInstance($player)->initJS();
+        }
     }
 
     private function prepareFrameworkTemplate(): void
