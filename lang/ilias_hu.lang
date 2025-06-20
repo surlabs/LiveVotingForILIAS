@@ -136,6 +136,7 @@ qtype_4_hide_correct_order#:#Rendezés irányának elrejtése
 qtype_4_id#:#ID
 qtype_4_options#:#Lehetőségek
 qtype_4_option_correct_position#:#Helyes sorrend
+qtype_4_option_correct_answer#:#Helyes válasz
 qtype_4_option_position#:#Pozíció
 qtype_4_option_text#:#Kifejezés
 qtype_4_save#:#Mentés
