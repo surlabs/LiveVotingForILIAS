@@ -53,7 +53,7 @@ grp_create_xlvo#:#Create LiveVoting
 fold_create_xlvo#:#Create LiveVoting
 incorrect_order#:#Incorrect Order
 msg_success_voting_created#:#Voting has been created
-msg_success_voting_updated#:#Voting has been udpated
+msg_success_voting_updated#:#Voting has been updated
 new_round#:#New Round
 obj_anonymous#:#Vote without Login
 obj_crs#:#Course
