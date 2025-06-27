@@ -335,7 +335,7 @@ voting_score#:#Question Score
 voting_score_info#:#The score of the question, to reach the maximum score the user must answer exactly the correct answer
 voter_header_scoreboard#:#Scoreboard
 voting_countdown#:#Time to answer
-voting_countdown_info#:#Time to answer the question, this also affects to question score
+voting_countdown_info#:#Time to answer the question, this also affects the question score
 form_input_not_valid_cm#:#Some of the information entered is incomplete or invalid. Please correct your entry. (Remember you need at least one correct option and the score must be greater than 0)
 voter_header_end#:#The vote is closed
 voter_info_end#:#Waiting for the presenter...
