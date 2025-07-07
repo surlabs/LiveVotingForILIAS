@@ -257,6 +257,7 @@ class LiveVotingDisplayPlayerUI
      * @throws LiveVotingException
      * @throws ilTemplateException
      * @throws ilSystemStyleException
+     * @throws ilException
      */
     private function renderScoreboard(): void
     {
@@ -268,7 +269,13 @@ class LiveVotingDisplayPlayerUI
             $tpl_scoreboard_points = new ilTemplate($this->pl->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score.html', true    , false);
             $tpl_scoreboard_points->setVariable('PLAYER', $player['nickname']);
             $tpl_scoreboard_points->setVariable('POINTS', $player['points']);
+
             $html .= $tpl_scoreboard_points->get();
+        }
+
+        if ($this->liveVoting->getPlayer()->isShowResults() && $this->liveVoting->getPlayer()->getStatus() == LiveVotingPlayer::STAT_SCOREBOARD) {
+            $xlvoInputResultGUI = LiveVotingInputResultsGUI::getInstance($this->liveVoting->getPlayer());
+            $this->tpl->setVariable('OPTION_CONTENT', $xlvoInputResultGUI->getHTML());
         }
 
         $this->tpl->setVariable('POINTS', $html);

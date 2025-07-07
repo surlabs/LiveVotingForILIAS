@@ -230,13 +230,19 @@ var xlvoPlayer = {
             this.btn_freeze.parent().show();
             this.btn_reset.attr("disabled", "disabled");
         }
-        if (this.player.show_results) {
-            this.btn_hide_results.parent().show();
-            this.btn_show_results.parent().hide();
-            this.div_display_results.show();
+        if (this.player.status !== 3) {
+            if (this.player.show_results) {
+                this.btn_hide_results.parent().show();
+                this.btn_show_results.parent().hide();
+                this.div_display_results.show();
+            } else {
+                this.btn_hide_results.parent().hide();
+                this.btn_show_results.parent().show();
+                this.div_display_results.hide();
+            }
         } else {
             this.btn_hide_results.parent().hide();
-            this.btn_show_results.parent().show();
+            this.btn_show_results.parent().hide();
             this.div_display_results.hide();
         }
         if (this.player.is_last) {
