@@ -292,6 +292,7 @@
 .navbar-btn {
     margin-top: 19.22px;
     margin-bottom: 19.22px;
+    margin-right: 5px;
 }
 .navbar-btn.btn-sm {
     margin-top: 15.5px;
@@ -521,4 +522,31 @@ fieldset[disabled] .navbar-inverse .btn-link:hover,
 .navbar-inverse .btn-link[disabled]:focus,
 fieldset[disabled] .navbar-inverse .btn-link:focus {
     color: #444;
+}
+
+.list-group-item {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+
+}
+
+.option-letter {
+    background-color: #4c6586;
+    color: white;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.option-list {
+    display:flex;
+    align-items:center;
+    gap: 8px;
 }
