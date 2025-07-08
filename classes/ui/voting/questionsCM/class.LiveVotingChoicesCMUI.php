@@ -152,6 +152,10 @@ class LiveVotingChoicesCMUI
                     function($value) {
                         $decoded = json_decode(str_replace("\'", '"', $value), true);
 
+                        if (!is_array($decoded)) {
+                            return false;
+                        }
+
                         foreach ($decoded as $item) {
                             if (empty(trim($item['text']))) {
                                 return false;
@@ -161,7 +165,7 @@ class LiveVotingChoicesCMUI
                         return true;
                     },
                     $this->plugin->txt('empty_input_error')
-                ));
+                ))->withRequired(true);
 
             $section_answers = $this->factory->input()->field()->section($form_answers, $this->plugin->txt("qtype_form_header"), "");
 
