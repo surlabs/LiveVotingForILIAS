@@ -394,13 +394,11 @@ const xlvoForms = {
             const text = optionInput.val();
             const isCorrect = checkboxInput.prop('checked');
 
-            if (text !== "") {
-                this.inputs.push({
-                    'id': parseInt(id),
-                    'text': text,
-                    'isCorrect': isCorrect
-                });
-            }
+            this.inputs.push({
+                'id': parseInt(id),
+                'text': text,
+                'isCorrect': isCorrect
+            });
         });
         this._updateHiddenInput();
         return this.inputs;

@@ -352,3 +352,4 @@ voting_style#:#Voting Style
 voting_style_info#:#Select the style of the voting
 voting_style_classic#:#Classic style
 voting_style_new#:#New style
+empty_input_error#:#There cannot be empty options

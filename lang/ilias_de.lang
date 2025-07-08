@@ -350,3 +350,4 @@ voting_style#:#Abstimmungsstil
 voting_style_info#:#Wählen Sie den Stil der Abstimmung
 voting_style_classic#:#Klassischer Stil
 voting_style_new#:#Neuer Stil
+empty_input_error#:#Es kann keine leeren Optionen geben
