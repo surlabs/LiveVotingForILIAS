@@ -33,6 +33,21 @@ class ilObjLiveVotingAccess extends ilObjectPluginAccess
         return self::hasAccess('write', $ref_id, $user_id);
     }
 
+    public function _checkAccess(string $cmd, string $permission, int $ref_id, int $obj_id, $user_id = ''): bool
+    {
+        switch ($permission) {
+            case 'visible':
+            case 'read':
+                if ($this->_isOffline($obj_id)
+                    && !self::hasAccess('write', $ref_id, $user_id)
+                ) {
+                    return false;
+                }
+        }
+        return true;
+    }
+
+
     protected static function hasAccess(string $permission, $ref_id = null, $user_id = null): bool
     {
         global $DIC;
