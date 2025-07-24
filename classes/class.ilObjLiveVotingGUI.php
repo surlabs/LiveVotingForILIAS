@@ -1057,8 +1057,10 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $param_manager = ParamManager::getInstance();
 
-        if ($this->object->getLiveVoting()->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
-            $this->object->getLiveVoting()->getPlayer()->startCountDown($this->object->getLiveVoting()->getPlayer()->getActiveVotingObject()->getCountdown());
+        $countdown = $this->object->getLiveVoting()->getPlayer()->getActiveVotingObject()->getCountdown();
+
+        if ($this->object->getLiveVoting()->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE && $countdown !== -1) {
+            $this->object->getLiveVoting()->getPlayer()->startCountDown($countdown);
         } else {
             $this->object->getLiveVoting()->getPlayer()->unfreeze($param_manager->getVoting());
 
@@ -1355,6 +1357,11 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 break;
             case 'end_time':
                 $liveVoting->getPlayer()->setCountdown(0);
+
+                if ($liveVoting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE && $liveVoting->getPlayer()->getActiveVotingObject()->getCountdown() == -1) {
+                    $liveVoting->getPlayer()->setStatus(LiveVotingPlayer::STAT_SCOREBOARD);
+                }
+
                 $liveVoting->getPlayer()->save();
                 break;
             case 'next-cm':

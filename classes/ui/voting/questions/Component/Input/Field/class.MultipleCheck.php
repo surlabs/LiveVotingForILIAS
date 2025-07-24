@@ -1,0 +1,188 @@
+<?php
+/**
+ * This file is part of the LiveVoting Repository Object plugin for ILIAS.
+ * This plugin allows to create real time votings within ILIAS.
+ *
+ * The LiveVoting Repository Object plugin for ILIAS is open-source and licensed under GPL-3.0.
+ * For license details, visit https://www.gnu.org/licenses/gpl-3.0.en.html.
+ *
+ * To report bugs or participate in discussions, visit the Mantis system and filter by
+ * the category "LiveVoting" at https://mantis.ilias.de.
+ *
+ * More information and source code are available at:
+ * https://github.com/surlabs/LiveVoting
+ *
+ * If you need support, please contact the maintainer of this software at:
+ * info@surlabs.es
+ *
+ */
+
+declare(strict_types=1);
+
+namespace Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\Input\Field;
+
+use Closure;
+use ILIAS\Data\Factory;
+use ILIAS\Data\Result;
+use ILIAS\Refinery\Constraint;
+use ILIAS\UI\Component\Input\Container\Form\FormInput;
+use ILIAS\UI\Component\Signal;
+use ILIAS\UI\Implementation\Component\Input\Input;
+use ILIAS\UI\Implementation\Component\JavaScriptBindable;
+use ILIAS\UI\Implementation\Component\Triggerer;
+use Throwable;
+
+/**
+ * Class MultipleCheck
+ */
+class MultipleCheck extends Input implements FormInput
+{
+    use JavaScriptBindable;
+    use Triggerer;
+
+    protected string $label;
+    protected ?string $byline;
+    protected bool $is_required = false;
+    protected bool $is_disabled = false;
+    private ?Constraint $requirement_constraint;
+    private string $attributes;
+
+    public function __construct(string $label, ?string $byline = null)
+    {
+        global $DIC;
+
+        $this->label = $label;
+        $this->byline = $byline;
+        $this->is_disabled = true;
+
+        parent::__construct(new Factory(), $DIC->refinery());
+    }
+
+    public function getUpdateOnLoadCode(): Closure
+    {
+        return fn($id) => "$('#$id').on('Input change', function(event) {
+				il.UI.Input.onFieldUpdate(event, '$id', $('#$id').val());
+			});
+			il.UI.Input.onFieldUpdate(null, '$id', $('#$id').val());";
+    }
+
+    public function withValue($value): Input
+    {
+        $this->checkArg("value", $this->isClientSideValueOk($value), "Display value does not match Input type. Expected array of items with numeric 'id' or a JSON string representing it.");
+        $clone = clone $this;
+        $clone->value = $value;
+        return $clone;
+    }
+
+    protected function isClientSideValueOk($value): bool
+    {
+        try {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                foreach ($decoded as $item) {
+                    if (is_array($item)) {
+                        if (!isset($item['id']) || !is_numeric($item['id'])) {
+                            return false;
+                        }
+                    } else if (is_numeric($item)) {
+                        return false;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return true;
+
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function withLabel(string $label): self
+    {
+        $clone = clone $this;
+        $clone->label = $label;
+        return $clone;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getByline(): ?string
+    {
+        return $this->byline;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function withByline(string $byline): self
+    {
+        $clone = clone $this;
+        $clone->byline = $byline;
+        return $clone;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isRequired(): bool
+    {
+        return $this->is_required;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function withRequired(bool $is_required, ?Constraint $requirement_constraint = null): self
+    {
+        $clone = clone $this;
+        $clone->is_required = $is_required;
+        $clone->requirement_constraint = ($is_required) ? $requirement_constraint : null;
+        return $clone;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isDisabled(): bool
+    {
+        return $this->is_disabled;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function withDisabled(bool $is_disabled): self
+    {
+        $clone = clone $this;
+        $clone->is_disabled = $is_disabled;
+        return $clone;
+    }
+
+    public function withOnUpdate(Signal $signal): self
+    {
+        return $this->withTriggeredSignal($signal, 'update');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function appendOnUpdate(Signal $signal): self
+    {
+        return $this->appendTriggeredSignal($signal, 'update');
+    }
+
+    protected function applyOperationsTo($res): Result
+    {
+        return parent::applyOperationsTo($res); // TODO: Change the autogenerated stub
+    }
+}

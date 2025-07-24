@@ -76,6 +76,10 @@ abstract class LiveVotingQuestion
 
     public abstract function getQuestionType(): string;
 
+
+
+    public abstract function getQuestionTypeLabel(): string;
+
     public function getQuestionTypeId(): int
     {
         return self::QUESTION_TYPES_IDS[$this->getQuestionType()];

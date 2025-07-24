@@ -136,6 +136,7 @@ qtype_4_hide_correct_order#:#Rendezés irányának elrejtése
 qtype_4_id#:#ID
 qtype_4_options#:#Lehetőségek
 qtype_4_option_correct_position#:#Helyes sorrend
+qtype_4_option_correct_answer#:#Helyes válasz
 qtype_4_option_position#:#Pozíció
 qtype_4_option_text#:#Kifejezés
 qtype_4_save#:#Mentés
@@ -313,3 +314,16 @@ voting_msg_duplicated_success#:#Kérdés duplikálása sikeres
 form_input_not_valid_cm#:#A megadott adatok egy része hiányos vagy érvénytelen. Kérjük, javítsa ki a bejegyzést. (Ne feledje, hogy legalább egy helyes opcióra van szükség, és a pontszámnak nagyobbnak kell lennie 0-nál.)
 voter_header_end#:#A szavazás lezárult
 voter_info_end#:#Várakozás az előadóra...
+no_countdown#:#Nincs visszaszámlálás
+new_voting#:#Új szavazás
+new_voting_message#:#Új szavazás indult.
+seconds_left#:#Hátralévő másodpercek
+single_choice#:#Egyszeres választás
+multiple_choice#:#Többszörös választás
+next#:#Következő
+styles#:#Styles
+voting_style#:#Voting Style
+voting_style_info#:#Select the style of the voting
+voting_style_classic#:#Classic style
+voting_style_new#:#New style
+empty_input_error#:#A kérdés nem lehet üres.

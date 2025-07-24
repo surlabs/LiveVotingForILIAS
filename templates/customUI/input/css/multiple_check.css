@@ -1,0 +1,19 @@
+.multiple-input-cm {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 10px;
+    width: 100%;
+    align-items: flex-start;
+}
+
+.multiple-input-cm .form-check {
+    flex-grow: 1;
+}
+.multiple-input-cm .action-buttons {
+    flex-shrink: 0;
+    padding-bottom: 5px;
+}
+
+.multiple-input-cm .action-buttons .btn {
+    height: 26px;
+}

@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace LiveVoting\UI;
 
+use Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\CustomFactory;
 use Exception;
 use ilCtrlInterface;
 use ilException;
@@ -67,6 +68,7 @@ class LiveVotingChoicesCMUI
     protected ilPlugin $plugin;
     protected renderer $renderer;
     protected $request;
+    private CustomFactory $customFactory;
 
     /**
      * @throws LiveVotingException
@@ -80,6 +82,7 @@ class LiveVotingChoicesCMUI
         $this->request = $DIC->http()->request();
         $this->factory = $DIC->ui()->factory();
         $this->renderer = $DIC->ui()->renderer();
+        $this->customFactory = new CustomFactory();
 
         if ($question_id) {
             $this->question = LiveVotingQuestion::loadQuestionById($question_id);
@@ -122,7 +125,7 @@ class LiveVotingChoicesCMUI
 
             $form_score["countdown"] = $this->factory->input()->field()->select(
                 $this->plugin->txt('voting_countdown'),
-                [10 => "10s", 20 => "20s", 30 => "30s", 40 => "40s", 50 => "50s", 60 => "60s"],
+                [-1 => $this->plugin->txt("no_countdown"), 10 => "10s", 20 => "20s", 30 => "30s", 40 => "40s", 50 => "50s", 60 => "60s", 90 => "1m 30s", 120 => "2m", 150 => "2m 30s", 180 => "3m", 240 => "4m", 300 => "5m"],
                 $this->plugin->txt('voting_countdown_info'))
                                                   ->withValue(isset($this->question) ? $this->question->getCountdown() : 30)
                                                   ->withRequired(true);
@@ -136,26 +139,33 @@ class LiveVotingChoicesCMUI
                 $options = $this->question->getOptions();
             }
 
-            $form_answers["hidden"] = $this->factory->input()->field()->hidden()
-                                                    ->withValue(isset($options) ? str_replace('"', "\'", json_encode(array_map(function ($option) {
-                                                        return [
-                                                            "text" => $option->getText(),
-                                                            "id" => $option->getId(),
-                                                            "isCorrect" => $option->isCorrect()
-                                                        ];
-                                                    }, $options), JSON_UNESCAPED_UNICODE)) : "")
-                                                    ->withOnLoadCode(function ($id) {
-                                                        return "xlvoForms.initHiddenInput('" . $id . "')";
-                                                    })
-                                                    ->withLabel('options');
+            $form_answers["hidden"] = $this->customFactory->multipleCheck($this->plugin->txt('qtype_1_options'))->withOnLoadCode(function ($id) {
+                return "xlvoForms.initMultipleInputsCM('" . $id . "', '" . $this->plugin->txt('qtype_4_correct') . "', '" . $this->plugin->txt('qtype_4_option_text') . "')";
+            })
+                ->withValue(isset($options) ? str_replace('"', "\'", json_encode(array_map(function ($option) {
+                    return [
+                        "text" => $option->getText(),
+                        "id" => $option->getId(),
+                        "isCorrect" => $option->isCorrect()
+                    ];
+                }, $options), JSON_UNESCAPED_UNICODE)) : "")->withAdditionalTransformation($DIC->refinery()->custom()->constraint(
+                    function($value) {
+                        $decoded = json_decode(str_replace("\'", '"', $value), true);
 
-            $form_answers["input"] = $this->factory->input()->field()->text(
-                $this->plugin->txt('qtype_1_options'))
-                                                   ->withOnLoadCode(function ($id) {
-                                                       return "xlvoForms.initMultipleInputsCM('" . $id . "', '" . $this->plugin->txt("qtype_4_correct") . "')";
-                                                   })
-                                                   ->withMaxLength(255)
-                                                   ->withRequired(true);
+                        if (!is_array($decoded)) {
+                            return false;
+                        }
+
+                        foreach ($decoded as $item) {
+                            if (empty(trim($item['text']))) {
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    },
+                    $this->plugin->txt('empty_input_error')
+                ))->withRequired(true);
 
             $section_answers = $this->factory->input()->field()->section($form_answers, $this->plugin->txt("qtype_form_header"), "");
 
@@ -172,7 +182,6 @@ class LiveVotingChoicesCMUI
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedChoicesCM");
             }
 
-            $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvoForms.js");
             $DIC->ui()->mainTemplate()->addCss($this->plugin->getDirectory() . "/templates/css/livevoting.css");
 
             return $this->createForm($form_action, $sections);
@@ -260,7 +269,6 @@ class LiveVotingChoicesCMUI
                 $question->setTitle($question_data["title"] ?? null);
                 $question->setQuestion($_POST["form/input_0/input_2"] ? ilRTE::_replaceMediaObjectImageSrc($_POST["form/input_0/input_2"]) : null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
-                $question->setMultiSelection(true);
                 $question->setScore((int)($scoring_data["points"] ?? 0));
                 $question->setCountdown((int)($scoring_data["countdown"] ?? 30));
 
@@ -322,10 +330,12 @@ class LiveVotingChoicesCMUI
                     }
                 }
 
-                if (!$this->checkCorrect($old_options)) {
+                $n_correct = $this->checkCorrect($old_options);
+                if ($n_correct < 1) {
                     return 0;
                 }
 
+                $question->setMultiSelection($n_correct > 1);
                 $question->setOptions($old_options);
                 $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
                 $question->setObjId($id);
@@ -340,14 +350,16 @@ class LiveVotingChoicesCMUI
         }
     }
 
-    private function checkCorrect(array $old_options): bool
+    private function checkCorrect(array $old_options): int
     {
+        $n_correct = 0;
+
         foreach ($old_options as $option) {
             if ($option->isCorrect()) {
-                return true;
+                $n_correct++;
             }
         }
 
-        return false;
+        return $n_correct;
     }
 }

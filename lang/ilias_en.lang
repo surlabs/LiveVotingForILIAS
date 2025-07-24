@@ -140,6 +140,7 @@ qtype_4_hide_correct_order#:#Korrekte Reihenfolge verbergen
 qtype_4_id#:#ID
 qtype_4_options#:#Options
 qtype_4_option_correct_position#:#Correct Position
+qtype_4_option_correct_answer#:#Correct Order
 qtype_4_option_position#:#Position
 qtype_4_option_text#:#Term
 qtype_4_save#:#Send
@@ -339,3 +340,16 @@ voting_countdown_info#:#Time to answer the question, this also affects the quest
 form_input_not_valid_cm#:#Some of the information entered is incomplete or invalid. Please correct your entry. (Remember you need at least one correct option and the score must be greater than 0)
 voter_header_end#:#The vote is closed
 voter_info_end#:#Waiting for the presenter...
+no_countdown#:#No countdown
+new_voting#:#New Voting
+new_voting_message#:#A new voting has started.
+seconds_left#:#Seconds left
+single_choice#:#Single Choice
+multiple_choice#:#Multiple Choice
+next#:#Next
+styles#:#Styles
+voting_style#:#Voting Style
+voting_style_info#:#Select the style of the voting
+voting_style_classic#:#Classic style
+voting_style_new#:#New style
+empty_input_error#:#There cannot be empty options

@@ -3,6 +3,7 @@
  * @type {{}}
  */
 var xlvoVoter = {
+	notificationCounter: 0,
 	init: function (json) {
 		var config = json;
 		var replacer = new RegExp('amp;', 'g');
@@ -19,7 +20,12 @@ var xlvoVoter = {
 		base_url: '', // Base-URL for API-Calls
 		cmd_voting_data: '', // loadVotingData
 		lng: {
-			player_seconds: 's'
+			player_seconds: 's',
+			new_voting: 'New Voting',
+			new_voting_message: 'A new voting has started.',
+			seconds_left: 'seconds left',
+			qtype_1_unvote: 'Unvote',
+			qtype_1_vote: 'Vote',
 		},
 		debug: false,
 		delay: 1000
@@ -44,6 +50,8 @@ var xlvoVoter = {
 	initElements: function () {
 		this.countdown_element = $('#xlvo_countdown');
 		this.player_element = $('#xlvo_voter_player');
+
+		$('.xlvo-nickname').attr('href', xlvoVoter.config.base_url + '&cmd=requestNickname');
 	},
 	loadVotingData: function () {
 		$.get(xlvoVoter.config.base_url, {cmd: 'getVotingData'})
@@ -61,6 +69,10 @@ var xlvoVoter = {
 					xlvoVoter.interval = null;
 				}
 
+				if (data.nickname) {
+					$('.xlvo-nickname').html(data.nickname);
+				}
+
 				if (data.online_voters) {
 					$('#xlvo-attendees').html(data.online_voters);
 				}
@@ -72,6 +84,19 @@ var xlvoVoter = {
 					frozen_changed = (xlvoVoter.player.frozen !== data.frozen), // frozen status has changed
 					show_results_changed = (xlvoVoter.player.show_results !== data.show_results), // Show Results has changed
 					show_correct_order_changed = (xlvoVoter.player.show_correct_order !== data.show_correct_order); // Show Correct Order has changed
+
+
+				if (xlvoVoter.player.active_voting_id !== data.active_voting_id && xlvoVoter.player.active_voting_id !== 0) {
+					xlvoVoter.showNotification(xlvoVoter.config.lng.new_voting, xlvoVoter.config.lng.new_voting_message);
+				}
+
+				if (status_has_changed) {
+					if (data.status === 2 && data.is_challenge) {
+						$('.xlvo-nickname').removeClass('disabled');
+					} else {
+						$('.xlvo-nickname').addClass('disabled');
+					}
+				}
 
 				xlvoVoter.player = data;
 				if (status_has_changed || voting_has_changed || forced_update || frozen_changed || show_correct_order_changed) {
@@ -142,6 +167,10 @@ var xlvoVoter = {
 			xlvoVoter.player.countdown--;
 			if (xlvoVoter.player.countdown > 0) {
 				xlvoVoter.countdown_element.text((xlvoVoter.player.countdown).toString() + ' ' + xlvoVoter.config.lng.player_seconds);
+
+				if (xlvoVoter.player.countdown === 10 || xlvoVoter.player.countdown === 5) {
+					$('[aria-live="assertive"]').text(xlvoVoter.player.countdown.toString() + ' ' + xlvoVoter.config.lng.seconds_left);
+				}
 			}
 		}
 	},
@@ -157,7 +186,53 @@ var xlvoVoter = {
 	debug: function () {
 		this.config.debug = true;
 	},
+
 	stop: function () {
 		this.config.debug = false;
+	},
+
+	playNotificationSound: function() {
+		const audio = new Audio("Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/media/notification.ogg");
+		audio.volume = 0.3;
+		audio.play();
+	},
+
+	showNotification: function(title, message) {
+		xlvoVoter.playNotificationSound();
+
+		const container = document.getElementById('notificationContainer');
+		const notificationId = `notification-${++this.notificationCounter}`;
+
+		const notification = document.createElement('div');
+		notification.className = `notification`;
+		notification.id = notificationId;
+
+		notification.innerHTML = `
+					<div class="notification-content">
+						<div class="notification-title">${title}</div>
+						<div class="notification-message">${message}</div>
+					</div>
+					<button class="notification-close" onclick="xlvoVoter.closeNotification('${notificationId}')">×</button>
+				`;
+
+		container.appendChild(notification);
+
+		setTimeout(() => {
+			if (document.getElementById(notificationId)) {
+				xlvoVoter.closeNotification(notificationId);
+			}
+		}, 4500);
+	},
+
+	closeNotification: function(notificationId) {
+		const notification = document.getElementById(notificationId);
+		if (notification) {
+			notification.classList.add('fade-out');
+			setTimeout(() => {
+				if (notification.parentNode) {
+					notification.parentNode.removeChild(notification);
+				}
+			}, 400);
+		}
 	}
 };

@@ -79,6 +79,7 @@ class LiveVoting
     private bool $nicknames = false;
     private bool $scoreboard = false;
     private LiveVotingPlayer $player;
+    private string $voting_style = "classic";
 
     /**
      * LiveVoting constructor.
@@ -325,6 +326,16 @@ class LiveVoting
         $this->player = $player;
     }
 
+    public function getVotingStyle(): string
+    {
+        return $this->voting_style;
+    }
+
+    public function setVotingStyle(string $voting_style): void
+    {
+        $this->voting_style = $voting_style;
+    }
+
     /**
      * @throws LiveVotingException
      */
@@ -348,7 +359,8 @@ class LiveVoting
             "puk" => $this->puk,
             "mode" => $this->mode->getMode(),
             "nicknames" => (int)$this->nicknames,
-            "scoreboard" => (int)$this->scoreboard
+            "scoreboard" => (int)$this->scoreboard,
+            "voting_style" => $this->voting_style
         ));
 
         return $this->id;
@@ -375,6 +387,7 @@ class LiveVoting
             $this->setMode(LiveVotingMode::new((int) $result[0]["mode"]));
             $this->setNicknames((bool)$result[0]["nicknames"]);
             $this->setScoreboard((bool)$result[0]["scoreboard"]);
+            $this->setVotingStyle($result[0]["voting_style"]);
         } else {
             $this->loadDefaultValues();
         }

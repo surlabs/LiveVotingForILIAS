@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace LiveVoting\questions\QuestionTypes;
 
+use ilLiveVotingPlugin;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\questions\LiveVotingQuestion;
 
@@ -45,6 +46,11 @@ class LiveVotingFreeTextQuestion extends LiveVotingQuestion
     public function getQuestionType(): string
     {
         return "FreeText";
+    }
+
+    public function getQuestionTypeLabel(): string
+    {
+        return ilLiveVotingPlugin::getInstance()->txt("voting_type_2");
     }
 
     public function save(): int

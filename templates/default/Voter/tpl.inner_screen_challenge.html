@@ -1,10 +1,11 @@
 <div class="display-voter panel panel-primary" id="xlvo-voter-header">
 	<div class="panel-heading clearfix">
-		<h3 class="panel-title pull-left">{TITLE}</h3>
+		<h1 class="panel-title pull-left">{TITLE}</h1>
 		<!--<h1 class="panel-title pull-right"><span class="label label-primary">{PIN}</span></h1>&nbsp;-->
 		<!--<h1 class="panel-title pull-right"><span class="label label-primary">{POSITION}/{COUNT}</span></h1>&nbsp;-->
-		<h1 class="panel-title pull-right"><span id="xlvo_countdown" class="label label-cd-warning">0 sec</span></h1>&nbsp;
-		<p>{DESCRIPTION}</p>
+		<h2 class="panel-title pull-right"><span id="xlvo_countdown" class="label label-cd-warning">0 sec</span></h2>&nbsp;
+		<h2 class="panel-title pull-right"><span id="xlvo_qtype" class="label {QTYPE_DISPLAY}" style="background: black">{QTYPE}</span></h2>&nbsp;
+		<h2 class="panel-subtitle">{DESCRIPTION}</h2>
 	</div>
 	<div class="panel-body">
 
@@ -17,12 +18,13 @@
 			<div class="xlvo-voter-glyph">{GLYPH}</div>
 			<!-- BEGIN question_text -->
 			<div class="row">
-				<div class="well">{QUESTION_TEXT}</div>
+				<div class="well" aria-live="polite">{QUESTION_TEXT}</div>
 			</div>
 			<!-- END question_text -->
 			<div class="row">
 				{QUESTION}
 			</div>
+			<div style="margin-top: 10px"></div>
 			<div class="xlvo_shortlink well text-center"><h3 id="xlvo-attendees">{ONLINE_TEXT}</h3></div>
 			<div class="xlvo_shortlink well text-center"><h3 id="xlvo-nquestions">{N_QUESTIONS}</h3></div>
 		</div>

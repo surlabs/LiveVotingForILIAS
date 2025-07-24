@@ -403,7 +403,7 @@ class LiveVotingUI
             $DIC->toolbar()->addButtonInstance($endTime);
 
             $nextBtn = ilLinkButton::getInstance();
-            $nextBtn->setCaption("Next", false);
+            $nextBtn->setCaption($this->pl->txt("next"), false);
             $nextBtn->setId('btn-next_cm');
             $DIC->toolbar()->addButtonInstance($nextBtn);
         } else {

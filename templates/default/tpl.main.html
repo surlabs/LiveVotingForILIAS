@@ -18,6 +18,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
 	<!--320-->
 	<link rel="icon" href="/templates/default/images/favicon.ico" type="image/x-icon">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Sixtyfour&display=swap" rel="stylesheet">
 </head>
 <body class="{BODY_CLASS}"  {BODY_ATTRIBUTES}>
 <div id="drag_zmove"></div>
@@ -30,7 +33,8 @@
 			</a>
 		</div>
 		<div class="navbar-header pull-right">
-			<a class="btn btn-stable navbar-btn" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/pin.php">PIN</a>
+			<a class="btn btn-default navbar-btn xlvo-nickname"></a>
+			<a class="btn btn-default navbar-btn" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/pin.php">PIN</a>
 		</div>
 	</div>
 	<!-- END navbar -->
@@ -49,6 +53,9 @@
 		{PLAYER_CONTENT}
 		<!-- END xlvo_player_content -->
 	</div>
+
+	<div class="notification-container" id="notificationContainer"></div>
+	<div style="display: none" aria-live="assertive"></div>
 </div>
 <!-- BEGIN on_load_code -->
 <script type="text/javascript">

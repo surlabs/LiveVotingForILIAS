@@ -558,6 +558,7 @@ class LiveVotingPlayer
             "attendees" => vsprintf(ilLiveVotingPlugin::getInstance()->txt("start_online"), [LiveVotingVoter::countVoters($this->getId())]),
             "qtype" => $this->getActiveVotingObject()->getQuestionType(),
             "countdown" => $this->remainingCountDown(),
+            "is_countdown_infinite" => $this->getActiveVotingObject()->getCountdown() === -1,
             "has_countdown" => $this->isCountDownRunning()
         );
     }
@@ -579,7 +580,9 @@ class LiveVotingPlayer
             "frozen" => $this->isFrozen(),
             "show_results" => $this->isShowResults(),
             "show_correct_order" => false,
-            "online_voters" => vsprintf($plugin->txt("start_online"), [LiveVotingVoter::countVoters($this->getId())])
+            "online_voters" => vsprintf($plugin->txt("start_online"), [LiveVotingVoter::countVoters($this->getId())]),
+            "is_challenge" => LiveVoting::getModeFromObjId($this->getObjId()) == LiveVotingMode::CHALLENGE_MODE,
+            "nickname" => LiveVotingParticipant::getNicknameOrName(LiveVotingParticipant::getInstance()->getIdentifier(), $this->getId())
         );
     }
 
@@ -855,7 +858,11 @@ class LiveVotingPlayer
         if ($this->nextQuestion()) {
             $this->setStatus(LiveVotingPlayer::STAT_RUNNING);
 
-            $this->startCountDown($this->getActiveVotingObject()->getCountdown());
+            if ($this->getActiveVotingObject()->getCountdown() !== -1) {
+                $this->startCountDown($this->getActiveVotingObject()->getCountdown());
+            } else {
+                $this->unfreeze();
+            }
         } else {
             $this->setStatus(self::STAT_END_VOTING);
 

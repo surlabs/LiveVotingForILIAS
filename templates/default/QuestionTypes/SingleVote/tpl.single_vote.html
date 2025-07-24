@@ -1,6 +1,14 @@
 <!-- BEGIN option -->
-<p class="single_vote_question">
-	<span class="label label-primary">{OPTION_LETTER}</span> {TITLE}
-</p>
-<a href="{LINK}" class="btn btn-block {BUTTON_STATE}">{ACTION}</a>
-<hr><!-- END option -->
+<div class="vote-option">
+	<input type="{TYPE}" id="option-{OPTION_LETTER}" class="vote-checkbox" value="{OPTION_LETTER}" {CHECKBOX} link="{LINK}" name="vote-option" />
+	<label for="option-{OPTION_LETTER}" class="vote-label">
+		<div class="vote-question">
+			<span class="label label-primary">{OPTION_LETTER}</span>
+			<span>{TITLE}</span>
+		</div>
+		<div class="btn btn-block {BUTTON_STATE}">
+			<span class="button-text">{ACTION}</span>
+		</div>
+	</label>
+</div>
+<!-- END option -->

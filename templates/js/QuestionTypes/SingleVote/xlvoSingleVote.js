@@ -3,6 +3,9 @@
  * @type {{}}
  */
 var xlvoSingleVote = {
+	config: {},
+	base_url: '',
+
 	init: function (json) {
 		var config = json;
 		var replacer = new RegExp('amp;', 'g');
@@ -10,15 +13,52 @@ var xlvoSingleVote = {
 		this.config = config;
 		this.ready = true;
 	},
-	config: {},
-	base_url: '',
-	run: function () {
-	},
-	/**
-	 * @param button_id
-	 * @param button_data
-	 */
-	handleButtonPress: function (button_id, button_data) {
 
+	run: function () {
+		let lastInteractionWasMouse = false;
+
+		document.addEventListener('mousedown', () => {
+			lastInteractionWasMouse = true;
+		});
+
+		document.addEventListener('keydown', () => {
+			lastInteractionWasMouse = false;
+		});
+
+		document.querySelectorAll('.vote-checkbox').forEach((checkbox) => {
+			checkbox.addEventListener('focus', () => {
+				if (lastInteractionWasMouse) {
+					checkbox.blur();
+				}
+			});
+		});
+
+		$(document).on('change', '.vote-checkbox', function (event) {
+			xlvoSingleVote.handleCheckboxChange(event.currentTarget);
+		});
+	},
+
+	handleCheckboxChange: function (thisElement) {
+		const selector = $(thisElement);
+
+		this.updateButtonState(selector.is(":checked"), selector.attr('id').replace('option-', ''));
+
+		$.get(selector.attr("link"));
+
+		if (selector.attr("type") === 'radio') {
+			$(`input[type="radio"][name="${selector.attr('name')}"]`).not(selector).each((index, element) => {
+				this.updateButtonState(false, $(element).attr('id').replace('option-', ''));
+			});
+		}
+	},
+
+	updateButtonState: function (checked, letter) {
+		const selector = $(`[for="option-${letter}"] .btn`);
+
+		if (checked) {
+			selector.removeClass('btn-default').addClass('btn-primary').find('span').text(xlvoVoter.config.lng.qtype_1_unvote);
+		} else {
+			selector.removeClass('btn-primary').addClass('btn-default').find('span').text(xlvoVoter.config.lng.qtype_1_vote);
+		}
 	}
 };

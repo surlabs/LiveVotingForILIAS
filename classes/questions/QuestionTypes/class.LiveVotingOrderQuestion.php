@@ -53,6 +53,15 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
         }
     }
 
+    public function getQuestionTypeLabel(): string
+    {
+        if ($this->correct_order) {
+            return ilLiveVotingPlugin::getInstance()->txt("voting_type_4");
+        } else {
+            return ilLiveVotingPlugin::getInstance()->txt("voting_type_5");
+        }
+    }
+
     public function save(): int
     {
         $id = parent::save();

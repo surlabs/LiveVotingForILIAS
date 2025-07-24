@@ -176,7 +176,7 @@ class LiveVotingPlayerGUI
 
         LiveVotingJs::getInstance()->initMathJax();
 
-        $t = array('player_seconds');
+        $t = array('player_seconds', 'new_voting', 'new_voting_message', 'seconds_left', 'qtype_1_unvote', 'qtype_1_vote');
 
         $delay = LiveVotingConfig::get('request_frequency');
         if (is_numeric($delay)) {
@@ -273,6 +273,8 @@ class LiveVotingPlayerGUI
                         $this->getVotingTemplate()->parseCurrentBlock();
                     }
                     $this->getVotingTemplate()->setVariable('QUESTION', $xlvoQuestionTypesGUI->getMobileHTML());
+                    $this->getVotingTemplate()->setVariable('QTYPE', $this->getLiveVoting()->getPlayer()->getActiveVotingObject()->getQuestionTypeLabel());
+                    $this->getVotingTemplate()->setVariable('QTYPE_DISPLAY', 'display');
                     break;
                 case LiveVotingPlayer::STAT_START_VOTING:
                     $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_start'));
