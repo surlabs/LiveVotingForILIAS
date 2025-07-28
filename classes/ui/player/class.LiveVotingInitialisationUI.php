@@ -560,7 +560,7 @@ class LiveVotingInitialisationUI
 
         if (!empty($param_manager->getPin())) {
             $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
-        } elseif ($param_manager->getRefId()) {
+        } elseif (!empty($param_manager->getRefId())) {
             $liveVoting = new LiveVoting(ilObject::_lookupObjId($param_manager->getRefId()), false);
         }
 

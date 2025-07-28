@@ -95,27 +95,27 @@ final class ParamManager
      */
     private function loadAndPersistAllParams()
     {
-        $pin = trim(filter_input(INPUT_GET, 'xlvo_pin') ?? "", "/");
+        $pin = trim((string) filter_input(INPUT_GET, 'xlvo_pin') ?? "", "/");
         if (!empty($pin)) {
             $this->setPin($pin);
         }
 
-        $ref_id = trim(filter_input(INPUT_GET, 'ref_id') ?? "", "/");
+        $ref_id = trim((string) filter_input(INPUT_GET, 'ref_id') ?? "", "/");
         if (!empty($ref_id)) {
             $this->setRefId((int)$ref_id);
         }
 
-        $puk = trim(filter_input(INPUT_GET, 'xlvo_puk') ?? "", "/");
+        $puk = trim((string) filter_input(INPUT_GET, 'xlvo_puk') ?? "", "/");
         if (!empty($puk)) {
             $this->setPuk($puk);
         }
 
-        $voting = trim(filter_input(INPUT_GET, 'xlvo_voting') ?? "", "/");
+        $voting = trim((string) filter_input(INPUT_GET, 'xlvo_voting') ?? "", "/");
         if (!empty($voting)) {
             $this->setVoting((int)$voting);
         }
 
-        $ppt = trim(filter_input(INPUT_GET, 'xlvo_ppt') ?? "", "/");
+        $ppt = trim((string) filter_input(INPUT_GET, 'xlvo_ppt') ?? "", "/");
         if (!empty($ppt)) {
             $this->setPpt((bool)$ppt);
         }
@@ -128,7 +128,7 @@ final class ParamManager
      */
     public function getRefId(): int
     {
-        $ref_id = trim(filter_input(INPUT_GET, 'ref_id'), "/");
+        $ref_id = trim((string) filter_input(INPUT_GET, 'ref_id'), "/");
 
         if (!empty($ref_id)) {
             $this->ref_id = (int)$ref_id;
@@ -137,7 +137,11 @@ final class ParamManager
         if (empty($this->ref_id)) {
             $obj_id = LiveVoting::getObjIdFromPin($this->pin);
 
-            $this->ref_id = current(ilObject::_getAllReferences($obj_id));
+            if ($obj_id > 0) {
+                $this->ref_id = current(ilObject::_getAllReferences($obj_id));
+            } else {
+                $this->ref_id = 0;
+            }
         }
 
         return $this->ref_id;
