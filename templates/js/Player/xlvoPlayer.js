@@ -13,7 +13,7 @@ var xlvoPlayer = {
 
         if (
             xlvoPlayer.config.use_mathjax &&
-            !!MathJax &&
+            !!MathJax && MathJax.version &&
             MathJax.version.charAt(0) !== "3"
         ) {
             MathJax.Hub.Config({
@@ -332,7 +332,7 @@ var xlvoPlayer = {
                         oldNode.remove();
 
                         if (xlvoPlayer.config.use_mathjax && !!MathJax) {
-                            if (MathJax.version.charAt(0) === "3") {
+                            if (MathJax.version && MathJax.version.charAt(0) === "3") {
                                 MathJax.typeset("xlvo_voter_player");
                             } else {
                                 MathJax.Hub.Config(xlvoPlayer.mathjax_config);

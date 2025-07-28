@@ -10,7 +10,7 @@ var xlvoVoter = {
 		config.base_url = config.base_url.replace(replacer, '');
 		this.config = config;
 		this.ready = true;
-		if (xlvoVoter.config.use_mathjax && !!MathJax && (MathJax.version.charAt(0) !== '3')) {
+		if (xlvoVoter.config.use_mathjax && !!MathJax && MathJax.version && (MathJax.version.charAt(0) !== '3')) {
 			MathJax.Hub.Config({
 				"HTML-CSS": {scale: 80}
 			});
