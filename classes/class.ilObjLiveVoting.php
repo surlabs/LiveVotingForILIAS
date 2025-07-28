@@ -88,6 +88,8 @@ class ilObjLiveVoting extends ilObjectPlugin
         }
 
         $new_obj_lv->setQuestions($questions);
+        $new_obj_lv->setMode($liveVoting->getMode());
+        $new_obj_lv->save();
     }
 
     protected function initType(): void
