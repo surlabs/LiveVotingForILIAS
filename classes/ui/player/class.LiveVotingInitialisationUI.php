@@ -430,10 +430,10 @@ class LiveVotingInitialisationUI
         $this->makeGlobal("ilSetting", $this->settings);
 
         // set anonymous user & role id and system role id
-        define("ANONYMOUS_USER_ID", $this->settings->get("anonymous_user_id"));
-        define("ANONYMOUS_ROLE_ID", $this->settings->get("anonymous_role_id"));
-        define("SYSTEM_USER_ID", $this->settings->get("system_user_id"));
-        define("SYSTEM_ROLE_ID", $this->settings->get("system_role_id"));
+        define("ANONYMOUS_USER_ID", (int) $this->settings->get("anonymous_user_id"));
+        define("ANONYMOUS_ROLE_ID", (int) $this->settings->get("anonymous_role_id"));
+        define("SYSTEM_USER_ID",(int) $this->settings->get("system_user_id"));
+        define("SYSTEM_ROLE_ID", (int) $this->settings->get("system_role_id"));
         define("USER_FOLDER_ID", 7);
 
         // recovery folder
