@@ -19,6 +19,7 @@ declare(strict_types=1);
  *
  */
 
+use LiveVoting\platform\ilias\LiveVotingContext;
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\LiveVotingJs;
@@ -111,12 +112,19 @@ class LiveVotingPlayerGUI
      * @throws ilSystemStyleException
      * @throws LiveVotingException
      * @throws ilCtrlException|ilException
+     * @throws Exception
      */
     protected function startVoterPlayer(): void
     {
         global $DIC;
 
         $player = $this->live_voting->getPlayer();
+
+        if ($this->live_voting->isAnonymous() && LiveVotingContext::getContext(true) === null && LiveVotingParticipant::getInstance()->getIdentifier() == ANONYMOUS_USER_ID) {
+            LiveVotingContext::setContext(1);
+
+            LiveVotingParticipant::getInstance()->setIdentifier(session_id())->setType(2);
+        }
 
         if ($this->live_voting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
             if ($this->live_voting->isNicknames() && LiveVotingParticipant::getInstance()->getNickname($player->getId()) == "") {
