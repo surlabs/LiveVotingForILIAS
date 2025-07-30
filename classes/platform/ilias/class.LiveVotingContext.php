@@ -55,14 +55,10 @@ class LiveVotingContext extends ilContext
     /**
      * @return mixed
      */
-    public static function getContext(bool $strict = false)
+    public static function getContext()
     {
         if (!empty($_COOKIE['xlvo_context'])) {
             return $_COOKIE['xlvo_context'];
-        }
-
-        if ($strict) {
-            return null;
         }
 
         return 2;

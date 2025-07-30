@@ -120,7 +120,7 @@ class LiveVotingPlayerGUI
 
         $player = $this->live_voting->getPlayer();
 
-        if ($this->live_voting->isAnonymous() && LiveVotingContext::getContext(true) === null && LiveVotingParticipant::getInstance()->getIdentifier() == ANONYMOUS_USER_ID) {
+        if ($this->live_voting->isAnonymous() && LiveVotingParticipant::getInstance()->getIdentifier() == ANONYMOUS_USER_ID) {
             LiveVotingContext::setContext(1);
 
             LiveVotingParticipant::getInstance()->setIdentifier(session_id())->setType(2);
