@@ -85,6 +85,12 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         }
 
         $this->player->createHistoryObject();
+
+        if (isset($_GET['isRequest']) && (bool)$_GET['isRequest']) {
+            header('Content-type: application/json');
+            echo json_encode(["ok" => true]);
+            exit();
+        }
     }
 
 

@@ -5,6 +5,7 @@
 var xlvoSingleVote = {
 	config: {},
 	base_url: '',
+	running: false,
 
 	init: function (json) {
 		var config = json;
@@ -15,6 +16,12 @@ var xlvoSingleVote = {
 	},
 
 	run: function () {
+		if (this.running) {
+			return;
+		}
+
+		this.running = true;
+
 		let lastInteractionWasMouse = false;
 
 		document.addEventListener('mousedown', () => {
@@ -43,7 +50,9 @@ var xlvoSingleVote = {
 
 		this.updateButtonState(selector.is(":checked"), selector.attr('id').replace('option-', ''));
 
-		$.get(selector.attr("link"));
+		$.get(selector.attr("link"), {
+			'isRequest': true
+		});
 
 		if (selector.attr("type") === 'radio') {
 			$(`input[type="radio"][name="${selector.attr('name')}"]`).not(selector).each((index, element) => {
