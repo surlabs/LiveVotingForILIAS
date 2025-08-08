@@ -218,8 +218,6 @@ voting_edit#:#Módosítás
 voting_export#:#Exportálás
 voting_form_title_create#:#Kérdése
 voting_form_title_update#:#Kérdése
-voting_history#:#Szavazástörténelem
-voting_history_info#:#A válaszadók összes szavazatát mentjük, akkor is, ha később azt módosítják. Így a válaszadók szavazási viselkedését is elemezheti.
 voting_import#:#Importálás
 voting_msg_duplicated#:#Kérdést sikeresen duplikálta
 voting_msg_sorting_saved#:#Sorrend mentése
