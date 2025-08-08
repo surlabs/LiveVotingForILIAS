@@ -116,15 +116,6 @@ class LiveVotingSettingsUI
                 ));
             $formFields['vote_login_check'] = $voteLoginCheck;
 
-            $voteHistoryCheck = $DIC->ui()->factory()->input()->field()->checkbox($this->plugin->txt("voting_history"), $this->plugin->txt("voting_history_info"))
-                ->withValue($this->object->getLiveVoting()->isVotingHistory())
-                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
-                    function ($v) {
-                        $this->object->getLiveVoting()->setVotingHistory((bool)$v);
-                    }
-                ));
-            $formFields['vote_history_check'] = $voteHistoryCheck;
-
             $showAttendeesCheck = $DIC->ui()->factory()->input()->field()->checkbox($this->plugin->txt("show_attendees"), $this->plugin->txt("show_attendees_info"))
                 ->withValue($this->object->getLiveVoting()->isShowAttendees())
                 ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(

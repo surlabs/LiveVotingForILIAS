@@ -228,8 +228,6 @@ voting_edit#:#Edit
 voting_export#:#Export
 voting_form_title_create#:#Question
 voting_form_title_update#:#Question
-voting_history#:#Voting History
-voting_history_info#:#All answers the participants give are saved even if they change their opinion later. You can analyze the voting behaviour of your users.
 voting_import#:#Import
 voting_msg_duplicated#:#Question has been duplicated
 voting_msg_sorting_saved#:#Order saved

@@ -230,8 +230,6 @@ voting_edit#:#Bearbeiten
 voting_export#:#Export
 voting_form_title_create#:#Frage
 voting_form_title_update#:#Frage
-voting_history#:#Antworten historisieren
-voting_history_info#:#Alle Antworten werden gespeichert, auch wenn sie später geändert werden. Dadurch kann das Antwortverhalten beobachtet werden.
 voting_import#:#Import
 voting_msg_duplicated#:#Frage wurde dupliziert
 voting_msg_sorting_saved#:#Reihenfolge gespeichert
