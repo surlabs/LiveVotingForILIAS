@@ -107,79 +107,81 @@ class LiveVotingUI
     {
         global $DIC;
 
-        if ($this->liveVoting->isOnline()) {
-            if (!empty($this->liveVoting->getQuestions())) {
-                if (isset($this->liveVoting->getQuestions()[0])) {
-                    $this->liveVoting->getPlayer()->prepareStart($this->liveVoting->getQuestions()[0]->getId());
-                } else {
-                    return $this->renderer->render($this->factory->messageBox()->failure($this->pl->txt("player_msg_no_start_2")));
-                }
+        $is_online = $this->liveVoting->isOnline();
+        $is_empty = empty($this->liveVoting->getQuestions());
 
-
-                if ($this->liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
-                    $b = ilLinkButton::getInstance();
-                    $b->setCaption($this->pl->txt('player_start_voting'), false);
-                    $b->addCSSClass('xlvo-preview');
-                    $b->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayer"));
-                    $b->setId('btn-start-voting');
-                    $b->setPrimary(true);
-                    $DIC->toolbar()->addButtonInstance($b);
-
-
-                    $current_selection_list = $this->getQuestionSelectionList(false);
-                    $DIC->toolbar()->addText($current_selection_list->getHTML());
-
-                    $b2 = ilLinkButton::getInstance();
-                    $b2->setCaption($this->pl->txt('player_start_voting_and_unfreeze'), false);
-                    $b2->addCSSClass('xlvo-preview');
-                    $b2->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayerAnUnfreeze"));
-                    $b2->setId('btn-start-voting-unfreeze');
-                    $DIC->toolbar()->addButtonInstance($b2);
-                } else {
-                    $b = ilLinkButton::getInstance();
-                    $b->setCaption($this->pl->txt('player_start_voting'), false);
-                    $b->addCSSClass('xlvo-preview');
-                    $b->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayerAnUnfreeze"));
-                    $b->setId('btn-start-voting');
-                    $b->setPrimary(true);
-                    $DIC->toolbar()->addButtonInstance($b);
-                }
-
-                $template = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl." . $this->liveVoting->getMode()->getStartTemplate() . ".html", true, true);
-                $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/default/default.css');
-
-
-                $template->setVariable('PIN', $this->liveVoting->getPin());
-
-                $param_manager = ParamManager::getInstance();
-
-                if ($this->liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
-                    $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId(), 180));
-                } else {
-                    $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId(), 280));
-                }
-
-                $template->setVariable('SHORTLINK', $this->liveVoting->getShortLink($param_manager->getRefId()));
-
-                $template->setVariable('MODAL', LiveVotingQRModalGUI::getInstanceFromLiveVoting($this->liveVoting)->getHTML());
-                $template->setVariable("ZOOM_TEXT", $this->pl->txt("start_zoom"));
-
-                $js = LiveVotingJs::getInstance()->addSetting("base_url", $DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "", "", true))->name('Player')->init();
-
-                if ($this->liveVoting->isShowAttendees()) {
-                    $js->call('updateAttendees');
-                    $template->setVariable("ONLINE_TEXT", vsprintf($this->pl->txt("start_online"), [LiveVotingVoter::countVoters($this->liveVoting->getPlayer()->getId())]));
-                }
-
-                $js->call('handleStartButton');
-
-                return '<div>' . $template->get() . '</div>';
-            } else {
-                return $this->renderer->render($this->factory->messageBox()->failure($this->pl->txt("player_msg_no_start_2")));
-            }
-        } else {
+        if (!$is_online && $is_empty) {
+            return $this->renderer->render($this->factory->messageBox()->failure($this->pl->txt("player_msg_no_start_3")));
+        } elseif (!$is_online) {
             return $this->renderer->render($this->factory->messageBox()->failure($this->pl->txt("player_msg_no_start_1")));
+        } elseif ($is_empty) {
+            return $this->renderer->render($this->factory->messageBox()->failure($this->pl->txt("player_msg_no_start_2")));
         }
+
+        if (isset($this->liveVoting->getQuestions()[0])) {
+            $this->liveVoting->getPlayer()->prepareStart($this->liveVoting->getQuestions()[0]->getId());
+        } else {
+            return $this->renderer->render($this->factory->messageBox()->failure($this->pl->txt("player_msg_no_start_2")));
+        }
+
+        if ($this->liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
+            $b = ilLinkButton::getInstance();
+            $b->setCaption($this->pl->txt('player_start_voting'), false);
+            $b->addCSSClass('xlvo-preview');
+            $b->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayer"));
+            $b->setId('btn-start-voting');
+            $b->setPrimary(true);
+            $DIC->toolbar()->addButtonInstance($b);
+
+
+            $current_selection_list = $this->getQuestionSelectionList(false);
+            $DIC->toolbar()->addText($current_selection_list->getHTML());
+
+            $b2 = ilLinkButton::getInstance();
+            $b2->setCaption($this->pl->txt('player_start_voting_and_unfreeze'), false);
+            $b2->addCSSClass('xlvo-preview');
+            $b2->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayerAnUnfreeze"));
+            $b2->setId('btn-start-voting-unfreeze');
+            $DIC->toolbar()->addButtonInstance($b2);
+        } else {
+            $b = ilLinkButton::getInstance();
+            $b->setCaption($this->pl->txt('player_start_voting'), false);
+            $b->addCSSClass('xlvo-preview');
+            $b->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayerAnUnfreeze"));
+            $b->setId('btn-start-voting');
+            $b->setPrimary(true);
+            $DIC->toolbar()->addButtonInstance($b);
+        }
+
+        $template = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl." . $this->liveVoting->getMode()->getStartTemplate() . ".html", true, true);
+        $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/default/default.css');
+
+
+        $template->setVariable('PIN', $this->liveVoting->getPin());
+
+        $param_manager = ParamManager::getInstance();
+
+        if ($this->liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
+            $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId(), 180));
+        } else {
+            $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId(), 280));
+        }
+
+        $template->setVariable('SHORTLINK', $this->liveVoting->getShortLink($param_manager->getRefId()));
+
+        $template->setVariable('MODAL', LiveVotingQRModalGUI::getInstanceFromLiveVoting($this->liveVoting)->getHTML());
+        $template->setVariable("ZOOM_TEXT", $this->pl->txt("start_zoom"));
+
+        $js = LiveVotingJs::getInstance()->addSetting("base_url", $DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "", "", true))->name('Player')->init();
+
+        if ($this->liveVoting->isShowAttendees()) {
+            $js->call('updateAttendees');
+            $template->setVariable("ONLINE_TEXT", vsprintf($this->pl->txt("start_online"), [LiveVotingVoter::countVoters($this->liveVoting->getPlayer()->getId())]));
+        }
+
+        $js->call('handleStartButton');
+
+        return '<div>' . $template->get() . '</div>';
     }
 
     /**

@@ -97,10 +97,9 @@ objs_xlvo_duplicate#:#Bestehendes LiveVoting kopieren
 player_close_modal#:#Schließen
 player_freeze#:#Pausieren
 player_hide_results#:#Ergebnisse ausblenden
-player_msg_no_start_1#:#Sie können das LiveVoting nicht starten! Das LiveVoting ist offline.
-player_msg_no_start_2#:#Das LiveVoting kann nicht gestartet werden, da noch keine Votings vorhanden sind.
-player_msg_no_votings#:#Es sind keine Fragen vorhanden, das Voting kann nicht gestartet werden.
-player_msg_voting_not_available#:#Das ausgewählte Voting ist nicht vorhanden
+player_msg_no_start_1#:#Dieses LiveVoting kann nicht gestartet werden, da es offline ist.
+player_msg_no_start_2#:#Dieses LiveVoting kann nicht gestartet werden, da noch keine Fragen verfügbar sind. Um eine Frage zu erstellen, gehen Sie zur Registerkarte „Verwalten”.
+player_msg_no_start_3#:#Dieses LiveVoting kann nicht gestartet werden, da es offline ist und noch keine Fragen verfügbar sind. Um eine Frage zu erstellen, gehen Sie zur Registerkarte „Verwalten”.
 player_player_countdown#:#Countdown
 player_reset#:#Zurücksetzen
 player_seconds#:#s
@@ -112,7 +111,6 @@ player_unfreeze#:#Abstimmen
 player_voting_countdown#:#Countdown
 player_voting_list#:#Fragen
 player_voters_description#:#%s Abstimmende
-playplayer_msg_no_start_2#:#Das LiveVoting kann nicht gestartet werden, da noch keine Votings vorhanden sind.
 qtype_1_colors#:#Unterschiedliche Farben
 qtype_1_info_latex#:#LaTeX kann mit [tex] ... [/tex] formatiert werden.
 qtype_1_multi_selection#:#Mehrfachauswahl
