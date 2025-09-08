@@ -93,10 +93,9 @@ objs_xlvo_duplicate#:#Meglévő élőszavazás klónozása
 player_close_modal#:#Bezárás
 player_freeze#:#Szüneteltetés
 player_hide_results#:#Szavazatállás elrejtése
-player_msg_no_start_1#:#Ez az élőszavazás nem indítható, mert jelenleg offline
-player_msg_no_start_2#:#Ez az élőszavazás nem indítható, mert nincsenek elérhető szavazatok
-player_msg_no_votings#:#Ez az élőszavazás nem indítható, mert nincs benne kérdés
-player_msg_voting_not_available#:#A kijelölt élőszavazás nem érhető el
+player_msg_no_start_1#:#Ez a LiveVoting nem indítható el, mert offline állapotban van.
+player_msg_no_start_2#:#Ez a LiveVoting nem indítható el, mert még nincsenek kérdések. Kérdés létrehozásához lépjen a «Kezelés» fülre.
+player_msg_no_start_3#:#Ez a LiveVoting nem indítható el, mivel offline állapotban van, és még nincsenek kérdések. Kérdés létrehozásához lépjen a „Kezelés” fülre.
 player_player_countdown#:#Visszaszámlálás
 player_reset#:#MISSING player_reset
 player_seconds#:#mp
