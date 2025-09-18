@@ -78,4 +78,11 @@ class LiveVotingUtils
             }
         }, $a_str);
     }
+
+    public static function _solveKeyBracketsBug(string $text): string
+    {
+        $text1 = str_replace("{", "&#123;", $text);
+
+        return str_replace("}", "&#125;", $text1);
+    }
 }

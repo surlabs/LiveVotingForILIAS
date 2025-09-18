@@ -25,6 +25,7 @@ use ILIAS\UI\Component\Input\Container\Form\FormInput;
 use ILIAS\UI\Implementation\Component\Input\Field\Renderer as RendererILIAS;
 use ILIAS\UI\Implementation\Render\Template;
 use ilTemplate;
+use LiveVoting\Utils\LiveVotingUtils;
 
 /**
  * Class Renderer
@@ -128,7 +129,7 @@ class Renderer extends RendererILIAS
             $value = $escape($value);
         }
         if (isset($value) && $value != '') {
-            $tpl->setVariable("VALUE", $value);
+            $tpl->setVariable("VALUE", LiveVotingUtils::_solveKeyBracketsBug($value));
         }
     }
 

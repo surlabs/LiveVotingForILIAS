@@ -39,6 +39,7 @@ use ilTextAreaInputGUI;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
 use LiveVoting\questions\LiveVotingQuestionOption;
+use LiveVoting\Utils\LiveVotingUtils;
 
 /**
  * Class LiveVotingFreeInputUI
@@ -101,7 +102,7 @@ class LiveVotingFreeInputUI
 
             $form_questions["question"] = $this->factory->input()->field()->textarea(
                 $this->plugin->txt('voting_question'))
-                ->withValue(isset($this->question) ? ilRTE::_replaceMediaObjectImageSrc($this->question->getQuestion(), 1) : "")
+                ->withValue(isset($this->question) ? ilRTE::_replaceMediaObjectImageSrc(LiveVotingUtils::_solveKeyBracketsBug($this->question->getQuestion()), 1) : "")
                 ->withRequired(true);
 
 
