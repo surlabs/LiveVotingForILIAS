@@ -785,34 +785,12 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     private function getDuplicateToAnotherObjectSelectTree(LiveVotingQuestion $question): string
     {
-        $liveVotings = [
-            [
-                "ref_id" => $this->tree->getRootId(),
-                "title" => "LiveVotings",
-                "livevoting" => false
-            ]
-        ];
+        $treeData = $this->buildOptimizedTreeStructure();
 
         $recursion = new class () implements \ILIAS\UI\Component\Tree\TreeRecursion {
             public function getChildren($record, $environment = null): array
             {
-                global $DIC;
-
-                $childs = $DIC->repositoryTree()->getChilds($record["ref_id"]);
-
-                $result = [];
-
-                foreach ($childs as $child) {
-                    if (($child["type"] == ilLiveVotingPlugin::PLUGIN_ID || count($DIC->repositoryTree()->getChilds((int) $child["ref_id"])) > 0) && $child["type"] != "adm") {
-                        $result[] = [
-                            "ref_id" => (int) $child["ref_id"],
-                            "title" => $child["title"],
-                            "livevoting" => $child["type"] == ilLiveVotingPlugin::PLUGIN_ID
-                        ];
-                    }
-                }
-
-                return $result;
+                return $record['children'] ?? [];
             }
 
             public function build(
@@ -822,7 +800,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             ): \ILIAS\UI\Component\Tree\Node\Node {
                 $node = $factory->simple($record['title']);
 
-                if ($record['livevoting']) {
+                if ($record['livevoting'] && $record['ref_id'] != $environment['current_ref_id']) {
                     $uri = new \ILIAS\Data\URI($environment['url'] . "&to_ref_id=" . $record['ref_id']);
                     $node = $node->withLink($uri);
                 }
@@ -832,11 +810,142 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         };
 
         $this->ctrl->setParameter($this, "question_id", $question->getId());
-        $tree = $this->factory->tree()->expandable("LiveVotings", $recursion)->withData($liveVotings)->withHighlightOnNodeClick(true)->withEnvironment(array(
-            "url" => ILIAS_HTTP_PATH . "/" . $this->ctrl->getLinkTarget($this, "duplicateQuestionToAnotherObject")
-        ));
+        $tree = $this->factory->tree()->expandable("LiveVotings", $recursion)
+            ->withData($treeData)
+            ->withHighlightOnNodeClick(true)
+            ->withEnvironment([
+                "url" => ILIAS_HTTP_PATH . "/" . $this->ctrl->getLinkTarget($this, "duplicateQuestionToAnotherObject"),
+                "current_ref_id" => $this->getRefId()
+            ]);
 
         return $this->renderer->render($tree);
+    }
+
+    private function buildOptimizedTreeStructure(): array
+    {
+        global $DIC;
+
+        $db = $DIC->database();
+        $tree = $DIC->repositoryTree();
+
+        $query = "
+        SELECT DISTINCT od.obj_id, od.title, tr.ref_id
+        FROM object_data od
+        JOIN object_reference tr ON od.obj_id = tr.obj_id
+        WHERE od.type = %s 
+        AND tr.deleted IS NULL
+        ORDER BY od.title
+    ";
+
+        $result = $db->queryF($query, ['text'], [ilLiveVotingPlugin::PLUGIN_ID]);
+
+        $liveVotingRefs = [];
+        while ($row = $db->fetchAssoc($result)) {
+            $liveVotingRefs[] = (int)$row['ref_id'];
+        }
+
+        if (empty($liveVotingRefs)) {
+            return [
+                [
+                    "ref_id" => $tree->getRootId(),
+                    "title" => "No LiveVotings found",
+                    "livevoting" => false,
+                    "children" => []
+                ]
+            ];
+        }
+
+        $relevantNodes = $this->getRelevantNodesFromPaths($liveVotingRefs);
+
+        return $this->buildHierarchicalStructure($relevantNodes, $tree->getRootId());
+    }
+
+    private function getRelevantNodesFromPaths(array $liveVotingRefs): array
+    {
+        global $DIC;
+
+        $tree = $DIC->repositoryTree();
+        $relevantNodeRefs = [];
+
+        foreach ($liveVotingRefs as $lvRefId) {
+            $pathFull = $tree->getPathFull($lvRefId);
+            foreach ($pathFull as $pathNode) {
+                $relevantNodeRefs[] = (int)$pathNode['ref_id'];
+            }
+        }
+
+        $relevantNodeRefs = array_unique($relevantNodeRefs);
+
+        if (empty($relevantNodeRefs)) {
+            return [];
+        }
+
+        $db = $DIC->database();
+        $inClause = $db->in('t.child', $relevantNodeRefs, false, 'integer');
+
+        $query = "
+        SELECT od.obj_id, od.title, od.type, t.child as ref_id, t.parent
+        FROM object_data od
+        JOIN object_reference r ON od.obj_id = r.obj_id
+        JOIN tree t ON r.ref_id = t.child
+        WHERE $inClause
+        AND r.deleted IS NULL
+        ORDER BY od.title
+    ";
+
+        $result = $db->query($query);
+
+        $nodes = [];
+        while ($row = $db->fetchAssoc($result)) {
+            $refId = (int)$row['ref_id'];
+            $nodes[$refId] = [
+                'ref_id' => $refId,
+                'obj_id' => (int)$row['obj_id'],
+                'title' => $row['title'],
+                'type' => $row['type'],
+                'parent' => (int)$row['parent'],
+                'livevoting' => $row['type'] === ilLiveVotingPlugin::PLUGIN_ID,
+                'children' => []
+            ];
+        }
+
+        return $nodes;
+    }
+
+    private function buildHierarchicalStructure(array $nodes, int $parentRefId): array
+    {
+        $children = [];
+
+        foreach ($nodes as $node) {
+            if ($node['parent'] == $parentRefId) {
+                $nodeData = [
+                    'ref_id' => $node['ref_id'],
+                    'title' => $node['title'],
+                    'livevoting' => $node['livevoting'],
+                    'children' => $this->buildHierarchicalStructure($nodes, $node['ref_id'])
+                ];
+
+                $children[] = $nodeData;
+            }
+        }
+
+        if ($parentRefId == 0 || empty($children)) {
+            global $DIC;
+            $rootId = $DIC->repositoryTree()->getRootId();
+
+            if ($parentRefId == 0) {
+                return [
+                    [
+                        'ref_id' => $rootId,
+                        'title' => 'Repository',
+                        'livevoting' => false,
+                        'children' => $this->buildHierarchicalStructure($nodes, $rootId)
+                    ]
+                ];
+            }
+        }
+
+        return $children;
     }
 
     /**
