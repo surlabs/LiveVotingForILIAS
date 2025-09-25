@@ -825,3 +825,12 @@ if (!$db->tableColumnExists('rep_robj_xlvo_config_n', 'voting_style')) {
     ]);
 }
 ?>
+<#47>
+<?php
+global $DIC;
+$db = $DIC->database();
+
+if ($db->tableColumnExists("rep_robj_xlvo_option_n", "is_correct")) {
+    $db->manipulate("ALTER TABLE rep_robj_xlvo_option_n MODIFY COLUMN text VARCHAR(4000)");
+}
+?>
