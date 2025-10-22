@@ -101,6 +101,7 @@ li.ilToolbarTextonly button {
   padding-bottom: 3px;
   padding-top: 3px;
   display: flex;
+  align-items: flex-start;
 }
 .xlvo-option_letter {
   display: inline-block !important;
@@ -110,11 +111,15 @@ li.ilToolbarTextonly button {
   padding: 0px !important;
   width: 25px;
   margin-right: 10px;
+  flex-shrink: 0;
+  min-width: 30px;
+  text-align: center;
 }
 .xlvo-option_text {
   display: inline-block;
   font-size: 22px;
-  line-height: 21px;
+  flex-grow: 1;
+  line-height: 1.4;
 }
 .ilToolbar li.ilToolbarGroup .navbar-text {
   margin-right: 20px !important;
