@@ -155,7 +155,7 @@ class Renderer extends RendererILIAS
         $tpl->setVariable("LABEL", $component->getLabel());
         $tpl->setVariable("BYLINE", $component->getByline());
 
-        $this->applyValue($component, $tpl);
+        $this->applyValue($component, $tpl, fn($value) => str_replace('"', "\'", $value));
 
         return $this->wrapInFormContext($component, $tpl->get(), $id);
     }
@@ -177,7 +177,7 @@ class Renderer extends RendererILIAS
         $tpl->setVariable("LABEL", $component->getLabel());
         $tpl->setVariable("BYLINE", $component->getByline());
 
-        $this->applyValue($component, $tpl);
+        $this->applyValue($component, $tpl, fn($value) => str_replace('"', "\'", $value));
 
         return $this->wrapInFormContext($component, $tpl->get(), $id);
     }
