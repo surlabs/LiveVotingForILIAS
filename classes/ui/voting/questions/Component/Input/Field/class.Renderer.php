@@ -22,6 +22,7 @@ namespace Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVo
 
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Component\Input\Container\Form\FormInput;
+use ILIAS\UI\Implementation\Component\Input\Field as F;
 use ILIAS\UI\Implementation\Component\Input\Field\Renderer as RendererILIAS;
 use ILIAS\UI\Implementation\Render\Template;
 use ilTemplate;
@@ -55,6 +56,7 @@ class Renderer extends RendererILIAS
             $component instanceof MultipleOptions => $this->renderMultipleOptions($component),
             $component instanceof CorrectOrder => $this->renderCorrectOrder($component),
             $component instanceof MultipleCheck => $this->renderMultipleCheck($component),
+            $component instanceof TextArea => $this->renderTextarea($component),
             default => $this->default_renderer->render($component),
         };
     }
@@ -200,6 +202,38 @@ class Renderer extends RendererILIAS
         $tpl->setVariable("BYLINE", $component->getByline());
 
         $this->applyValue($component, $tpl, fn($value) => str_replace('"', "\'", $value));
+
+        return $this->wrapInFormContext($component, $tpl->get(), $id);
+    }
+
+    private function renderTextarea(TextArea $component): string
+    {
+        /** @var $component F\Textarea */
+        $component = $component->withAdditionalOnLoadCode(
+            static function ($id): string {
+                return "
+                    il.UI.Input.textarea.init('$id');
+                ";
+            }
+        );
+
+        $tpl = $this->getTemplateCustom("tpl.textarea.html", true, true);
+
+        if (0 < $component->getMaxLimit()) {
+            $tpl->setVariable('REMAINDER_TEXT', $this->txt('ui_chars_remaining'));
+            $tpl->setVariable('REMAINDER', $component->getMaxLimit() - strlen($component->getValue() ?? ''));
+            $tpl->setVariable('MAX_LIMIT', $component->getMaxLimit());
+        }
+
+        if (null !== $component->getMinLimit()) {
+            $tpl->setVariable('MIN_LIMIT', $component->getMinLimit());
+        }
+
+        $this->applyName($component, $tpl);
+        $this->applyValue($component, $tpl, $this->htmlEntities());
+        $this->maybeDisable($component, $tpl);
+
+        $id = $this->bindJSandApplyId($component, $tpl);
 
         return $this->wrapInFormContext($component, $tpl->get(), $id);
     }

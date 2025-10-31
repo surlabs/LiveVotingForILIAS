@@ -176,7 +176,7 @@ class liveVotingTableGUI extends ilTable2GUI
         //$question = strip_tags("QUESTION TEST");
 
         //$question = $this->shorten($question);
-        $this->tpl->setVariable('QUESTION', strip_tags($this->shorten($question->getQuestion())));
+        $this->tpl->setVariable('QUESTION', strip_tags($this->shorten($question->getQuestion(true))));
         $this->tpl->setVariable('TYPE', $this->txt('voting_type_' . $a_set['voting_type']));
 
         $voting_status = $this->getVotingStatus("STATUS");
