@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace LiveVoting\UI;
 
+use Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\CustomFactory;
 use Exception;
 use ilCtrlInterface;
 use ilException;
@@ -65,6 +66,7 @@ class LiveVotingRangeUI
     protected ilPlugin $plugin;
     protected renderer $renderer;
     protected $request;
+    private CustomFactory $customFactory;
 
     /**
      * @throws LiveVotingException
@@ -78,6 +80,7 @@ class LiveVotingRangeUI
         $this->request = $DIC->http()->request();
         $this->factory = $DIC->ui()->factory();
         $this->renderer = $DIC->ui()->renderer();
+        $this->customFactory = new CustomFactory();
 
         if ($question_id) {
             $this->question = LiveVotingQuestion::loadQuestionById($question_id);
@@ -98,7 +101,7 @@ class LiveVotingRangeUI
                 ->withValue(isset($this->question) ? $this->question->getTitle() : "")
                 ->withRequired(true);
 
-            $form_questions["question"] = $this->factory->input()->field()->textarea(
+            $form_questions["question"] = $this->customFactory->textArea(
                 $this->plugin->txt('voting_question'))
                 ->withValue(isset($this->question) ? $this->question->getQuestion(true) : "")
                 ->withRequired(true);

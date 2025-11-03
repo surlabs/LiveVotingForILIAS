@@ -101,7 +101,7 @@ class LiveVotingPrioritiesUI
                 ->withValue(isset($this->question) ? $this->question->getTitle() : "")
                 ->withRequired(true);
 
-            $form_questions["question"] = $this->factory->input()->field()->textarea(
+            $form_questions["question"] = $this->customFactory->textArea(
                 $this->plugin->txt('voting_question'))
                 ->withValue(isset($this->question) ? $this->question->getQuestion(true) : "")
                 ->withRequired(true);
