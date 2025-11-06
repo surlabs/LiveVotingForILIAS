@@ -288,7 +288,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
 
         while (count($clone) > 0) {
             $key = array_rand($clone);
-            $shuffledArray[] = &$clone[$key];
+            $shuffledArray[$key] = &$clone[$key];
             unset($clone[$key]);
         }
 
