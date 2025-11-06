@@ -22,11 +22,14 @@ declare(strict_types=1);
 namespace Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\Input\Field;
 
 use Closure;
+use Generator;
 use ILIAS\Data\Factory;
+use ILIAS\Data\Result;
 use ILIAS\Refinery\Constraint;
 use ILIAS\UI\Component\Input\Field\Textarea as TextareaIlias;
 use ILIAS\UI\Component\Signal;
 use ILIAS\UI\Implementation\Component\Input\Input;
+use ILIAS\UI\Implementation\Component\Input\InputData;
 use ILIAS\UI\Implementation\Component\JavaScriptBindable;
 use ILIAS\UI\Implementation\Component\Triggerer;
 
@@ -57,6 +60,24 @@ class TextArea extends Input implements TextareaIlias
         $this->byline = $byline;
 
         parent::__construct(new Factory(), $DIC->refinery());
+    }
+
+    public function withInput(InputData $input): self
+    {
+        if (!$this->isDisabled()) {
+            return parent::withInput($input);
+        } else {
+            $clone = $this;
+            $clone->content = $this->applyOperationsTo($clone->getValue());
+            if ($clone->content->isError()) {
+                $error = $clone->content->error();
+                if ($error instanceof \Exception) {
+                    $error = $error->getMessage();
+                }
+                return $clone->withError("" . $error);
+            }
+            return $clone;
+        }
     }
 
     public function getLabel(): string
@@ -200,6 +221,27 @@ class TextArea extends Input implements TextareaIlias
             return $this->refinery->string()->hasMinLength($this->min_limit);
         }
         return $this->refinery->string()->hasMinLength(1);
+    }
+
+    protected function applyOperationsTo($res): Result
+    {
+        if ($res === null && !$this->isRequired()) {
+            return $this->data_factory->ok($res);
+        }
+
+        return parent::applyOperationsTo($res);
+    }
+
+    protected function getOperations(): Generator
+    {
+        if ($this->isRequired()) {
+            $op = $this->getConstraintForRequirement();
+            if ($op !== null) {
+                yield $op;
+            }
+        }
+
+        yield from parent::getOperations();
     }
 
     public function isLimited(): bool
