@@ -630,7 +630,8 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                             $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_updated')));
                             $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form));
                         } else {
-                            $this->tpl->setContent($DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+                            $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
+                            $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
                         }
 
                     } else {

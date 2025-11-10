@@ -242,15 +242,8 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         //shuffle array items (can't use the PHP shuffle function because the keys are not preserved.)
         $optionsClone = $this->shuffleArray($options);
 
-        foreach ($optionsClone as $key => $option) {
-            $option->setPosition($key + 1);
-        }
-
         $lastCorrectPosition = 0;
 
-        /**
-         * @var LiveVotingQuestionOption $option
-         */
         foreach ($optionsClone as $option) {
             //get correct item position
             $currentCurrentPosition = $option->getCorrectPosition();
