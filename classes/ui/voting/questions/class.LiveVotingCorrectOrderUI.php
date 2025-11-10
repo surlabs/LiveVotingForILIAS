@@ -36,6 +36,7 @@ use ilPlugin;
 use ilPropertyFormGUI;
 use ilRTE;
 use ilTextAreaInputGUI;
+use InvalidArgumentException;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
 use LiveVoting\questions\LiveVotingQuestionOption;
@@ -125,6 +126,12 @@ class LiveVotingCorrectOrderUI
 
             if (isset($this->question)) {
                 $options = $this->question->getOptions();
+
+                if ($this->question->isRandomiseOptionSequence()) {
+                    usort($options, function($a, $b) {
+                        return $a->getCorrectPosition() - $b->getCorrectPosition();
+                    });
+                }
             }
 
             $form_answers["hidden"] = $this->customFactory->correctOrder($this->plugin->txt('qtype_1_options'))->withOnLoadCode(function ($id) {
@@ -315,9 +322,8 @@ class LiveVotingCorrectOrderUI
                     }
                 }
 
-                foreach ($old_options as $index => $option) {
-                    $option->setPosition($index + 1);
-                    $option->save();
+                if ($question->isRandomiseOptionSequence()) {
+                    $old_options = $this->randomiseOptionPosition($old_options);
                 }
 
                 $question->setOptions($old_options);
@@ -332,5 +338,50 @@ class LiveVotingCorrectOrderUI
         } else {
             return 0;
         }
+    }
+
+    public function randomiseOptionPosition(array $options): array
+    {
+        if (count($options) < 2) {
+            return $options;
+        }
+
+        $optionsLength = count($options);
+        foreach ($options as $option) {
+            $newPosition = rand(1, $optionsLength);
+            $previousOption = $this->findOptionByPosition($options, $newPosition);
+            $previousOption->setPosition($option->getPosition());
+            $option->setPosition($newPosition);
+        }
+
+        if ($this->isNotCorrectlyOrdered($options)) {
+            return $options;
+        }
+
+        //we got the right result reshuffle
+        return $this->randomiseOptionPosition($options);
+    }
+
+    private function findOptionByPosition(array &$options, int $position): LiveVotingQuestionOption
+    {
+        foreach ($options as $option) {
+            if ($option->getPosition() === $position) {
+                return $option;
+            }
+        }
+
+        throw new InvalidArgumentException("Supplied position \"$position\" can't be found within the given options.");
+    }
+
+    private function isNotCorrectlyOrdered(array &$options): bool
+    {
+        $incorrectOrder = 0;
+        foreach ($options as $option) {
+            if (strcmp(strval($option->getCorrectPosition()), strval($option->getPosition())) !== 0) {
+                $incorrectOrder++;
+            }
+        }
+
+        return $incorrectOrder > 0;
     }
 }

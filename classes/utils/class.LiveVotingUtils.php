@@ -23,6 +23,7 @@ namespace LiveVoting\Utils;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use LiveVoting\questions\LiveVotingQuestionOption;
 
 /**
  *  Class LiveVotingUtils
