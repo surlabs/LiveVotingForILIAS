@@ -27,11 +27,12 @@ const xlvoForms = {
         if (Array.isArray(this.inputs) && this.inputs.length > 0) {
             jsonString = JSON.stringify(this.inputs);
         }
+        
         $(this.hiddenId).val(jsonString);
     },
 
     initMultipleInputs: function (id) {
-        this.inputSelector = "#" + id;
+        this.inputSelector = "#" + id + " .baseInput";
         this.hiddenId = this.inputSelector;
         this.parent = $(this.inputSelector).parent();
 
@@ -66,7 +67,7 @@ const xlvoForms = {
         newInput.attr('id', newId);
         newInput.attr('name', (originalInput.attr('name') || baseId) + '_' + index);
         newInput.val('');
-        newInput.addClass("option-input form-control");
+        newInput.addClass("option-input form-control").removeClass("baseInput");
         newInput.removeAttr('required');
         newInput.css('display', '');
 
@@ -139,7 +140,7 @@ const xlvoForms = {
     },
 
     initCorrectOrder: function (id, number_input_label = "Order", text_input_label = "Text") {
-        this.inputSelector = "#" + id;
+        this.inputSelector = "#" + id + " .baseInput";
         this.hiddenId = this.inputSelector;
         this.parent = $(this.inputSelector).parent();
 
@@ -179,7 +180,7 @@ const xlvoForms = {
         newInputHtml.attr('name', (originalInput.attr('name') || baseId) + '_text_' + index);
         newInputHtml.val('');
         newInputHtml.removeAttr('value');
-        newInputHtml.addClass("option-input form-control");
+        newInputHtml.addClass("option-input form-control").removeClass("baseInput");
         newInputHtml.removeAttr('required');
         newInputHtml.css('display', '');
 
@@ -265,7 +266,7 @@ const xlvoForms = {
 
     initMultipleInputsCM: function (id, correct_label = "Correct") {
 
-        this.inputSelector = "#" + id;
+        this.inputSelector = "#" + id + " .baseInput";
         this.hiddenId = this.inputSelector;
         this.parent = $(this.inputSelector).parent();
 
@@ -312,7 +313,7 @@ const xlvoForms = {
         newInputHtml.attr('id', newTextId);
         newInputHtml.attr('name', (originalInput.attr('name') || baseId) + '_text_' + index);
         newInputHtml.val('');
-        newInputHtml.addClass("option-input form-control");
+        newInputHtml.addClass("option-input form-control").removeClass("baseInput");
         newInputHtml.removeAttr('required');
         newInputHtml.css('display', '');
 

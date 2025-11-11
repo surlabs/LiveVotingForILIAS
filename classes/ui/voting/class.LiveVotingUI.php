@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace LiveVoting\UI;
 
-use ilAdvancedSelectionListGUI;
 use ilButtonToSplitButtonMenuItemAdapter;
 use ilCtrlException;
 use ilException;
@@ -37,7 +36,7 @@ use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
 use JsonException;
-use LiveVoting\legacy\LiveVotingQRModalGUI;
+use LiveVoting\objects\modes\LiveVotingMode;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\UI\QuestionsResults\LiveVotingInputFreeTextUI;
 use LiveVoting\Utils\LiveVotingJs;
@@ -46,7 +45,6 @@ use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingVoter;
 use stdClass;
-use LiveVoting\objects\modes\LiveVotingMode;
 
 /**
  * Class LiveVotingUI
@@ -134,8 +132,7 @@ class LiveVotingUI
             $DIC->toolbar()->addButtonInstance($b);
 
 
-            $current_selection_list = $this->getQuestionSelectionList(false);
-            $DIC->toolbar()->addText($current_selection_list->getHTML());
+            $DIC->toolbar()->addText($this->getQuestionSelectionList());
 
             $b2 = ilLinkButton::getInstance();
             $b2->setCaption($this->pl->txt('player_start_voting_and_unfreeze'), false);
@@ -154,7 +151,7 @@ class LiveVotingUI
         }
 
         $template = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl." . $this->liveVoting->getMode()->getStartTemplate() . ".html", true, true);
-        $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/default/default.css');
+        $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/default.css');
 
 
         $template->setVariable('PIN', $this->liveVoting->getPin());
@@ -169,8 +166,11 @@ class LiveVotingUI
 
         $template->setVariable('SHORTLINK', $this->liveVoting->getShortLink($param_manager->getRefId()));
 
-        $template->setVariable('MODAL', LiveVotingQRModalGUI::getInstanceFromLiveVoting($this->liveVoting)->getHTML());
+        $modal = new LiveVotingQRModal($this->liveVoting);
+
+        $template->setVariable('MODAL', $modal->getHTML());
         $template->setVariable("ZOOM_TEXT", $this->pl->txt("start_zoom"));
+        $template->setVariable("MODAL_SIGNAL", $modal->getShowSignal());
 
         $js = LiveVotingJs::getInstance()->addSetting("base_url", $DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "", "", true))->name('Player')->init();
 
@@ -182,40 +182,6 @@ class LiveVotingUI
         $js->call('handleStartButton');
 
         return '<div>' . $template->get() . '</div>';
-    }
-
-    /**
-     * @throws ilCtrlException
-     */
-    protected function getQuestionSelectionList($async = true): ilAdvancedSelectionListGUI
-    {
-        global $DIC;
-
-        $current_selection_list = new ilAdvancedSelectionListGUI();
-        $current_selection_list->setItemLinkClass('xlvo-preview');
-        $current_selection_list->setListTitle($this->pl->txt('player_voting_list'));
-        $current_selection_list->setId('xlvo_select');
-        $current_selection_list->setTriggerEvent('xlvo_voting');
-        $current_selection_list->setUseImages(false);
-
-
-        foreach ($this->liveVoting->getQuestions() as $question) {
-            $id = $question->getId();
-            $title = $question->getTitle();
-
-            $DIC->ctrl()->setParameterByClass("ilObjLiveVotingGUI", "xlvo_voting", $id);
-
-            $target = $DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayer");
-            if ($async) {
-                $current_selection_list->addItem($title, (string)$id, $target, '', '', '', '', false, 'xlvoPlayer.open(' . $id . ')');
-            } else {
-                $current_selection_list->addItem($title, (string)$id, $target);
-            }
-        }
-
-        $DIC->ctrl()->clearParameterByClass("ilObjLiveVotingGUI", "xlvo_voting");
-
-        return $current_selection_list;
     }
 
     /**
@@ -258,8 +224,8 @@ class LiveVotingUI
             'voting_confirm_reset',
         ))->init()->setRunCode();
 
-        $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/css/player.css');
-        $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/css/bar.css');
+        $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/player.css');
+        $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/bar.css');
 
         LiveVotingInputFreeTextUI::addJsAndCss();
         /*xlvoCorrectOrderResultsGUI::addJsAndCss();
@@ -287,9 +253,9 @@ class LiveVotingUI
         }
 
         try {
-            $modal = LiveVotingQRModalGUI::getInstanceFromLiveVoting($this->liveVoting)->getHTML();
+            $modal = new LiveVotingQRModal($this->liveVoting);
 
-            $DIC->ui()->mainTemplate()->setContent($modal . $this->getPlayerHTML());
+            $DIC->ui()->mainTemplate()->setContent($modal->getHtml() . $this->getPlayerHTML());
 
             $this->initToolbarDuringVoting();
         } catch (JsonException|ilCtrlException|LiveVotingException|ilTemplateException|ilException $e) {
@@ -379,8 +345,8 @@ class LiveVotingUI
                 $nextBtn->setDisabled(true);
                 $DIC->toolbar()->addButtonInstance($nextBtn);
 
-                $current_selection_list = $this->getVotingSelectionList();
-                $DIC->toolbar()->addText($current_selection_list->getHTML());
+                $current_selection_list = $this->getQuestionSelectionList();
+                $DIC->toolbar()->addText($current_selection_list);
             }
 
             $DIC->toolbar()->addSeparator();
@@ -417,39 +383,31 @@ class LiveVotingUI
         }
     }
 
+
+
     /**
-     * @param bool $async
-     *
-     * @return ilAdvancedSelectionListGUI
      * @throws ilCtrlException
      */
-    protected function getVotingSelectionList(bool $async = true): ilAdvancedSelectionListGUI
+    protected function getQuestionSelectionList(): string
     {
         global $DIC;
-        $current_selection_list = new ilAdvancedSelectionListGUI();
-        $current_selection_list->setItemLinkClass('xlvo-preview');
-        $current_selection_list->setListTitle($this->pl->txt('player_voting_list'));
-        $current_selection_list->setId('xlvo_select');
-        $current_selection_list->setTriggerEvent('xlvo_voting');
-        $current_selection_list->setUseImages(false);
-        /**
-         * @var liveVoting[] $votings
-         */
-        foreach ($this->liveVoting->getQuestions() as $voting) {
-            $id = $voting->getId();
-            $t = $voting->getTitle();
-            $DIC->ctrl()->setParameterByClass(ilObjLiveVotingGUI::class, 'xlvo_voting', $id);
 
-            $target = $DIC->ctrl()->getLinkTarget(new ilObjLiveVotingGUI(), 'startPlayer');
+        $factory = $DIC->ui()->factory();
 
-            if ($async) {
-                $current_selection_list->addItem($t, (string)$id, $target, '', '', '', '', false, 'xlvoPlayer.open(' . $id . ')');
-            } else {
-                $current_selection_list->addItem($t, (string)$id, $target);
-            }
+        $items = array();
+
+        foreach ($this->liveVoting->getQuestions() as $question) {
+            $DIC->ctrl()->setParameterByClass("ilObjLiveVotingGUI", "xlvo_voting", $question->getId());
+
+            $items[] = $factory->button()->shy(
+                $question->getTitle(),
+                $DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayer")
+            );
         }
 
-        return $current_selection_list;
+        $DIC->ctrl()->clearParameterByClass("ilObjLiveVotingGUI", "xlvo_voting");
+
+        return $DIC->ui()->renderer()->render($factory->dropdown()->standard($items)->withLabel($this->pl->txt('player_voting_list')));
     }
 
     /**

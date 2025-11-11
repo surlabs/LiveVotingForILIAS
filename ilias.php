@@ -18,7 +18,8 @@ declare(strict_types=1);
  *
  */
 
-require_once __DIR__ . '/../../../../../../../libs/composer/vendor/autoload.php';
+
+require_once __DIR__ . '/../../../../../../../../vendor/composer/vendor/autoload.php';
 require_once "dir.php";
 
 use LiveVoting\platform\ilias\LiveVotingContext;
@@ -29,6 +30,7 @@ use LiveVoting\votings\LiveVotingParticipant;
 
 
 $context = LiveVotingContext::getContext();
+
 switch ($context) {
     case 1:
         LiveVotingInitialisationUI::init();

@@ -489,7 +489,6 @@ var xlvoPlayer = {
      */
     handleStartButton: function () {
         var btn = $(".xlvo-preview");
-        btn.disableSelection();
         btn.click(function (evt) {
             xlvoPlayer.clearTimeout();
             if (evt.shiftKey) {
@@ -593,3 +592,36 @@ var xlvoPlayer = {
         this.config.debug = false;
     },
 };
+
+setTimeout(function () {
+    let prevent_2_click = false;
+
+    $(document).on('click', '[modal-signal]', function () {
+        if (prevent_2_click) {
+            return;
+        }
+
+        prevent_2_click = true;
+
+        let il_signal = $(this).attr('modal-signal');
+
+        if (il_signal.length < 15) {
+            const signal_element = $('#' + il_signal);
+            if (signal_element.length > 0 && signal_element.attr('data-signal')) {
+                il_signal = signal_element.attr('data-signal');
+            }
+        }
+
+        $(this).trigger(il_signal,
+            {
+                'id' : il_signal, 'event' : 'click',
+                'triggerer' : $(this),
+                'options' : JSON.parse('[]')
+            }
+        );
+
+        setTimeout(function () {
+            prevent_2_click = false;
+        }, 500);
+    });
+}, 200);

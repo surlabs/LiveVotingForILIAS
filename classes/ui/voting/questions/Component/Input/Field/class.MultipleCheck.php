@@ -53,7 +53,6 @@ class MultipleCheck extends Input implements FormInput
 
         $this->label = $label;
         $this->byline = $byline;
-        $this->is_disabled = true;
 
         parent::__construct(new Factory(), $DIC->refinery());
     }

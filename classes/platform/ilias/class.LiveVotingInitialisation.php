@@ -82,10 +82,9 @@ class LiveVotingInitialisation extends ilInitialisation
      */
     protected function run(): void
     {
-        //		$this->setContext(self::CONTEXT_ILIAS);
         switch (self::getContext()) {
             case 2:
-                require_once 'include/inc.header.php';
+                ilInitialisation::initILIAS();
                 self::initHTML2();
                 break;
             case 1:
@@ -102,7 +101,7 @@ class LiveVotingInitialisation extends ilInitialisation
     public static function initILIAS2(): void
     {
         global $DIC;
-        require_once 'include/inc.ilias_version.php';
+//        require_once 'include/inc.ilias_version.php';
         self::initDependencyInjection();
         self::initCore();
         self::initClient();
@@ -174,27 +173,26 @@ class LiveVotingInitialisation extends ilInitialisation
             self::initHTML();
         }
 
-        $tpl = new ilGlobalTemplate("tpl.main.html", true, true, "Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting", "DEFAULT", true);
+        $tpl = new ilGlobalTemplate("tpl.main.html", true, true, "public/Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting", "DEFAULT", true);
 
         $tpl->touchBlock("navbar");
-        $tpl->addCss('./templates/default/delos.css');
-        $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/css/old_delos.css');
-        $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/default.css');
+        $tpl->addCss('assets/css/delos.css');
+        $tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/old_delos.css');
+        $tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/default.css');
 
         if (self::getLiveVotingStyle() == "new") {
-            $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/css/new_style.css');
+            $tpl->addCss('public/Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_style.css');
         }
 
         //$tpl->addCss('/templates/default/030-tools/legacy-bootstrap-mixins/_nav-divider.scss');
 
-        $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", "Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting");
+        $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", "public/Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting");
 
         $tpl->setVariable("BASE", LiveVotingConfig::getBaseVoteUrl());
 
         self::initGlobal("tpl", $tpl);
 
         iljQueryUtil::initjQuery();
-        ilUIFramework::init();
     }
 
     public static function initUIFramework(Container $c): void

@@ -26,7 +26,7 @@ use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingParticipant;
 
-require_once __DIR__ . '/../../../../../../../libs/composer/vendor/autoload.php';
+require_once __DIR__ . '/../../../../../../../../vendor/composer/vendor/autoload.php';
 require_once "dir.php";
 
 
@@ -44,11 +44,11 @@ try {
     global $DIC;
 
     $DIC->ctrl()->setTargetScript(LiveVotingConfig::getFullApiUrl());
-    
+
     if (!empty($pin)) {
         $live_voting = LiveVoting::getLiveVotingFromPin($pin);
         if ($live_voting && $live_voting->isAnonymous()) {
-            $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
+            $DIC->ctrl()->redirectByClass(["ilObjPluginDispatchGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
         } else if ($live_voting) {
             $base_url = parse_url(ILIAS_HTTP_PATH, PHP_URL_SCHEME) . "://" . parse_url(ILIAS_HTTP_PATH, PHP_URL_HOST);
 
@@ -64,10 +64,10 @@ try {
 
             $DIC->ctrl()->redirectToURL($non_anonymous_voting_link);
         } else {
-            $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'requestPin');
+            $DIC->ctrl()->redirectByClass(["ilObjPluginDispatchGUI", "LiveVotingPlayerGUI"], 'requestPin');
         }
     } else {
-        $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'requestPin');
+        $DIC->ctrl()->redirectByClass(["ilObjPluginDispatchGUI", "LiveVotingPlayerGUI"], 'requestPin');
     }
 } catch (Throwable $ex) {
     echo $ex->getMessage() . "<br /><br /><a href='/'>back</a>";

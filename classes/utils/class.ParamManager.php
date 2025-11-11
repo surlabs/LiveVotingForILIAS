@@ -23,7 +23,7 @@ namespace LiveVoting\Utils;
 use ilCtrlException;
 use ilObject;
 use ilSetting;
-use ilUIPluginRouterGUI;
+use ilObjPluginDispatchGUI;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\votings\LiveVoting;
 
@@ -158,7 +158,7 @@ final class ParamManager
 
         $this->ref_id = $ref_id;
 
-        $DIC->ctrl()->setParameterByClass(ilUIPluginRouterGUI::class, 'ref_id', $ref_id);
+        $DIC->ctrl()->setParameterByClass(ilObjPluginDispatchGUI::class, 'ref_id', $ref_id);
     }
 
 
@@ -180,7 +180,7 @@ final class ParamManager
         global $DIC;
         $this->pin = $pin;
 
-        $DIC->ctrl()->setParameterByClass(ilUIPluginRouterGUI::class, 'xlvo_pin', $pin);
+        $DIC->ctrl()->setParameterByClass(ilObjPluginDispatchGUI::class, 'xlvo_pin', $pin);
     }
 
 
@@ -202,7 +202,7 @@ final class ParamManager
         global $DIC;
 
         $this->puk = $puk;
-        $DIC->ctrl()->setParameterByClass(ilUIPluginRouterGUI::class, 'xlvo_puk', $puk);
+        $DIC->ctrl()->setParameterByClass(ilObjPluginDispatchGUI::class, 'xlvo_puk', $puk);
     }
 
 
@@ -224,7 +224,7 @@ final class ParamManager
         global $DIC;
         $this->voting = $voting;
 
-        $DIC->ctrl()->setParameterByClass(ilUIPluginRouterGUI::class, 'xlvo_voting', $voting);
+        $DIC->ctrl()->setParameterByClass(ilObjPluginDispatchGUI::class, 'xlvo_voting', $voting);
     }
 
 
@@ -246,7 +246,7 @@ final class ParamManager
         global $DIC;
         $this->ppt = $ppt;
 
-        $DIC->ctrl()->setParameterByClass(ilUIPluginRouterGUI::class, 'xlvo_ppt', $ppt);
+        $DIC->ctrl()->setParameterByClass(ilObjPluginDispatchGUI::class, 'xlvo_ppt', $ppt);
     }
 
 }

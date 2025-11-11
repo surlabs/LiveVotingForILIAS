@@ -29,11 +29,9 @@ use ilLiveVotingPlugin;
 use ilObjLiveVotingGUI;
 use ilSelectInputGUI;
 use ilSubmitButton;
-use LiveVoting\legacy\LiveVotingResultsTableGUI;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingRound;
-use LiveVoting\votings\LiveVotingVote;
 
 /**
  * Class LiveVotingResultsUI
@@ -74,13 +72,9 @@ class LiveVotingResultsUI
      */
     public function showResults(ilObjLiveVotingGUI $parent): string
     {
-        global $DIC;
-
         $this->buildToolbar();
 
         $liveVotingTableGUI = new LiveVotingResultsTableGUI($parent, 'results');
-        $this->buildFilters($liveVotingTableGUI, $this->round->getId(), $this->liveVoting->getQuestions());
-        $liveVotingTableGUI->initFilter();
         $liveVotingTableGUI->buildData($this->liveVoting->getId(), $this->round->getId());
 
         return $liveVotingTableGUI->getHTML();
@@ -120,65 +114,6 @@ class LiveVotingResultsUI
             $button->setCommand("changeRound");
             $DIC->toolbar()->addButtonInstance($button);
         }
-    }
-
-    /**
-     * @param LiveVotingResultsTableGUI $table
-     * @param int $round_id
-     * @param array $question_list
-     *
-     * @throws LiveVotingException
-     * @throws ilCtrlException
-     * @throws Exception
-     */
-    public static function buildFilters(LiveVotingResultsTableGUI &$table, int $round_id, array $question_list): void
-    {
-        global $DIC;
-
-        $plugin = ilLiveVotingPlugin::getInstance();
-        $filter = new ilSelectInputGUI($plugin->txt("common_participant"), "participant");
-
-        $votes = LiveVotingVote::getVotesForRound($round_id);
-        $options = array(0 => $plugin->txt("common_all"));
-        foreach ($votes as $vote) {
-            $options[$vote->getUserIdentifier() ?? $vote->getUserId()] = $vote->getParticipantName($table->getPlayerId());
-        }
-        $filter->setOptions($options);
-        $table->addFilterItem($filter);
-        $filter->readFromSession();
-
-        $titles = array(
-            0 => $plugin->txt("common_all")
-        );
-        $questions = array(
-            0 => $plugin->txt("common_all")
-        );
-        $closure = self::getShortener();
-
-        foreach ($question_list as $question) {
-            $titles[$question->getId()] = $question->getTitle();
-            $questions[$question->getId()] = $question->getQuestion();
-        }
-
-        // Title
-        $filter = new ilSelectInputGUI($plugin->txt("voting_title"), "voting_title");
-        array_walk($titles, $closure);
-        $filter->setOptions($titles);
-        $table->addFilterItem($filter);
-        $filter->readFromSession();
-
-        // Question
-        $filter = new ilSelectInputGUI($plugin->txt("common_question"), "voting");
-        array_walk($questions, $closure);
-        $filter->setOptions($questions);
-        $table->addFilterItem($filter);
-        $filter->readFromSession();
-
-        // Set post var round_id
-        $DIC->ctrl()->setParameterByClass("ilObjLiveVotingGUI", "round_id", $round_id);
-
-        // Read values
-        $table->setFormAction($DIC->ctrl()->getFormActionByClass("ilObjLiveVotingGUI", "applyFilter"));
     }
 
     public static function getShortener($length = 40): Closure

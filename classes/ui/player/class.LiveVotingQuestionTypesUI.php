@@ -243,6 +243,6 @@ abstract class LiveVotingQuestionTypesUI
     protected function startVoterPlayer()
     {
         global $DIC;
-        $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
+        $DIC->ctrl()->redirectByClass(["ilObjPluginDispatchGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
     }
 }

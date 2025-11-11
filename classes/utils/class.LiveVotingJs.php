@@ -158,7 +158,7 @@ final class LiveVotingJs
         global $DIC;
 
         if ($external) {
-            $DIC->ui()->mainTemplate()->addJavascript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/libs/' . $name_of_lib);
+            $DIC->ui()->mainTemplate()->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/libs/' . $name_of_lib);
         } else {
             $DIC->ui()->mainTemplate()->addJavaScript($name_of_lib);
         }

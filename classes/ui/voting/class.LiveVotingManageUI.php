@@ -28,9 +28,8 @@ use ILIAS\UI\Renderer;
 use ilLiveVotingPlugin;
 use ilObjLiveVotingGUI;
 use ilPlugin;
-use LiveVoting\legacy\liveVotingTableGUI;
-use LiveVoting\platform\LiveVotingException;
 use LiveVoting\objects\modes\LiveVotingMode;
+use LiveVoting\platform\LiveVotingException;
 
 /**
  * Class LiveVotingManageUI

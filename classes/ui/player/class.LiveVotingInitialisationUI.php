@@ -24,6 +24,7 @@ use ilAccess;
 use ilAppEventHandler;
 use ilCtrlException;
 use ilDatabaseException;
+use ilDBConstants;
 use ilDBWrapperFactory;
 use ilErrorHandling;
 use ilGlobalTemplate;
@@ -224,7 +225,7 @@ class LiveVotingInitialisationUI
         $ilias = new LiveVotingILIAS();
         $this->makeGlobal("ilias", $ilias);
 
-        $tpl = new ilGlobalTemplate("tpl.main.html", true, true, "Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting", "DEFAULT", true);
+        $tpl = new ilGlobalTemplate("tpl.main.html", true, true, "public/Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting", "DEFAULT", true);
 
         $param_manager = ParamManager::getInstance();
 
@@ -232,24 +233,23 @@ class LiveVotingInitialisationUI
             $tpl->touchBlock("navbar");
         }
 
-        $tpl->addCss('./templates/default/delos.css');
-        $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/css/old_delos.css');
-        $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/default.css');
+        $tpl->addCss('assets/css/delos.css');
+        $tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/old_delos.css');
+        $tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/default.css');
 
         if (self::getLiveVotingStyle() == "new") {
-            $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/css/new_style.css');
+            $tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_style.css');
         }
 
         //$tpl->addCss('/templates/default/030-tools/legacy-bootstrap-mixins/_nav-divider.scss');
 
-        $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", "Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting");
+        $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", "public/Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting");
 
         $tpl->setVariable("BASE", LiveVotingConfig::getBaseVoteUrl());
 
         $this->makeGlobal("tpl", $tpl);
 
         iljQueryUtil::initjQuery();
-        ilUIFramework::init();
 
         $ilToolbar = new ilToolbarGUI();
 
@@ -272,14 +272,18 @@ class LiveVotingInitialisationUI
 
     private function loadIniFile()
     {
-        $this->iliasIniFile = new ilIniFile("./ilias.ini.php");
+        $this->iliasIniFile = new ilIniFile("../scripts/ilias.ini.php");
         $this->iliasIniFile->read();
 
         $this->makeGlobal('ilIliasIniFile', $this->iliasIniFile);
 
         //Initialize constants
         define("ILIAS_DATA_DIR", $this->iliasIniFile->readVariable("clients", "datadir"));
-        define("ILIAS_WEB_DIR", $this->iliasIniFile->readVariable("clients", "path"));
+
+        $from_ilias_ini = $this->iliasIniFile->readVariable("clients", "path");
+        $from_ilias_ini = str_replace('public/', '', $from_ilias_ini);
+        define("ILIAS_WEB_DIR", $from_ilias_ini);
+
         define("ILIAS_ABSOLUTE_PATH", $this->iliasIniFile->readVariable("server", "absolute_path"));
 
         //loggin
@@ -334,7 +338,7 @@ class LiveVotingInitialisationUI
 
     private function loadClientIniFile(): void
     {
-        $ini_file = "./" . ILIAS_WEB_DIR . "/" . CLIENT_ID . "/client.ini.php";
+        $ini_file = "./data/" . CLIENT_ID . "/client.ini.php";
 
         // get settings from ini file
         $ilClientIniFile = new ilIniFile($ini_file);
@@ -373,7 +377,7 @@ class LiveVotingInitialisationUI
 
         $val = $ilClientIniFile->readVariable("db", "type");
         if ($val == "") {
-            define("IL_DB_TYPE", "mysql");
+            define("IL_DB_TYPE", ilDBConstants::TYPE_INNODB);
         } else {
             define("IL_DB_TYPE", $val);
         }
@@ -452,7 +456,7 @@ class LiveVotingInitialisationUI
 
     private function requireCommonIncludes(): void
     {
-        require_once 'include/inc.ilias_version.php';
+        require_once("../ilias_version.php");
 
         //$this->makeGlobal("ilBench", new ilBenchmark());
     }
@@ -860,9 +864,8 @@ class LiveVotingInitialisationUI
                 htmlentities(str_replace([" ", ".", "-"], "_", ILIAS_VERSION_NUMERIC))
             );
         };
-        $c->globalScreen()->tool()->context()->stack()->clear();
-        $c->globalScreen()->tool()->context()->claim()->main();
-
+//        $c->globalScreen()->tool()->context()->stack()->clear();
+//        $c->globalScreen()->tool()->context()->claim()->main();
     }
 
     /**

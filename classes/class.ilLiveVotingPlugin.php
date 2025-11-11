@@ -59,4 +59,9 @@ class ilLiveVotingPlugin extends ilRepositoryObjectPlugin
     {
         return true;
     }
+
+    public static function _getIcon(string $a_type): string
+    {
+        return "/Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/images/icon_xlvo.svg";
+    }
 }

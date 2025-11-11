@@ -26,6 +26,7 @@ use ILIAS\UI\Implementation\Component\Input\Field as F;
 use ILIAS\UI\Implementation\Component\Input\Field\Renderer as RendererILIAS;
 use ILIAS\UI\Implementation\Render\Template;
 use ilTemplate;
+use ilTemplateException;
 use LiveVoting\Utils\LiveVotingUtils;
 
 /**
@@ -35,13 +36,9 @@ class Renderer extends RendererILIAS
 {
     private \ILIAS\UI\Renderer $default_renderer;
 
-    protected function getComponentInterfaceName(): array
-    {
-        return [
-            MultipleOptions::class, CorrectOrder::class, MultipleCheck::class
-        ];
-    }
-
+    /**
+     * @throws ilTemplateException
+     */
     public function render(Component $component, ?\ILIAS\UI\Renderer $default_renderer = null): string
     {
         global $DIC;
@@ -61,43 +58,66 @@ class Renderer extends RendererILIAS
         };
     }
 
+    /**
+     * @throws ilTemplateException
+     */
     protected function wrapInFormContext(
         FormInput $component,
-        string    $input_html,
-        string    $id_pointing_to_input = '',
-        string    $dependant_group_html = '',
-        bool      $bind_label_with_for = true
-    ): string
-    {
-        $tpl = new ilTemplate("src/UI/templates/default/Input/tpl.context_form.html", true, true);
+        string $label,
+        string $input_html,
+        ?string $id_for_label = null,
+        ?string $dependant_group_html = null
+    ): string {
+        $tpl = new ilTemplate("Input/tpl.context_form.html", true, true, 'components/ILIAS/UI/src');
 
+        $tpl->setVariable("LABEL", $label);
         $tpl->setVariable("INPUT", $input_html);
+        $tpl->setVariable("UI_COMPONENT_NAME", $this->getComponentCanonicalNameAttribute($component));
+        $tpl->setVariable("INPUT_NAME", $component->getName());
 
-        if ($id_pointing_to_input && $bind_label_with_for) {
-            $tpl->setCurrentBlock('for');
-            $tpl->setVariable("ID", $id_pointing_to_input);
-            $tpl->parseCurrentBlock();
+        if ($component->getOnLoadCode() !== null) {
+            $binding_id = $this->bindJavaScript($component) ?? $this->createId();
+            $tpl->setVariable("BINDING_ID", $binding_id);
         }
 
-        $label = $component->getLabel();
-        $tpl->setVariable("LABEL", $label);
+        if ($id_for_label) {
+            $tpl->setCurrentBlock('for');
+            $tpl->setVariable("ID", $id_for_label);
+            $tpl->parseCurrentBlock();
+        } else {
+            $tpl->touchBlock('tabindex');
+        }
 
         $byline = $component->getByline();
         if ($byline) {
             $tpl->setVariable("BYLINE", $byline);
         }
 
-        if ($component->isRequired()) {
-            $tpl->touchBlock("required");
+        $required = $component->isRequired();
+        if ($required) {
+            $tpl->setCurrentBlock('required');
+            $tpl->setVariable("REQUIRED_ARIA", $this->txt('required_field'));
+            $tpl->parseCurrentBlock();
+        }
+
+        if ($component->isDisabled()) {
+            $tpl->touchBlock("disabled");
         }
 
         $error = $component->getError();
         if ($error) {
+            $error_id = $this->createId();
+            $tpl->setVariable("ERROR_LABEL", $this->txt("ui_error"));
+            $tpl->setVariable("ERROR_ID", $error_id);
             $tpl->setVariable("ERROR", $error);
-            $tpl->setVariable("ERROR_FOR_ID", $id_pointing_to_input);
+            if ($id_for_label) {
+                $tpl->setVariable("ERROR_FOR_ID", $id_for_label);
+            }
         }
 
-        $tpl->setVariable("DEPENDANT_GROUP", $dependant_group_html);
+        if ($dependant_group_html) {
+            $tpl->setVariable("DEPENDANT_GROUP", $dependant_group_html);
+        }
         return $tpl->get();
     }
 
@@ -117,13 +137,6 @@ class Renderer extends RendererILIAS
         return $name;
     }
 
-    protected function bindJSandApplyId(FormInput $component, ilTemplate|Template $tpl): string
-    {
-        $id = $this->bindJavaScript($component) ?? $this->createId();
-        $tpl->setVariable("ID", $id);
-        return $id;
-    }
-
     protected function applyValue(FormInput $component, ilTemplate|Template $tpl, callable $escape = null): void
     {
         $value = $component->getValue();
@@ -137,9 +150,12 @@ class Renderer extends RendererILIAS
 
     private function getTemplateCustom(string $name): ilTemplate
     {
-        return new ilTemplate("Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/customUI/input/templates/$name", true, true);
+        return new ilTemplate("/public/Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/customUI/input/templates/$name", true, true);
     }
 
+    /**
+     * @throws ilTemplateException
+     */
     private function renderMultipleOptions(MultipleOptions $component): string
     {
         global $DIC;
@@ -152,16 +168,18 @@ class Renderer extends RendererILIAS
 
         $this->applyName($component, $tpl);
         $this->maybeDisable($component, $tpl);
-        $id = $this->bindJSandApplyId($component, $tpl);
 
         $tpl->setVariable("LABEL", $component->getLabel());
         $tpl->setVariable("BYLINE", $component->getByline());
 
         $this->applyValue($component, $tpl, fn($value) => str_replace('"', "\'", $value));
 
-        return $this->wrapInFormContext($component, $tpl->get(), $id);
+        return $this->wrapInFormContext($component, $component->getLabel(), $tpl->get());
     }
 
+    /**
+     * @throws ilTemplateException
+     */
     private function renderCorrectOrder(CorrectOrder $component): string
     {
         global $DIC;
@@ -174,16 +192,18 @@ class Renderer extends RendererILIAS
 
         $this->applyName($component, $tpl);
         $this->maybeDisable($component, $tpl);
-        $id = $this->bindJSandApplyId($component, $tpl);
 
         $tpl->setVariable("LABEL", $component->getLabel());
         $tpl->setVariable("BYLINE", $component->getByline());
 
         $this->applyValue($component, $tpl, fn($value) => str_replace('"', "\'", $value));
 
-        return $this->wrapInFormContext($component, $tpl->get(), $id);
+        return $this->wrapInFormContext($component, $component->getLabel(), $tpl->get());
     }
 
+    /**
+     * @throws ilTemplateException
+     */
     private function renderMultipleCheck(MultipleCheck $component): string
     {
         global $DIC;
@@ -196,14 +216,13 @@ class Renderer extends RendererILIAS
 
         $this->applyName($component, $tpl);
         $this->maybeDisable($component, $tpl);
-        $id = $this->bindJSandApplyId($component, $tpl);
 
         $tpl->setVariable("LABEL", $component->getLabel());
         $tpl->setVariable("BYLINE", $component->getByline());
 
         $this->applyValue($component, $tpl, fn($value) => str_replace('"', "\'", $value));
 
-        return $this->wrapInFormContext($component, $tpl->get(), $id);
+        return $this->wrapInFormContext($component, $component->getLabel(), $tpl->get());
     }
 
     private function renderTextarea(TextArea $component): string

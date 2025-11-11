@@ -66,7 +66,7 @@ abstract class LiveVotingAbstractBarUI implements LiveVotingGeneralBarUI
         global $DIC;
         try {
             $this->tpl = new ilTemplate (ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Bar/tpl.bar_free_input.html', true, true);
-            $DIC->ui()->mainTemplate()->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . "/templates/default/Bar/bar.css");
+            $DIC->ui()->mainTemplate()->addCss("Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/Bar/bar.css");
         } catch (ilSystemStyleException|ilTemplateException $e) {
             $DIC->ui()->mainTemplate()->setContent($DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($e->getMessage())));
         }

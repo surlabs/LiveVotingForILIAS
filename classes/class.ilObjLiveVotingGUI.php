@@ -19,22 +19,22 @@ declare(strict_types=1);
  *
  */
 
+use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
-use LiveVoting\legacy\LiveVotingResultsTableGUI;
-use LiveVoting\legacy\liveVotingTableGUI;
+use LiveVoting\objects\modes\LiveVotingMode;
 use LiveVoting\platform\ilias\LiveVotingInitialisation;
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
+use LiveVoting\UI\LiveVotingChoicesCMUI;
 use LiveVoting\UI\LiveVotingChoicesUI;
 use LiveVoting\UI\LiveVotingCorrectOrderUI;
 use LiveVoting\UI\LiveVotingFreeInputUI;
 use LiveVoting\UI\LiveVotingManageUI;
 use LiveVoting\UI\LiveVotingPrioritiesUI;
 use LiveVoting\UI\LiveVotingRangeUI;
-use LiveVoting\UI\LiveVotingChoicesCMUI;
 use LiveVoting\UI\LiveVotingResultsUI;
 use LiveVoting\UI\LiveVotingSettingsUI;
 use LiveVoting\UI\LiveVotingUI;
@@ -47,7 +47,6 @@ use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingRound;
 use LiveVoting\votings\LiveVotingVote;
 use LiveVoting\votings\LiveVotingVoter;
-use LiveVoting\objects\modes\LiveVotingMode;
 
 /**
  * Class ilObjLiveVotingGUI
@@ -118,10 +117,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'confirmNewRound':
             case 'newRound':
             case 'changeRound':
-            case 'applyFilter':
-            case 'resetFilter':
-            case 'applyFilterQuestions':
-            case 'resetFilterQuestions':
             case 'apiCall':
             case 'confirmResetAll':
             case 'resetAll':
@@ -132,7 +127,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'duplicateQuestionToAnotherObject':
             case 'confirmDeleteQuestion':
             case 'deleteQuestion':
-            case 'saveSorting':
             case 'endTime':
                 $this->{$cmd}();
                 break;
@@ -1289,69 +1283,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     }
 
     /**
-     * @throws ilException
-     * @throws ilCtrlException
-     * @throws LiveVotingException
-     */
-    public function applyFilter(): void
-    {
-        global $DIC;
-
-        $table = new LiveVotingResultsTableGUI($this, "results");
-        LiveVotingResultsUI::buildFilters($table, (int)$_GET['round_id'], $this->object->getLiveVoting()->getQuestions());
-        $table->initFilter();
-        $table->writeFilterToSession();
-        $DIC->ctrl()->redirect($this, "results");
-    }
-
-    /**
-     * @throws ilException
-     * @throws ilCtrlException
-     * @throws LiveVotingException
-     */
-    public function resetFilter(): void
-    {
-        global $DIC;
-
-        $table = new LiveVotingResultsTableGUI($this, "results");
-        LiveVotingResultsUI::buildFilters($table, (int)$_GET['round_id'], $this->object->getLiveVoting()->getQuestions());
-        $table->initFilter();
-        $table->resetFilter();
-        $DIC->ctrl()->redirect($this, "results");
-    }
-
-    /**
-     * @throws ilException
-     * @throws ilCtrlException
-     * @throws LiveVotingException
-     */
-    public function applyFilterQuestions(): void
-    {
-        global $DIC;
-
-        $table = new LiveVotingTableGUI($this, "manage");
-        $table->initFilter();
-        $table->writeFilterToSession();
-        $DIC->ctrl()->redirect($this, "manage");
-    }
-
-    /**
-     * @throws ilException
-     * @throws ilCtrlException
-     * @throws LiveVotingException
-     */
-    public function resetFilterQuestions(): void
-    {
-        global $DIC;
-
-        $table = new LiveVotingTableGUI($this, "manage");
-        $table->initFilter();
-        $table->resetFilter();
-        $DIC->ctrl()->redirect($this, "manage");
-    }
-
-
-    /**
      * @throws LiveVotingException
      * @throws ilException
      */
@@ -1508,33 +1439,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     /**
      * @throws ilCtrlException
-     * @throws LiveVotingException
-     */
-    public function saveSorting(): void
-    {
-        global $DIC;
-
-        if (!ilObjLiveVotingAccess::hasWriteAccess()) {
-            $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_write')));
-            $DIC->ctrl()->redirect($this, "index");
-        } else {
-            $positions = $_POST["position"];
-
-            $questions = LiveVotingQuestion::loadAllQuestionsByObjectId($this->obj_id);
-
-            foreach ($questions as $question) {
-                $question->setPosition(array_search($question->getId(), $positions) + 1);
-                $question->save();
-            }
-
-            $DIC->ui()->mainTemplate()->setOnScreenMessage("success", $this->txt('sorting_msg_saved'), true);
-
-            $DIC->ctrl()->redirect($this, "manage");
-        }
-    }
-
-    /**
-     * @throws ilCtrlException
      * @throws Exception
      */
     public static function _goto(array $a_target): void
@@ -1548,26 +1452,37 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             $param_manager->setPin($matches[1]);
 
             $DIC->ctrl()->setTargetScript(ltrim(LiveVotingConfig::getFullApiURL(), './'));
-            $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
+            $DIC->ctrl()->redirectByClass(["ilObjPluginDispatchGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
         }
 
         parent::_goto($a_target);
     }
 
-    protected function initCreateForm(string $new_type): ilPropertyFormGUI
+    protected function initCreateForm(string $new_type): Standard
     {
-        $form = parent::initCreateForm($new_type);
+        $form_fields['title_and_description'] = (new ilObject())->getObjectProperties()->getPropertyTitleAndDescription()->toForm(
+            $this->lng,
+            $this->ui_factory->input()->field(),
+            $this->refinery
+        );
 
-        $mode = new ilRadioGroupInputGUI($this->plugin->txt('xlvo_mode'), 'xlvo_mode');
-        $mode->addOption(new ilRadioOption($this->plugin->txt('xlvo_mode_basic'), (string) LiveVotingMode::BASIC_MODE, $this->plugin->txt('xlvo_mode_basic_info')));
-        $mode->addOption(new ilRadioOption($this->plugin->txt('xlvo_mode_challenge'), (string) LiveVotingMode::CHALLENGE_MODE, $this->plugin->txt('xlvo_mode_challenge_info')));
+        $form_fields["xlvo_mode"] = $this->factory->input()->field()->radio($this->plugin->txt('xlvo_mode'))
+            ->withOption((string) LiveVotingMode::BASIC_MODE, $this->plugin->txt('xlvo_mode_basic'), $this->plugin->txt('xlvo_mode_basic_info'))
+            ->withOption((string) LiveVotingMode::CHALLENGE_MODE, $this->plugin->txt('xlvo_mode_challenge'), $this->plugin->txt('xlvo_mode_challenge_info'))
+            ->withRequired(true)
+            ->withValue((string) LiveVotingMode::BASIC_MODE);
 
-        $mode->setValue((string) LiveVotingMode::BASIC_MODE);
-        $mode->setRequired(true);
-
-        $form->addItem($mode);
-
-        return $form;
+        return $this->ui_factory->input()->container()->form()->standard(
+            $this->ctrl->getFormAction($this, 'save'),
+            $form_fields
+        )->withSubmitLabel(
+            !$this->obj_definition->isPlugin($new_type)
+                ? $this->lng->txt($new_type . '_add')
+                : ilObjectPlugin::lookupTxtById(
+                $this->requested_new_type,
+                "{$this->requested_new_type}_add"
+            )
+        );
     }
 
     /**
@@ -1577,8 +1492,11 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     {
         $form = $this->initCreateForm("xlvo");
 
-        if ($form->checkInput()) {
-            $new_object->getLiveVoting()->setMode(LiveVotingMode::new((int)$form->getInput("xlvo_mode")));
+        if ($this->request->getMethod() === 'POST') {
+            $form = $form->withRequest($this->request);
+            $mode = LiveVotingMode::new((int) $form->getData()["xlvo_mode"]);
+
+            $new_object->getLiveVoting()->setMode($mode);
             $new_object->getLiveVoting()->save();
         }
 

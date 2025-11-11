@@ -182,7 +182,7 @@ class LiveVotingChoicesCMUI
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedChoicesCM");
             }
 
-            $DIC->ui()->mainTemplate()->addCss($this->plugin->getDirectory() . "/templates/css/livevoting.css");
+            $DIC->ui()->mainTemplate()->addCss("Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/livevoting.css");
 
             return $this->createForm($form_action, $sections);
         } catch (Exception $e) {
