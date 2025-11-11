@@ -42,6 +42,17 @@ var xlvoSingleVote = {
 
 		$(document).on('change', '.vote-checkbox', function (event) {
 			xlvoSingleVote.handleCheckboxChange(event.currentTarget);
+			$(this).data('previousState', this.checked);
+		});
+
+		$(document).on('click', '.vote-checkbox', function (event) {
+			const wasChecked = $(this).data('previousState');
+
+			if ($(this).attr('type') === 'radio' && wasChecked && this.checked) {
+				this.checked = false;
+				$(this).trigger('change');
+				event.preventDefault();
+			}
 		});
 	},
 
