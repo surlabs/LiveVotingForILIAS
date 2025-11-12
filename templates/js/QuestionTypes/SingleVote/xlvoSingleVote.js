@@ -6,7 +6,6 @@ var xlvoSingleVote = {
 	config: {},
 	base_url: '',
 	running: false,
-
 	init: function (json) {
 		var config = json;
 		var replacer = new RegExp('amp;', 'g');
@@ -14,12 +13,10 @@ var xlvoSingleVote = {
 		this.config = config;
 		this.ready = true;
 	},
-
 	run: function () {
 		if (this.running) {
 			return;
 		}
-
 		this.running = true;
 
 		let lastInteractionWasMouse = false;
@@ -40,45 +37,87 @@ var xlvoSingleVote = {
 			});
 		});
 
-		$(document).on('change', '.vote-checkbox', function (event) {
-			xlvoSingleVote.handleCheckboxChange(event.currentTarget);
+		$('.vote-checkbox').each(function() {
 			$(this).data('previousState', this.checked);
 		});
 
-		$(document).on('click', '.vote-checkbox', function (event) {
-			const wasChecked = $(this).data('previousState');
+		$(document).on('click', '.vote-label', function (event) {
+			event.preventDefault();
+			const checkboxId = $(this).attr('for');
+			const $checkbox = $(`#${checkboxId}`);
 
-			if ($(this).attr('type') === 'radio' && wasChecked && this.checked) {
-				this.checked = false;
-				$(this).trigger('change');
+			if ($checkbox.attr('type') === 'radio') {
+				xlvoSingleVote.handleRadioClick($checkbox[0]);
+			}
+		});
+
+		$(document).on('click', '.vote-checkbox', function (event) {
+			if ($(this).attr('type') === 'radio') {
 				event.preventDefault();
+				xlvoSingleVote.handleRadioClick(this);
 			}
 		});
 	},
 
-	handleCheckboxChange: function (thisElement) {
-		const selector = $(thisElement);
+	handleRadioClick: function(radioElement) {
+		const $radio = $(radioElement);
+		const wasChecked = $radio.data('previousState');
+		const radioName = $radio.attr('name');
 
-		this.updateButtonState(selector.is(":checked"), selector.attr('id').replace('option-', ''));
+		if (wasChecked) {
+			radioElement.checked = false;
+			$radio.data('previousState', false);
+			this.updateAllRadioButtonsUI(radioName);
+			this.sendVote($radio);
+		} else {
+			$(`input[type="radio"][name="${radioName}"]`).each((index, element) => {
+				element.checked = false;
+				$(element).data('previousState', false);
+			});
+
+			radioElement.checked = true;
+			$radio.data('previousState', true);
+
+			this.updateAllRadioButtonsUI(radioName);
+
+			this.sendVote($radio);
+		}
+	},
+
+	updateAllRadioButtonsUI: function(radioName) {
+		$(`input[type="radio"][name="${radioName}"]`).each((index, element) => {
+			const $element = $(element);
+			const optionId = $element.attr('id').replace('option-', '');
+			this.updateButtonState(element.checked, optionId);
+		});
+	},
+
+	sendVote: function($checkbox) {
+		$.get($checkbox.attr("link"), {
+			'isRequest': true
+		});
+	},
+
+	handleCheckboxChange: function (thisElement, isChecked) {
+		const selector = $(thisElement);
+		const optionId = selector.attr('id').replace('option-', '');
+
+		this.updateButtonState(isChecked, optionId);
 
 		$.get(selector.attr("link"), {
 			'isRequest': true
 		});
-
-		if (selector.attr("type") === 'radio') {
-			$(`input[type="radio"][name="${selector.attr('name')}"]`).not(selector).each((index, element) => {
-				this.updateButtonState(false, $(element).attr('id').replace('option-', ''));
-			});
-		}
 	},
 
 	updateButtonState: function (checked, letter) {
 		const selector = $(`[for="option-${letter}"] .btn`);
 
 		if (checked) {
-			selector.removeClass('btn-default').addClass('btn-primary').find('span').text(xlvoVoter.config.lng.qtype_1_unvote);
+			selector.removeClass('btn-default').addClass('btn-primary')
+				.find('span').text(xlvoVoter.config.lng.qtype_1_unvote);
 		} else {
-			selector.removeClass('btn-primary').addClass('btn-default').find('span').text(xlvoVoter.config.lng.qtype_1_vote);
+			selector.removeClass('btn-primary').addClass('btn-default')
+				.find('span').text(xlvoVoter.config.lng.qtype_1_vote);
 		}
 	}
 };
