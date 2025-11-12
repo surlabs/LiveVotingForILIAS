@@ -48,6 +48,8 @@ var xlvoSingleVote = {
 
 			if ($checkbox.attr('type') === 'radio') {
 				xlvoSingleVote.handleRadioClick($checkbox[0]);
+			} else if ($checkbox.attr('type') === 'checkbox') {
+				xlvoSingleVote.handleCheckboxClick($checkbox[0]);
 			}
 		});
 
@@ -107,6 +109,22 @@ var xlvoSingleVote = {
 		$.get(selector.attr("link"), {
 			'isRequest': true
 		});
+	},
+
+	handleCheckboxClick: function(checkboxElement) {
+		const $checkbox = $(checkboxElement);
+		const currentState = checkboxElement.checked;
+
+		// Toggle del checkbox
+		checkboxElement.checked = !currentState;
+		$checkbox.data('previousState', checkboxElement.checked);
+
+		// Actualizar UI
+		const optionId = $checkbox.attr('id').replace('option-', '');
+		this.updateButtonState(checkboxElement.checked, optionId);
+
+		// Enviar petición al servidor
+		this.sendVote($checkbox);
 	},
 
 	updateButtonState: function (checked, letter) {
