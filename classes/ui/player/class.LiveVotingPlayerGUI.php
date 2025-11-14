@@ -185,7 +185,6 @@ class LiveVotingPlayerGUI
     private function initCssAndJs(): void
     {
         global $DIC;
-//        iljQueryUtil::initjQueryUI();
 
         LiveVotingJs::getInstance()->initMathJax();
 
