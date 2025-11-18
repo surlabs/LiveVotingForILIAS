@@ -315,7 +315,7 @@ abstract class LiveVotingQuestion
     public function getQuestion(bool $forInput = false): string
     {
         if ($forInput) {
-            return ilLegacyFormElementsUtil::prepareTextareaOutput(ilRTE::_replaceMediaObjectImageSrc($this->question, 1), true);
+            return ilRTE::_replaceMediaObjectImageSrc($this->question, 1);
         }
 
         return $this->question;

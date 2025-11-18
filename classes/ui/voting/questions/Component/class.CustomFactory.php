@@ -25,7 +25,7 @@ namespace Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVo
 use Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\Input\Field\MultipleOptions;
 use Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\Input\Field\CorrectOrder;
 use Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\Input\Field\MultipleCheck;
-use Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\Input\Field\TextArea;
+use Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\Input\Field\TextareaRTE;
 
 /**
  * Class CustomFactory
@@ -45,8 +45,14 @@ class CustomFactory
         return new MultipleCheck($label, $byline);
     }
 
-    public function textArea(string $label, ?string $byline = null): TextArea
+    public function textareaRTE(int $obj_id, string $label, ?string $by_line = null, bool $rteSupport = true): TextareaRTE
     {
-        return new TextArea($label, $byline);
+        $textareaRTE = new TextareaRTE($label, $by_line);
+
+        if ($rteSupport) {
+            $textareaRTE->setRTESupport($obj_id, "qpl", "xqcas");
+        }
+
+        return $textareaRTE;
     }
 }
