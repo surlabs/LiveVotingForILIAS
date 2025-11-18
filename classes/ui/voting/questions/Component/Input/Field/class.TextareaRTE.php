@@ -1,19 +1,21 @@
 <?php
+
 /**
- * This file is part of the LiveVoting Repository Object plugin for ILIAS.
- * This plugin allows to create real time votings within ILIAS.
+ * This file is part of the STACK Question plugin for ILIAS, an advanced STEM assessment tool.
+ *  This plugin is developed and maintained by SURLABS and is a port of STACK Question for Moodle,
+ *  originally created by Chris Sangwin.
  *
- * The LiveVoting Repository Object plugin for ILIAS is open-source and licensed under GPL-3.0.
- * For license details, visit https://www.gnu.org/licenses/gpl-3.0.en.html.
+ *  The STACK Question plugin for ILIAS is open-source and licensed under GPL-3.0.
+ *  For license details, visit https://www.gnu.org/licenses/gpl-3.0.en.html.
  *
- * To report bugs or participate in discussions, visit the Mantis system and filter by
- * the category "LiveVoting" at https://mantis.ilias.de.
+ *  To report bugs or participate in discussions, visit the Mantis system and filter by
+ *  the category "STACK Question" at https://mantis.ilias.de.
  *
- * More information and source code are available at:
- * https://github.com/surlabs/LiveVoting
+ *  More information and source code are available at:
+ *  https://github.com/surlabs/STACK
  *
- * If you need support, please contact the maintainer of this software at:
- * info@surlabs.es
+ *  If you need support, please contact the maintainer of this software at:
+ *  stack@surlabs.es
  *
  */
 
@@ -22,22 +24,19 @@ declare(strict_types=1);
 namespace Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\Input\Field;
 
 use Closure;
-use Generator;
 use ILIAS\Data\Factory;
-use ILIAS\Data\Result;
 use ILIAS\Refinery\Constraint;
-use ILIAS\UI\Component\Input\Field\Textarea as TextareaIlias;
+use ILIAS\UI\Component\Input\Field\Textarea;
 use ILIAS\UI\Component\Signal;
 use ILIAS\UI\Implementation\Component\Input\Input;
-use ILIAS\UI\Implementation\Component\Input\InputData;
 use ILIAS\UI\Implementation\Component\JavaScriptBindable;
 use ILIAS\UI\Implementation\Component\Triggerer;
 
+
 /**
- * Class TextArea
+ * Class TextareaRTE
  */
-class TextArea extends Input implements TextareaIlias
-{
+class TextareaRTE extends Input implements Textarea {
     use JavaScriptBindable;
     use Triggerer;
 
@@ -60,24 +59,6 @@ class TextArea extends Input implements TextareaIlias
         $this->byline = $byline;
 
         parent::__construct(new Factory(), $DIC->refinery());
-    }
-
-    public function withInput(InputData $input): self
-    {
-        if (!$this->isDisabled()) {
-            return parent::withInput($input);
-        } else {
-            $clone = $this;
-            $clone->content = $this->applyOperationsTo($clone->getValue());
-            if ($clone->content->isError()) {
-                $error = $clone->content->error();
-                if ($error instanceof \Exception) {
-                    $error = $error->getMessage();
-                }
-                return $clone->withError("" . $error);
-            }
-            return $clone;
-        }
     }
 
     public function getLabel(): string
@@ -163,7 +144,7 @@ class TextArea extends Input implements TextareaIlias
         return $this->appendTriggeredSignal($signal, 'update');
     }
 
-    public function withMaxLimit(int $max_limit): TextArea
+    public function withMaxLimit(int $max_limit): TextareaRTE
     {
         $clone = $this->withAdditionalTransformation(
             $this->refinery->string()->hasMaxLength($max_limit)
@@ -186,7 +167,7 @@ class TextArea extends Input implements TextareaIlias
     /**
      * set minimum number of characters
      */
-    public function withMinLimit(int $min_limit): TextArea
+    public function withMinLimit(int $min_limit): TextareaRTE
     {
         $clone = $this->withAdditionalTransformation(
             $this->refinery->string()->hasMinLength($min_limit)
@@ -223,27 +204,6 @@ class TextArea extends Input implements TextareaIlias
         return $this->refinery->string()->hasMinLength(1);
     }
 
-    protected function applyOperationsTo($res): Result
-    {
-        if ($res === null && !$this->isRequired()) {
-            return $this->data_factory->ok($res);
-        }
-
-        return parent::applyOperationsTo($res);
-    }
-
-    protected function getOperations(): Generator
-    {
-        if ($this->isRequired()) {
-            $op = $this->getConstraintForRequirement();
-            if ($op !== null) {
-                yield $op;
-            }
-        }
-
-        yield from parent::getOperations();
-    }
-
     public function isLimited(): bool
     {
         return $this->min_limit > 0 || $this->max_limit > 0;
@@ -255,5 +215,28 @@ class TextArea extends Input implements TextareaIlias
 				il.UI.input.onFieldUpdate(event, '$id', $('#$id').val());
 			});
 			il.UI.input.onFieldUpdate(event, '$id', $('#$id').val());";
+    }
+
+    public function setRTESupport(
+        int $obj_id,
+        string $obj_type,
+        string $module,
+        ?string $cfg_template = null,
+        bool $hide_switch = false,
+        ?string $version = null
+    ): void {
+        $this->rteSupport = array(
+            "obj_id" => $obj_id,
+            "obj_type" => $obj_type,
+            "module" => $module,
+            'cfg_template' => $cfg_template,
+            'hide_switch' => $hide_switch,
+            'version' => $version
+        );
+    }
+
+    public function getRTESupport(): array
+    {
+        return $this->rteSupport;
     }
 }

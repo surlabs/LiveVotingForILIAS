@@ -24,8 +24,6 @@ use Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\c
 use Exception;
 use ilCtrlInterface;
 use ilException;
-use ilHtmlPurifierFactory;
-use ilHtmlPurifierNotFoundException;
 use ILIAS\UI\Component\Input\Container\Form\Form;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
@@ -33,9 +31,7 @@ use ilLiveVotingPlugin;
 use ilObject;
 use ilObjLiveVotingGUI;
 use ilPlugin;
-use ilPropertyFormGUI;
 use ilRTE;
-use ilTextAreaInputGUI;
 use InvalidArgumentException;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
@@ -103,7 +99,8 @@ class LiveVotingCorrectOrderUI
                 ->withValue(isset($this->question) ? $this->question->getTitle() : "")
                 ->withRequired(true);
 
-            $form_questions["question"] = $this->customFactory->textArea(
+            $form_questions["question"] = $this->customFactory->textareaRTE(
+                0,
                 $this->plugin->txt('voting_question'))
                 ->withValue(isset($this->question) ? $this->question->getQuestion(true) : "")
                 ->withRequired(true);
@@ -167,61 +164,8 @@ class LiveVotingCorrectOrderUI
         }
     }
 
-
-    /**
-     * @throws ilHtmlPurifierNotFoundException
-     */
     private function createForm(string $form_action, array $sections): Form
     {
-        $r = new ilTextAreaInputGUI($this->plugin->txt('question'), 'question');
-        $r->addPlugin('latex');
-        $r->addButton('latex');
-        $r->addButton('pastelatex');
-        $r->setRequired(true);
-        $r->setRTESupport(ilObject::_lookupObjId((int)$_GET['ref_id']), "dcl", ilLiveVotingPlugin::PLUGIN_ID);
-        $r->setUseRte(true);
-        $r->setRteTags(array(
-            'p',
-            'a',
-            'br',
-            'strong',
-            'b',
-            'i',
-            'em',
-            'span',
-            'img',
-        ));
-        $r->usePurifier(false);
-        $r->setPurifier(ilHtmlPurifierFactory::getInstanceByType('frm_post'));
-        $r->disableButtons(array(
-            'charmap',
-            'undo',
-            'redo',
-            'justifyleft',
-            'justifycenter',
-            'justifyright',
-            'justifyfull',
-            'anchor',
-            'fullscreen',
-            'cut',
-            'copy',
-            'paste',
-            'pastetext',
-            'formatselect',
-            'bullist',
-            'hr',
-            'sub',
-            'sup',
-            'numlist',
-            'cite',
-        ));
-
-        $r->setRows(5);
-
-        $formAlt = new ilPropertyFormGUI();
-        $formAlt->addItem($r);
-        $formAlt->getHTML();
-
         return $this->factory->input()->container()->form()->standard(
             $form_action,
             $sections,

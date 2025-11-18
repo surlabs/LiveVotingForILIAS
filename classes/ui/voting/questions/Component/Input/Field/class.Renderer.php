@@ -25,8 +25,10 @@ use ILIAS\UI\Component\Input\Container\Form\FormInput;
 use ILIAS\UI\Implementation\Component\Input\Field as F;
 use ILIAS\UI\Implementation\Component\Input\Field\Renderer as RendererILIAS;
 use ILIAS\UI\Implementation\Render\Template;
+use ilRTE;
 use ilTemplate;
 use ilTemplateException;
+use ilTinyMCE;
 use LiveVoting\Utils\LiveVotingUtils;
 
 /**
@@ -53,7 +55,7 @@ class Renderer extends RendererILIAS
             $component instanceof MultipleOptions => $this->renderMultipleOptions($component),
             $component instanceof CorrectOrder => $this->renderCorrectOrder($component),
             $component instanceof MultipleCheck => $this->renderMultipleCheck($component),
-            $component instanceof TextArea => $this->renderTextarea($component),
+            $component instanceof TextareaRTE  => $this->renderTextareaRTE($component),
             default => $this->default_renderer->render($component),
         };
     }
@@ -225,9 +227,9 @@ class Renderer extends RendererILIAS
         return $this->wrapInFormContext($component, $component->getLabel(), $tpl->get());
     }
 
-    private function renderTextarea(TextArea $component): string
+    private function renderTextareaRTE(TextareaRTE $component): string
     {
-        /** @var $component F\Textarea */
+        /** @var $component TextareaRTE */
         $component = $component->withAdditionalOnLoadCode(
             static function ($id): string {
                 return "
@@ -236,7 +238,15 @@ class Renderer extends RendererILIAS
             }
         );
 
-        $tpl = $this->getTemplateCustom("tpl.textarea.html", true, true);
+        $tpl = $this->getPreparedTextareaRTETemplate($component);
+        $id = $this->bindJSandApplyId($component, $tpl);
+
+        return $this->wrapInFormContext($component, $tpl->get(), $id);
+    }
+
+    protected function getPreparedTextareaRTETemplate(TextareaRTE $component): ilTemplate
+    {
+        $tpl = $this->getTemplateCustom("tpl.textareaRte.html");
 
         if (0 < $component->getMaxLimit()) {
             $tpl->setVariable('REMAINDER_TEXT', $this->txt('ui_chars_remaining'));
@@ -252,8 +262,25 @@ class Renderer extends RendererILIAS
         $this->applyValue($component, $tpl, $this->htmlEntities());
         $this->maybeDisable($component, $tpl);
 
-        $id = $this->bindJSandApplyId($component, $tpl);
+        $rte_string = ilRTE::_getRTEClassname();
+        /** @var ilTinyMCE $rte */
+        $rte = new $rte_string();
 
-        return $this->wrapInFormContext($component, $tpl->get(), $id);
+        $rte->addPlugin("emoticons");
+        $rte->addPlugin("latex");
+        $rte->addButton("latex");
+        $rte->addButton("pastelatex");
+
+        $rteSupport = $component->getRTESupport();
+
+        if (!empty($rteSupport)) {
+            $rte->addRTESupport($rteSupport["obj_id"], $rteSupport["obj_type"], $rteSupport["module"], false, $rteSupport['cfg_template'], $rteSupport['hide_switch']);
+
+            $tpl->setVariable('RTE_EDITOR', "yesRTEditor");
+        } else {
+            $tpl->setVariable('RTE_EDITOR', "noRTEditor");
+        }
+
+        return $tpl;
     }
 }
