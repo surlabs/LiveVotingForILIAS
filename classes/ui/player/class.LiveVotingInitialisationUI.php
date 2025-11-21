@@ -272,7 +272,7 @@ class LiveVotingInitialisationUI
 
     private function loadIniFile()
     {
-        $this->iliasIniFile = new ilIniFile("../scripts/ilias.ini.php");
+        $this->iliasIniFile = new ilIniFile("../ilias.ini.php");
         $this->iliasIniFile->read();
 
         $this->makeGlobal('ilIliasIniFile', $this->iliasIniFile);
