@@ -103,10 +103,16 @@ class LiveVotingPrioritiesUI
                 ->withValue(isset($this->question) ? $this->question->getQuestion(true) : "")
                 ->withRequired(true);
 
+            $columns = isset($this->question) ? $this->question->getColumns() : 1;
+
+            if ($columns < 1 || $columns > 4) {
+                $columns = 1;
+            }
+
             $form_questions["columns"] = $this->factory->input()->field()->select(
                 $this->plugin->txt('voting_columns'),
                 [1 => "1", 2 => "2", 3 => "3", 4 => "4"])
-                ->withValue(isset($this->question) ? $this->question->getColumns() : 1);
+                ->withValue($columns)->withRequired(true);
 
 
             $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_5"));
