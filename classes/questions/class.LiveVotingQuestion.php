@@ -507,6 +507,8 @@ abstract class LiveVotingQuestion
 
         $question = ilRTE::_replaceMediaObjectImageSrc($question, 1);
 
+        $question = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $question);
+
         return ilLegacyFormElementsUtil::prepareTextareaOutput($question, true);
     }
 
