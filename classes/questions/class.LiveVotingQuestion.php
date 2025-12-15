@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace LiveVoting\questions;
 
+use ILIAS\LegalDocuments\HTMLPurifier;
 use ilLegacyFormElementsUtil;
-use ilObjectTypeMismatchException;
 use ilRTE;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
@@ -507,9 +507,10 @@ abstract class LiveVotingQuestion
 
         $question = ilRTE::_replaceMediaObjectImageSrc($question, 1);
 
-        $question = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $question);
+        $purifier = new HTMLPurifier();
+        $clean = $purifier->purify($question);
 
-        return ilLegacyFormElementsUtil::prepareTextareaOutput($question, true);
+        return ilLegacyFormElementsUtil::prepareTextareaOutput($clean, true);
     }
 
     public function isValidOption(int $option_id): bool
