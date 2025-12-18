@@ -323,6 +323,10 @@ abstract class LiveVotingQuestion
 
     public function setQuestion(string $question): void
     {
+        $purifier = new HTMLPurifier();
+
+        $question = $purifier->purify($question);
+
         $this->question = $question;
     }
 
