@@ -239,9 +239,8 @@ class Renderer extends RendererILIAS
         );
 
         $tpl = $this->getPreparedTextareaRTETemplate($component);
-        $id = $this->bindJSandApplyId($component, $tpl);
 
-        return $this->wrapInFormContext($component, $tpl->get(), $id);
+        return $this->wrapInFormContext($component, $component->getLabel(), $tpl->get());
     }
 
     protected function getPreparedTextareaRTETemplate(TextareaRTE $component): ilTemplate
