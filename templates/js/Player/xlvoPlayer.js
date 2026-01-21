@@ -329,16 +329,27 @@ var xlvoPlayer = {
                         xlvoPlayer.player_html !== null &&
                         xlvoPlayer.player_html !== playerHtml
                     ) {
-                        // Only change html if changed (Try prevent blinking images) (Not work because countdown text and/or token links)
-                        //create new jquery node
                         var node = $(playerHtml);
-                        //get list of old childs
-                        var oldNode = $("#xlvo-display-player").children();
 
-                        //append new child
-                        $("#xlvo-display-player").append(node);
+                        var $container = $("#xlvo-display-player");
+                        var $oldQuestion = $container.find(".xlvo-question");
+                        var oldQuestionText = $oldQuestion.text().trim();
 
-                        //fade out old child and remove child afterwards
+                        var $newQuestion = node.find(".xlvo-question");
+                        var newQuestionText = $newQuestion.text().trim();
+
+                        var questionChanged = oldQuestionText !== "" &&
+                            newQuestionText !== "" &&
+                            oldQuestionText !== newQuestionText;
+
+                        if (!questionChanged && $oldQuestion.length && $newQuestion.length) {
+                            $newQuestion.replaceWith($oldQuestion);
+                        }
+
+                        var oldNode = $container.children();
+
+                        $container.append(node);
+
                         oldNode.remove();
 
                         if (xlvoPlayer.config.use_mathjax && !!MathJax) {
