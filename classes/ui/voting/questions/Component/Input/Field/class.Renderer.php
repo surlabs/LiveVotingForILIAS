@@ -273,11 +273,9 @@ class Renderer extends RendererILIAS
         $rteSupport = $component->getRTESupport();
 
         if (!empty($rteSupport)) {
-            $rte->addRTESupport($rteSupport["obj_id"], $rteSupport["obj_type"], $rteSupport["module"], false, $rteSupport['cfg_template'], $rteSupport['hide_switch']);
+            $rte->addRTESupport($rteSupport["obj_id"], $rteSupport["obj_type"], $rteSupport["module"], false, $rteSupport['cfg_template']);
 
-            $tpl->setVariable('RTE_EDITOR', "yesRTEditor");
-        } else {
-            $tpl->setVariable('RTE_EDITOR', "noRTEditor");
+            $tpl->setVariable('RTE_EDITOR', "RTEditor");
         }
 
         return $tpl;

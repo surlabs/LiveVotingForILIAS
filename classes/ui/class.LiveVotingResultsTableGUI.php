@@ -51,11 +51,12 @@ class LiveVotingResultsTableGUI implements DataRetrieval
     private ilCtrl $ctrl;
     private ilUIService $ui_service;
     private ilLiveVotingPlugin $plugin;
-    private array $records;
     private int $player_id;
     private $request;
+    private int $obj_id;
+    private int $round_id;
 
-    public function __construct(ilObjLiveVotingGUI $a_parent_obj, string $parent_cmd)
+    public function __construct(ilObjLiveVotingGUI $a_parent_obj, string $parent_cmd, int $obj_id, int $round_id)
     {
         global $DIC;
 
@@ -72,45 +73,53 @@ class LiveVotingResultsTableGUI implements DataRetrieval
         $this->player_id = $a_parent_obj->getObject()->getLiveVoting()->getPlayer()->getId();
 
         $this->request = $DIC->http()->request();
+
+        $this->obj_id = $obj_id;
+        $this->round_id = $round_id;
     }
 
+    /**
+     * @throws LiveVotingException
+     */
     public function getRows(DataRowBuilder $row_builder, array $visible_column_ids, Range $range, Order $order, ?array $filter_data, ?array $additional_parameters): Generator
     {
-        foreach ($this->records as $record) {
+        $records = $this->getRecords($filter_data);
+
+        foreach ($records as $record) {
             yield $row_builder->buildDataRow((string) $record['id'], $record);
         }
     }
 
+    /**
+     * @throws LiveVotingException
+     */
     public function getTotalRowCount(?array $filter_data, ?array $additional_parameters): ?int
     {
-        return count($this->records);
+        $records = $this->getRecords($filter_data);
+
+        return count($records);
     }
 
     /**
      * @throws ilCtrlException
+     * @throws LiveVotingException
      */
     public function getHtml(): string
     {
-        $table = $this->factory->table()->data(
-            $this->plugin->txt('results_title'),
-            $this->getColumns(),
-            $this
-        )->withRequest($this->request);
 
         $participants = [];
         $voting_titles = [];
-        $votings = [];
 
-        foreach ($this->records as $record) {
-            $participants[$record['user_id']] = $record['participant'];
+        $records = $this->getRecords();
+
+        foreach ($records as $record) {
+            $participants[$record['user_id'] != 0 ? $record['user_id'] : $record['user_identifier']] = $record['participant'];
             $voting_titles[$record['voting_id']] = $record['title'];
-            $votings[$record['voting_id']] = $record['title'];
         }
 
         $filter_inputs = [
             "participant" => $this->factory->input()->field()->select($this->plugin->txt('common_user'), $participants),
             "voting_title" => $this->factory->input()->field()->select($this->plugin->txt('voting_title'), $voting_titles),
-            "voting" => $this->factory->input()->field()->select($this->plugin->txt('voting_title'), $votings),
         ];
 
         $active = array_fill(0, count($filter_inputs), true);
@@ -121,7 +130,13 @@ class LiveVotingResultsTableGUI implements DataRetrieval
             $filter_inputs,
             $active,
             true
-        );
+        )->withRequest($this->request);
+
+        $table = $this->factory->table()->data(
+            $this->plugin->txt('results_title'),
+            $this->getColumns(),
+            $this
+        )->withRequest($this->request)->withFilter($filter->getData());
 
         return $this->renderer->render($filter) . $this->renderer->render($table);
     }
@@ -143,57 +158,6 @@ class LiveVotingResultsTableGUI implements DataRetrieval
 
 
         return $columns;
-    }
-
-    /**
-     * @throws LiveVotingException
-     */
-    public function buildData(int $obj_id, int $round_id): void
-    {
-        $a_data = array();
-
-        $a_questions = array();
-        $questions = array();
-
-        if (isset($this->filter['voting']) && $this->filter['voting'] != "") {
-            $a_questions[] = LiveVotingQuestion::loadQuestionById((int)$this->filter['voting']);
-        } else if (isset($this->filter['voting_title']) && $this->filter['voting_title'] != "") {
-            $a_questions[] = LiveVotingQuestion::loadQuestionById((int)$this->filter['voting_title']);
-        } else {
-            $a_questions = LiveVotingQuestion::loadAllQuestionsByObjectId($obj_id);
-        }
-
-        foreach ($a_questions as $question) {
-            $questions[$question->getId()] = $question;
-        }
-
-        $participant = isset($this->filter['participant']) && $this->filter['participant'] != "" ? $this->filter['participant'] : null;
-        $votes = LiveVotingVote::getVotesForRound($round_id, true, $participant);
-        $all_votes = LiveVotingVote::getVotesForRound($round_id, false, $participant);
-
-        foreach ($votes as $vote) {
-            foreach ($questions as $question) {
-                $answers = $this->getVotesForQuestion($all_votes, $question->getId(), $vote);
-
-                $a_data[] = array(
-                    "position" => $question->getPosition(),
-                    "participant" => $vote->getParticipantName($this->player_id),
-                    "user_id" => $vote->getUserId(),
-                    "user_identifier" => $vote->getUserIdentifier(),
-                    "question_type" => $question->getQuestionTypeId(),
-                    "title" => $question->getTitle(),
-                    "question" => $question->getQuestion(),
-                    "answer" => $question->getVotesRepresentation($answers),
-                    "answer_ids" => $this->concatAnswersIds($answers),
-                    "voting_id" => $question->getId(),
-                    "round_id" => $round_id,
-                    "id" => $vote->getId(),
-                    "points" => LiveVotingPlayer::getPlayerPoints($vote->getUserIdType() == 1 ? (string) $vote->getUserId() : (string) $vote->getUserIdentifier(), $obj_id, $question->getId(), $round_id)
-                );
-            }
-        }
-
-        $this->records = $a_data;
     }
 
     private function getVotesForQuestion(array $all_votes, int $question_id, LiveVotingVote $vote): array
@@ -218,5 +182,54 @@ class LiveVotingResultsTableGUI implements DataRetrieval
         }
 
         return implode(",", $answers_ids);
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    private function getRecords(?array $filter_data = []): array
+    {
+        $a_data = array();
+
+        $a_questions = array();
+        $questions = array();
+
+        if (isset($filter_data['voting_title']) && $filter_data['voting_title'] != "") {
+            $a_questions[] = LiveVotingQuestion::loadQuestionById((int)$filter_data['voting_title']);
+        } else {
+            $a_questions = LiveVotingQuestion::loadAllQuestionsByObjectId($this->obj_id);
+        }
+
+        foreach ($a_questions as $question) {
+            $questions[$question->getId()] = $question;
+        }
+
+        $participant = isset($filter_data['participant']) && $filter_data['participant'] != "" ? $filter_data['participant'] : null;
+        $votes = LiveVotingVote::getVotesForRound($this->round_id, true, $participant);
+        $all_votes = LiveVotingVote::getVotesForRound($this->round_id, false, $participant);
+
+        foreach ($votes as $vote) {
+            foreach ($questions as $question) {
+                $answers = $this->getVotesForQuestion($all_votes, $question->getId(), $vote);
+
+                $a_data[] = array(
+                    "position" => $question->getPosition(),
+                    "participant" => $vote->getParticipantName($this->player_id),
+                    "user_id" => $vote->getUserId(),
+                    "user_identifier" => $vote->getUserIdentifier(),
+                    "question_type" => $question->getQuestionTypeId(),
+                    "title" => $question->getTitle(),
+                    "question" => $question->getQuestion(),
+                    "answer" => $question->getVotesRepresentation($answers),
+                    "answer_ids" => $this->concatAnswersIds($answers),
+                    "voting_id" => $question->getId(),
+                    "round_id" => $this->round_id,
+                    "id" => $vote->getId(),
+                    "points" => LiveVotingPlayer::getPlayerPoints($vote->getUserIdType() == 1 ? (string) $vote->getUserId() : (string) $vote->getUserIdentifier(), $this->obj_id, $question->getId(), $this->round_id)
+                );
+            }
+        }
+
+        return $a_data;
     }
 }

@@ -144,7 +144,7 @@ var xlvoPlayer = {
         this.btn_previous = $("#btn-previous");
         this.btn_next = $("#btn-next");
         this.btn_unfreeze = $("#btn-unfreeze");
-        this.btn_unfreeze.closest(".btn-group").hide();
+        this.btn_unfreeze.closest(".l-bar__group").hide();
         this.btn_reset = $("#btn-reset");
         this.btn_end_time = $("#btn-end_time");
         this.btn_end_time.hide();
@@ -167,49 +167,59 @@ var xlvoPlayer = {
         this.toolbar_loader = $("#xlvo_player_loading");
         this.toolbar_loader.show();
         this.btn_freeze.click(function () {
+            if (xlvoPlayer.btn_freeze.attr("disabled")) return false;
             xlvoPlayer.callPlayer("toggle_freeze");
             return false;
         });
 
         this.btn_unfreeze.click(function () {
+            if (xlvoPlayer.btn_unfreeze.attr("disabled")) return false;
             xlvoPlayer.callPlayer("toggle_freeze");
             return false;
         });
 
         this.btn_hide_results.click(function () {
+            if (xlvoPlayer.btn_hide_results.attr("disabled")) return false;
             xlvoPlayer.callPlayer("toggle_results");
             return false;
         });
 
         this.btn_show_results.click(function () {
+            if (xlvoPlayer.btn_show_results.attr("disabled")) return false;
             xlvoPlayer.callPlayer("toggle_results");
             return false;
         });
 
         this.btn_reset.click(function () {
+            if (xlvoPlayer.btn_reset.attr("disabled")) return false;
             if (window.confirm(xlvoPlayer.config.lng.voting_confirm_reset)) {
                 xlvoPlayer.callPlayer("reset");
             }
             return false;
         });
         this.btn_next.click(function () {
+            if (xlvoPlayer.btn_next.attr("disabled")) return false;
             xlvoPlayer.callPlayer("next");
             return false;
         });
         this.btn_previous.click(function () {
+            if (xlvoPlayer.btn_previous.attr("disabled")) return false;
             xlvoPlayer.callPlayer("previous");
             return false;
         });
         if (this.btn_toggle_pull) {
             this.btn_toggle_pull.click(function () {
+                if (xlvoPlayer.btn_toggle_pull.attr("disabled")) return false;
                 xlvoPlayer.togglePull();
             });
         }
         this.btn_end_time.click(function () {
+            if (xlvoPlayer.btn_end_time.attr("disabled")) return false;
             xlvoPlayer.callPlayer("end_time");
             return false;
         });
         this.btn_next_cm.click(function () {
+            if (xlvoPlayer.btn_next_cm.attr("disabled")) return false;
             xlvoPlayer.callPlayer("next-cm");
             return false;
         });
@@ -219,14 +229,14 @@ var xlvoPlayer = {
         if (this.player.frozen) {
             this.btn_freeze.parent().hide();
 
-            this.btn_unfreeze.closest(".btn-group").show();
+            this.btn_unfreeze.closest(".l-bar__group").show();
             if (this.player.votes > 0) {
                 this.btn_reset.removeAttr("disabled");
             } else {
                 this.btn_reset.attr("disabled", "disabled");
             }
         } else {
-            this.btn_unfreeze.closest(".btn-group").hide();
+            this.btn_unfreeze.closest(".l-bar__group").hide();
             this.btn_freeze.parent().show();
             this.btn_reset.attr("disabled", "disabled");
         }

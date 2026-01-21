@@ -24,6 +24,7 @@ use ilButtonToSplitButtonMenuItemAdapter;
 use ilCtrlException;
 use ilException;
 use ilGlyphGUI;
+use ILIAS\UI\Component\Dropdown\Standard;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use iljQueryUtil;
@@ -290,19 +291,9 @@ class LiveVotingUI
             );
             $playButton->setUrl('#');
             $playButton->setId('btn-unfreeze');
+            $DIC->toolbar()->addStickyItem($playButton);
 
-            $split = ilSplitButtonGUI::getInstance();
-            $split->setDefaultButton($playButton);
-            foreach (array(10, 30, 90, 120, 180, 240, 300) as $seconds) {
-                $cd = ilLinkButton::getInstance();
-                $cd->setUrl('#');
-                $cd->setCaption($seconds . ' ' . $this->pl->txt('player_seconds'), false);
-                $cd->setOnClick("xlvoPlayer.countdown(event, $seconds);");
-                $ilSplitButtonMenuItem = new ilButtonToSplitButtonMenuItemAdapter($cd);
-                $split->addMenuItem($ilSplitButtonMenuItem);
-            }
-
-            $DIC->toolbar()->addStickyItem($split);
+            $DIC->toolbar()->addStickyItem($this->getVoteDropdown());
         }
 
         // Hide
@@ -409,6 +400,34 @@ class LiveVotingUI
 
         return $DIC->ui()->renderer()->render($factory->dropdown()->standard($items)->withLabel($this->pl->txt('player_voting_list')));
     }
+
+    protected function getVoteDropdown(): Standard
+    {
+        global $DIC;
+
+        $factory = $DIC->ui()->factory();
+
+        $items = [];
+
+        foreach (array(10, 30, 90, 120, 180, 240, 300) as $seconds) {
+            $items[] = $factory->button()->shy(
+                $seconds . ' ' . $this->pl->txt('player_seconds'),
+                '#'
+            )->withOnLoadCode(function ($id) use ($seconds) {
+                return " $('#$id').on('click', function(e) { e.preventDefault(); xlvoPlayer.countdown(event, $seconds); }); ";
+            });
+        }
+
+        return $factory->dropdown()
+            ->standard($items)->withOnLoadCode(function ($id) {
+                $javascript = "$('#$id .dropdown-toggle').removeClass('btn-default').addClass('btn-primary');";
+
+                $javascript .= "$('#$id').closest('.l-bar__group, .l-bar__space-keeper').find('> .l-bar__element').css('margin-right', '0px');";
+
+                return $javascript;
+            });
+    }
+
 
     /**
      * @throws ilException

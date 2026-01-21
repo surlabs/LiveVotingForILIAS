@@ -162,7 +162,6 @@ div#il_prop_cont_pin_input input#pin_input {
   margin: auto;
 }
 div#il_prop_cont_pin_input label[for=pin_input] {
-  width: 100%;
   clear: both;
   text-align: center;
 }

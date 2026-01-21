@@ -1185,7 +1185,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         //Set Active Voting of Presenter via URL - bot don't save it - PLLV-272
         if ($param_manager->getVoting() > 0) {
-            $this->object->getLiveVoting()->getPlayer()->setActive($param_manager->getVoting());
+            $this->object->getLiveVoting()->getPlayer()->setActiveVoting($param_manager->getVoting());
         }
 
         $liveVotingUI = new LiveVotingUI($this->object->getLiveVoting());

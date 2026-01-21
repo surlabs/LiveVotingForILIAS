@@ -378,8 +378,10 @@ class LiveVotingPlayerGUI
 
         $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Voter/tpl.pin.html', true, false);
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/Voter/pin.css');
+        $DIC->ui()->mainTemplate()->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/Voter/pin.js');
         $pin_form = new ilPropertyFormGUI();
         $pin_form->setFormAction($DIC->ctrl()->getLinkTarget($this, 'checkPin'));
+        $pin_form->addCommandButton('#', $this->txt('common_back'), "pinBackButton");
         $pin_form->addCommandButton('checkPin', $this->txt('voter_send'));
 
         $te = new ilTextInputGUI($this->txt('voter_pin_input'), 'pin_input');

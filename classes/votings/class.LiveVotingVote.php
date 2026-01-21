@@ -487,10 +487,22 @@ class LiveVotingVote
         $database = new LiveVotingDatabase();
 
         if ($filter) {
-            $result = $database->select("rep_robj_xlvo_vote_n", array(
+            $where = [
                 "round_id" => $round_id,
-                "status" => 1
-            ), ["id", "user_identifier", "user_id"], "AND (user_identifier LIKE '" . $filter . "' OR user_id = '" . $filter . "')");
+                "status" => 1,
+            ];
+
+            if (is_numeric($filter)) {
+                $where["user_id"] = (int)$filter;
+            } else {
+                $where["user_identifier"] = $filter;
+            }
+
+            $result = $database->select(
+                "rep_robj_xlvo_vote_n",
+                $where,
+                ["id", "user_identifier", "user_id"]
+            );
         } else {
             $result = $database->select("rep_robj_xlvo_vote_n", array(
                 "round_id" => $round_id,

@@ -74,8 +74,7 @@ class LiveVotingResultsUI
     {
         $this->buildToolbar();
 
-        $liveVotingTableGUI = new LiveVotingResultsTableGUI($parent, 'results');
-        $liveVotingTableGUI->buildData($this->liveVoting->getId(), $this->round->getId());
+        $liveVotingTableGUI = new LiveVotingResultsTableGUI($parent, 'results', $this->liveVoting->getId(), $this->round->getId());
 
         return $liveVotingTableGUI->getHTML();
     }
