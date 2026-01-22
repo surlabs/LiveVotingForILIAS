@@ -175,11 +175,11 @@ class LiveVotingPrioritiesUI
             $answers_data = $result["config_answers"];
             $options_data = json_decode(str_replace("\'", '"', $answers_data["hidden"]));
 
-            if (!empty($options_data)) {
+            if (!empty($options_data) && !empty($question_data["question"])) {
                 $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Priorities");
 
                 $question->setTitle($question_data["title"] ?? null);
-                $question->setQuestion($_POST["form/input_0/input_2"] ? ilRTE::_replaceMediaObjectImageSrc($_POST["form/input_0/input_2"]) : null);
+                $question->setQuestion(ilRTE::_replaceMediaObjectImageSrc($question_data["question"]));
                 $question->setColumns((int)($question_data["columns"] ?? 0));
 
                 $old_options = $question->getOptions();

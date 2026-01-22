@@ -215,7 +215,13 @@ final class LiveVotingJs
     public function ilias(ilObjLiveVotingGUI $liveVotingGUI, string $cmd = ''): LiveVotingJs
     {
         global $DIC;
-        $this->addSetting('base_url', $DIC->ctrl()->getLinkTarget($liveVotingGUI, $cmd, '', true));
+
+        $url = $DIC->ctrl()->getLinkTarget($liveVotingGUI, $cmd, '', true);
+
+        // Remove the param xlvo_voting
+        $url = preg_replace('/(&|\?)xlvo_voting=[^&]*/', '', $url);
+
+        $this->addSetting('base_url', $url);
 
         return $this;
     }

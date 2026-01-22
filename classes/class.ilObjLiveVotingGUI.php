@@ -211,7 +211,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $liveVotingChoicesUI = new LiveVotingChoicesUI();
         $form = $liveVotingChoicesUI->getChoicesForm();
         if ($DIC->http()->request()->getMethod() == "POST") {
-
             $id = $liveVotingChoicesUI->save($form->withRequest($DIC->http()->request())->getData());
 
             if ($id !== 0) {
@@ -505,7 +504,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                     $form = $liveVotingChoicesUI->getChoicesForm();
                     $saving_info = "";
                     if ($DIC->http()->request()->getMethod() == "POST") {
-
                         $id = $liveVotingChoicesUI->save($form->withRequest($DIC->http()->request())->getData(), $question->getId());
 
                         if ($id !== 0) {

@@ -213,7 +213,7 @@ voter_text#:#Input
 voting_actions#:#Actions
 voting_add#:#Add Question
 voting_cancel#:#Cancel
-voting_columns#:#Colums for possible answers
+voting_columns#:#Columns for possible answers
 voting_confirm_number_of_votes#:#Amount of User-Inputs:
 voting_confirm_reset#:#Do you like to reset this Voting? All User-Inputs will be deleted.
 voting_confirm_reset_all#:#Do you like to reset all results of this LiveVoting? All User-Inputs will be deleted.

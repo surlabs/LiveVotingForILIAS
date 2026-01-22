@@ -165,11 +165,14 @@ class LiveVotingFreeInputUI
             $question_data = $result["config_question"];
             $answers_data = $result["config_answers"];
 
+            if (empty($question_data["question"])) {
+                return 0;
+            }
 
             $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("FreeText");
 
             $question->setTitle($question_data["title"] ?? null);
-            $question->setQuestion($_POST["form/input_0/input_2"] ? ilRTE::_replaceMediaObjectImageSrc($_POST["form/input_0/input_2"]) : null);
+            $question->setQuestion(ilRTE::_replaceMediaObjectImageSrc($question_data["question"]));
             $question->setMultiFreeInput($answers_data["multi_input"] ? (bool)$answers_data["multi_input"] : false);
             $question->setAnswerField($answers_data["answer_field"] ? (int)$answers_data["answer_field"] : 1);
 

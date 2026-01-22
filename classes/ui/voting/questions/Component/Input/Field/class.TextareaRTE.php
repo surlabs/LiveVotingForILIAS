@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Customizing\global\plugins\Services\Repository\RepositoryObject\LiveVoting\classes\ui\voting\questions\Component\Input\Field;
 
 use Closure;
+use Generator;
 use ILIAS\Data\Factory;
 use ILIAS\Refinery\Constraint;
 use ILIAS\UI\Component\Input\Field\Textarea;
@@ -202,6 +203,18 @@ class TextareaRTE extends Input implements Textarea {
             return $this->refinery->string()->hasMinLength($this->min_limit);
         }
         return $this->refinery->string()->hasMinLength(1);
+    }
+
+    protected function getOperations(): Generator
+    {
+        if ($this->isRequired()) {
+            $op = $this->getConstraintForRequirement();
+            if ($op !== null) {
+                yield $op;
+            }
+        }
+
+        yield from parent::getOperations();
     }
 
     public function isLimited(): bool
