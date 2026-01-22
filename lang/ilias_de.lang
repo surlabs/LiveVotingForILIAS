@@ -269,7 +269,7 @@ xlvo_mode#:#Modus
 xlvo_mode_basic#:#Standard
 xlvo_mode_basic_info#:#Der klassische LiveVoting-Modus
 xlvo_mode_challenge#:#Challenge
-xlvo_mode_challenge_info#:#Im Challenge-Modus spielen die Teilnehmer ein Spiel, bei dem sie für die richtige Beantwortung von Fragen Punkte sammeln können.
+xlvo_mode_challenge_info#:#Im Challenge-Modus spielen die Teilnehmenden ein Spiel und sammeln Punkte, indem sie Fragen korrekt beantworten. In diesem Modus sind nur „Einzel-/Mehrfachauswahl“-Fragen möglich.
 cat_create_xlobj_results_behaviour#:#MISSING cat_create_xlobj_results_behaviour
 rminable_select_start_time#:#MISSING rminable_select_start_time
 vqtype_1_options#:#MISSING vqtype_1_options

@@ -40,4 +40,9 @@ class LiveVotingBasicMode extends LiveVotingMode
     {
         return "inner_screen";
     }
+
+    public function getManageDisclaimerVar(): string
+    {
+        return "manage_disclaimer_basic_mode";
+    }
 }

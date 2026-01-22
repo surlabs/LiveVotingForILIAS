@@ -269,7 +269,7 @@ xlvo_mode#:#Mode
 xlvo_mode_basic#:#Standard
 xlvo_mode_basic_info#:#The classic LiveVoting mode
 xlvo_mode_challenge#:#Challenge
-xlvo_mode_challenge_info#:#With the Challenge mode, the participants play a game raching points for answering questions correctly.
+xlvo_mode_challenge_info#:#With the Challenge mode, the participants play a game earning points for answering questions correctly. In this mode, only "Single/Multiple Choice" questions are possible.
 qtype_1_total_obj_results_alway_on_info#:#MISSING qtype_1_total_obj_results_alway_on_info
 obj_frozen_alway_ofxlvo_edit#:#MISSING obj_frozen_alway_ofxlvo_edit
 playplayer_msg_no_start_2#:#MISSING playplayer_msg_no_start_2
@@ -350,3 +350,5 @@ voting_style_info#:#Select the style of the voting
 voting_style_classic#:#Classic style
 voting_style_new#:#New style
 empty_input_error#:#There cannot be empty options
+manage_disclaimer_basic_mode#:#This LiveVoting was created in "Standard" mode
+manage_disclaimer_challenge_mode#:#This LiveVoting was created in "Challenge" mode. In this mode, only "Single/Multiple Choice" questions are possible.
