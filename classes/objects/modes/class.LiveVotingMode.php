@@ -48,4 +48,6 @@ abstract class LiveVotingMode
     abstract public function getStartTemplate(): string;
 
     abstract public function getInnerTemplate(): string;
+
+    abstract public function getManageDisclaimerVar(): string;
 }

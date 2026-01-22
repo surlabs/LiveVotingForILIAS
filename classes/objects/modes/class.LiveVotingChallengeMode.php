@@ -40,4 +40,9 @@ class LiveVotingChallengeMode extends LiveVotingMode
     {
         return "inner_screen_challenge";
     }
+
+    public function getManageDisclaimerVar(): string
+    {
+        return "manage_disclaimer_challenge_mode";
+    }
 }

@@ -178,8 +178,11 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             $this->tpl->setContent($this->renderer->render($this->factory->messageBox()->failure($this->plugin->txt("permission_denied"))));
         } elseif (ilObjLiveVotingAccess::hasWriteAccess()) {
             $liveVotingManageUI = new LiveVotingManageUI();
+
+            $modeDisclaimer = $this->plugin->txt($this->object->getLiveVoting()->getMode()->getManageDisclaimerVar());
+
             try {
-                $this->tpl->setContent($liveVotingManageUI->showManage($this));
+                $this->tpl->setContent($this->renderer->render($this->factory->messageBox()->info($modeDisclaimer)) . $liveVotingManageUI->showManage($this));
             } catch (ilSystemStyleException|ilTemplateException $e) {
                 $this->tpl->setContent($this->renderer->render($this->factory->messageBox()->failure($e->getMessage())));
             }
