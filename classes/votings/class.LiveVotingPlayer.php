@@ -284,7 +284,7 @@ class LiveVotingPlayer
             $this->setFrozen((bool)$result[0]["frozen"]);
             $this->setTimestampRefresh((int)$result[0]["timestamp_refresh"]);
             $this->setShowResults((bool)$result[0]["show_results"]);
-            $this->setButtonStates(json_decode($result[0]["button_states"], true));
+            $this->setButtonStates(json_decode($result[0]["button_states"] ?? "{}", true));
             $this->setCountdown((int)$result[0]["countdown"]);
             $this->setCountdownStart((int)$result[0]["countdown_start"]);
             $this->setForceReload((bool)$result[0]["force_reload"]);

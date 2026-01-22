@@ -834,3 +834,12 @@ if ($db->tableColumnExists("rep_robj_xlvo_option_n", "is_correct")) {
     $db->manipulate("ALTER TABLE rep_robj_xlvo_option_n MODIFY COLUMN text VARCHAR(4000)");
 }
 ?>
+<#48>
+<?php
+global $DIC;
+$db = $DIC->database();
+
+if ($db->tableExists("rep_robj_xlvo_player_n")) {
+    $db->manipulate("UPDATE rep_robj_xlvo_player_n SET button_states = '[]' WHERE button_states IS NULL");
+}
+?>
