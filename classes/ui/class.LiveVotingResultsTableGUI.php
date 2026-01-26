@@ -83,7 +83,7 @@ class LiveVotingResultsTableGUI implements DataRetrieval
      */
     public function getRows(DataRowBuilder $row_builder, array $visible_column_ids, Range $range, Order $order, ?array $filter_data, ?array $additional_parameters): Generator
     {
-        $records = $this->getRecords($filter_data);
+        $records = $this->getRecords($filter_data, $order);
 
         foreach ($records as $record) {
             yield $row_builder->buildDataRow((string) $record['id'], $record);
@@ -187,7 +187,7 @@ class LiveVotingResultsTableGUI implements DataRetrieval
     /**
      * @throws LiveVotingException
      */
-    private function getRecords(?array $filter_data = []): array
+    private function getRecords(?array $filter_data = [], ?Order $order = null): array
     {
         $a_data = array();
 
@@ -228,6 +228,26 @@ class LiveVotingResultsTableGUI implements DataRetrieval
                     "points" => LiveVotingPlayer::getPlayerPoints($vote->getUserIdType() == 1 ? (string) $vote->getUserId() : (string) $vote->getUserIdentifier(), $this->obj_id, $question->getId(), $this->round_id)
                 );
             }
+        }
+
+        if (isset($order)) {
+            $fields = $order->get();
+
+            usort($a_data, function ($a, $b) use ($fields) {
+                foreach ($fields as $field => $direction) {
+                    if ($a[$field] == $b[$field]) {
+                        continue;
+                    }
+
+                    if ($direction === Order::ASC) {
+                        return ($a[$field] < $b[$field]) ? -1 : 1;
+                    } else {
+                        return ($a[$field] > $b[$field]) ? -1 : 1;
+                    }
+                }
+
+                return 0;
+            });
         }
 
         return $a_data;
