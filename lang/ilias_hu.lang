@@ -31,6 +31,8 @@ config_base_url#:#Alap URL
 config_base_url_info#:#Telepítése URL-je (alkönyvtárat is beleértve), pl. https://www.domain.hu/ilias
 config_cancel#:#Mégsem
 config_msg_success#:#Mentve
+config_request_frequency#:#Ügyfélfrissítési gyakoriság
+config_request_frequency_info#:#Az ügyfél oldali élő szavazási adatok frissítési gyakorisága másodpercben mérve. Minél alacsonyabb a szám, annál gyorsabban reagálnak az ügyfelek a tanár által végzett változtatásokra, de a szerver terhelése nő. 2–5 másodpercet javaslunk.
 config_update#:#Módosítás
 config_result_api#:#MISSING config_result_api
 config_result_api_info#:#MISSING config_result_api_info
@@ -41,12 +43,14 @@ config_open_result_api#:#MISSING config_open_result_api
 config_use_global_cache#:#aktiválása caching
 config_use_global_cache_info#:#Lehetővé teszi a LiveVoting plugint használni a globális cache mechanizmus, amely biztosítja ILIAS. Az alapul szolgáló cache szinkronizálni kell egy multi veszi a telepítést, egyébként a plugin megjósolhatatlan eredményeket.
 config_presenter_link#:#MISSING config_presenter_link
+config_presenter_link_non_anonym#:#MISSING config_presenter_link_non_anonym
 config_ppt_export#:#MISSING config_ppt_export
 config_ppt_export_info#:#MISSING config_ppt_export_info
 correct_order#:#Helyes sorrend
 crs_create_xlvo#:#Élőszavazás létrehozása
 fikd_create_xlvo#:#Élőszavazás létrehozása
 grp_create_xlvo#:#Élőszavazás létrehozása
+fold_create_xlvo#:#Élőszavazás létrehozása
 incorrect_order#:#Hibás sorrend
 msg_success_voting_created#:#Szavazást sikeresen létrehozta
 msg_success_voting_updated#:#Szavazást sikeresen módosította
@@ -168,11 +172,16 @@ qtype_6_option_alternative_result_display_mode#:#Képviselete a válaszokat
 qtype_6_option_alternative_result_display_mode_info#:#Alternatív képviselete a válaszokat. Ezeket mutatja lehajló csoportosítva szövegként.
 qtype_4_option_randomise_option_after_save_info#:#MISSING qtype_4_option_randomise_option_after_save_info
 qtype_6_display_mode_nr_0#:#MISSING qtype_6_display_mode_nr_0
-qtype_6_display_mode_nr_1#:#MISSING qtype_6_display_mode_nr_1
 qtype_6_display_mode_nr_2#:#MISSING qtype_6_display_mode_nr_2
+qtype_6_display_mode_nr_1#:#MISSING qtype_6_display_mode_nr_1
 results_title#:#Eredmények
-rminable_select_start_time#:#Indítás
 root_create_xlvo#:#Élőszavazás létrehozása
+show_attendees#:#MISSING show_attendees
+show_attendees_info#:#MISSING show_attendees_info
+nicknames#:#Becenevek
+nicknames_info#:#Ez az opció lehetővé teszi a résztvevőknek, hogy szavazás előtt becenevet adjanak meg, csak kihívás módban elérhető.
+scoreboard#:#Eredménytábla
+scoreboard_info#:#Minden kérdés után mutasd meg az eredménytáblát, csak kihívás módban elérhető.
 subtab_show#:#Megjelenítés
 tab_content#:#Tartalom
 tab_edit#:#Beállítások
@@ -260,22 +269,10 @@ xlvo_mode_basic#:#Alapvető
 xlvo_mode_challenge#:#Kihívás
 xlvo_mode_challenge_info#:#A Kihívás módban a résztvevők egy játékot játszanak, amelyben pontokat kapnak a kérdések helyes megválaszolásáért.
 qtype_1_total_obj_results_alway_on_info#:#MISSING qtype_1_total_obj_results_alway_on_info
-config_request_frequency#:#MISSING config_request_frequency
 obj_frozen_alway_ofxlvo_edit#:#MISSING obj_frozen_alway_ofxlvo_edit
 playplayer_msg_no_start_2#:#MISSING playplayer_msg_no_start_2
-show_attendees#:#MISSING show_attendees
-show_attendees_info#:#MISSING show_attendees_info
 voting_short_link#:#Rövid URL
 voting_permanent_link#:#MISSING voting_permanent_link
-config_ppt_export_info_manual#:#MISSING config_ppt_export_info_manual
-config_ppt_export_info_manual_1#:#MISSING config_ppt_export_info_manual_1
-config_ppt_export_info_manual_2#:#MISSING config_ppt_export_info_manual_2
-config_ppt_export_info_manual_3#:#MISSING config_ppt_export_info_manual_3
-config_ppt_export_info_manual_4#:#MISSING config_ppt_export_info_manual_4
-config_allow_shortlink_presenter#:#MISSING config_allow_shortlink_presenter
-config_allow_shortlink_presenter_info#:#MISSING config_allow_shortlink_presenter_info
-config_allow_shortlink_link_presenter#:#MISSING config_allow_shortlink_link_presenter
-config_allow_shortlink_link_presenter_info#:#MISSING config_allow_shortlink_link_presenter_info
 rbac_create_xlvo#:#MISSING rbac_create_xlvo
 player_pin#:#MISSING player_pin
 qtype_6_option_range_step#:#MISSING qtype_6_option_range_step
@@ -291,7 +288,6 @@ qtype_2_answer_field_multi_line#:#MISSING qtype_2_answer_field_multi_line
 qtype_2_answer_field_multi_line_info#:#MISSING qtype_2_answer_field_multi_line_info
 start_online#:#MISSING start_online
 start_zoom#:#MISSING start_zoom
-qtype_1_optmsg_success_voting_updated#:#MISSING qtype_1_optmsg_success_voting_updated
 qtype_6_mean#:#MISSING qtype_6_mean
 qtype_6_median#:#MISSING qtype_6_median
 qtype_6_mode#:#MISSING qtype_6_mode
@@ -308,6 +304,14 @@ voting_msg_reset#:#Válasz törölve
 sorting_msg_saved#:#Sorrend mentve
 voting_msg_duplicated_failed#:#Kérdés duplikálása sikertelen
 voting_msg_duplicated_success#:#Kérdés duplikálása sikeres
+end_time#:#Befejezés ideje
+common_points#:#Pontszám
+score_form_header#:#Pontszám
+voting_score#:#Kérdés pontszáma
+voting_score_info#:#A kérdés pontszáma, hogy elérje a legnagyobb pontszámot, a felhasználó pontosan a helyes választ kell választani
+voter_header_scoreboard#:#Pontszám
+voting_countdown#:#Time to answer
+voting_countdown_info#:#Time to answer the question, this also affects the question score
 form_input_not_valid_cm#:#A megadott adatok egy része hiányos vagy érvénytelen. Kérjük, javítsa ki a bejegyzést. (Ne feledje, hogy legalább egy helyes opcióra van szükség, és a pontszámnak nagyobbnak kell lennie 0-nál.)
 voter_header_end#:#A szavazás lezárult
 voter_info_end#:#Várakozás az előadóra...
@@ -318,9 +322,11 @@ seconds_left#:#Hátralévő másodpercek
 single_choice#:#Egyszeres választás
 multiple_choice#:#Többszörös választás
 next#:#Következő
-styles#:#Styles
+styles#:#Stílusok
 voting_style#:#Voting Style
 voting_style_info#:#Select the style of the voting
 voting_style_classic#:#Classic style
 voting_style_new#:#New style
 empty_input_error#:#A kérdés nem lehet üres.
+manage_disclaimer_basic_mode#:#Ez az élőszavazás "Standard" módban lett létrehozva
+manage_disclaimer_challenge_mode#:#Ez az élőszavazás "Challenge" módban lett létrehozva. Ebben a módban csak "Single/Multiple Choice" kérdések lehetnek.
