@@ -1,3 +1,4 @@
+cat_create_xlobj_results_behaviour#:#Ergebnisse anzeigen
 cat_create_xlvo#:#LiveVoting erstellen
 common_actions#:#Aktionen
 common_all#:#Alle
@@ -61,7 +62,6 @@ obj_edit_properties#:#Einstellungen bearbeiten
 obj_formtitle_change_vote#:#Verhalten beim Wechsel der Frage
 obj_frozen_alway_off#:#nach Wechsel immer ausgeschaltet
 obj_frozen_alway_off_info#:#Benutzer können erst abstimmen, wenn die Frage freigegeben wird.
-obj_frozen_alway_ofxlvo_edit#:#Bearbeiten
 obj_frozen_alway_on#:#nach Wechsel immer eingeschaltet
 obj_frozen_alway_on_info#:#Benutzer können nach einem Wechsel der Frage sofort abstimmen.
 obj_frozen_behaviour#:#Abstimmen
@@ -117,8 +117,6 @@ qtype_1_multi_selection#:#Mehrfachauswahl
 qtype_1_multi_selection_info#:#Ein Nutzer kann mehrere Antworten wählen. Beim Einblenden der Ergebnisse wird für jede Antwortmöglichkeit das Verhältnis separat berechnet (Anzahl erhaltener Stimmen / Anzahl Abstimmende).
 qtype_1_options#:#Mögliche Antworten
 qtype_1_option_text#:#Options-Text
-qtype_1_optmsg_success_voting_updated#:#Frage wurde gespeichert
-qtype_1_total_obj_results_alway_on_info#:#Die Ergebnisse werden nach einem Wechsel der Frage automatisch eingeblendet.
 qtype_1_total_voters#:#Anzahl Abstimmende
 qtype_1_total_votes#:#Anzahl Stimmen
 qtype_1_unvote#:#Zurücksetzen
@@ -256,6 +254,7 @@ voting_update_and_stay#:#Speichern
 voting_type_6#:#Zahl schätzen
 voting_type_6_info#:#Benutzer können eine Zahl zwischen X und Y schätzen.
 voting_powerpoint_export#:#Als PowerPoint exportieren
+vqtype_1_options#:#Optionen
 xlvo_add#:#Hinzufügen
 xlvo_delete#:#LiveVoting löschen
 xlvo_edit#:#Bearbeiten
@@ -271,26 +270,9 @@ xlvo_mode_basic_info#:#Der klassische LiveVoting-Modus
 xlvo_mode_challenge#:#Challenge
 xlvo_mode_challenge_info#:#Im Challenge-Modus spielen die Teilnehmenden ein Spiel und sammeln Punkte, indem sie Fragen korrekt beantworten. In diesem Modus sind nur „Einzel-/Mehrfachauswahl“-Fragen möglich.
 cat_create_xlobj_results_behaviour#:#MISSING cat_create_xlobj_results_behaviour
-rminable_select_start_time#:#MISSING rminable_select_start_time
 vqtype_1_options#:#MISSING vqtype_1_options
 voting_short_link#:#Kurz-URL
 voting_permanent_link#:#Permanenter-Link
-config_ppt_export_info_manual#:#LiveVotings in PowerPoint einbetten und nutzen:
-config_ppt_export_info_manual_1#:#Einmalig: In Powerpoint: "Web Viewer" im Office-Add-Ins Store suchen (Einfügen > Add-Ins > Meine Add-Ins) und Web-Viewer Add-In hinzufügen.
-config_ppt_export_info_manual_2#:#LiveVoting exportieren
-config_ppt_export_info_manual_3#:#Präsentation starten
-config_ppt_export_info_manual_4#:#Achtung. Bei Einsatz des LiveVotings in PowerPoint müssen Sie vor jedem Folienwechsel mit LiveVoting das Voting pausieren. Sonst wird das LiveVoting in der Teilnehmendensicht nicht aktualisiert.
-config_ppt_link_info_manual#:#LiveVotings in PowerPoint einbetten und nutzen:
-config_ppt_link_info_manual_1#:#Einmalig: In Powerpoint: "Web Viewer" im Office-Add-Ins Store suchen (Einfügen > Add-Ins > Meine Add-Ins) und Web-Viewer Add-In hinzufügen.
-config_ppt_link_info_manual_2#:#Moderations-Link dieser Frage kopieren
-config_ppt_link_info_manual_3#:#In der Präsentation eine leere Folie erstellen und ein Webviewer Element hinzufügen
-config_ppt_link_info_manual_4#:#Moderations-Link einfügen
-config_ppt_link_info_manual_5#:#Präsentation starten
-config_ppt_link_info_manual_6#:#Achtung. Bei Einsatz des LiveVotings in PowerPoint müssen Sie vor jedem Folienwechsel mit LiveVoting das Voting pausieren. Sonst wird das LiveVoting in der Teilnehmendensicht nicht aktualisiert.
-config_allow_shortlink_presenter#:#Kurz-URL für Moderator einschalten
-config_allow_shortlink_presenter_info#:#Eine Kurz-URL kann bspw. durch Hinzufügen einer RewriteRule in der .htaccess erstellt werden, dadurch kann auf https://ilias.domain.com/presenter angestimmt werden:
-config_allow_shortlink_link_presenter#:#Kurz-URL
-config_allow_shortlink_link_presenter_info#:#Ganze Kurz-URL Ihrer Installation, bspw. https://ilias.domain.com/presenter
 rbac_create_xlvo#:#LiveVoting anlegen
 player_pin#:#PIN: %s
 qtype_6_option_range_step#:#Schrittweite
@@ -298,8 +280,6 @@ qtype_6_option_range_step_info#:#Schrittweite des Zahlenbereichs.
 config_use_serif_font_for_pins#:#Serifenschrift für PINs nutzen
 config_use_serif_font_for_pins_info#:#Serifenschrift für PINs nutzen
 qtype_6_invalid_step_range#:#Die Schrittweite konnte nicht gespeichert werden. Diese muss kleiner sein als der Zahlenbereich zwischen Minimum und Maximum. Der Zahlenbereich zwischen Minimum und Maximum muss teilbar sein durch die Schrittweite.
-qtype_6_invalid_end_range#:#Das Ende des Zahlenbereichs muss größer sein als der Start. Bitte beachten Sie, dass das Ende zwischen %1$s und %2$s sein muss.
-qtype_6_invalid_start_range#:#Der Start des Zahlenbereichs muss kleiner sein als das Ende. Bitte beachten Sie, dass der Start zwischen %1$s und %2$s sein muss.
 qtype_2_answer_field#:#Antwortfeld
 qtype_2_answer_field_info#:#MISSING qtype_2_answer_field_info
 qtype_2_answer_field_single_line#:#Einzeiliges Antwortfeld
@@ -340,6 +320,7 @@ new_voting#:#Neue Abstimmung
 new_voting_message#:#Eine neue Abstimmung hat begonnen.
 seconds_left#:#Verbleibende Sekunden
 single_choice#:#Einzelauswahl
+multiple_choice#:#Multiple Choice
 next#:#Weiter
 styles#:#Stil
 voting_style#:#Abstimmungsstil
@@ -347,3 +328,5 @@ voting_style_info#:#Wählen Sie den Stil der Abstimmung
 voting_style_classic#:#Klassischer Stil
 voting_style_new#:#Neuer Stil
 empty_input_error#:#Es kann keine leeren Optionen geben
+manage_disclaimer_basic_mode#:#Dieses LiveVoting wurde im Modus „Standard“ erstellt.
+manage_disclaimer_challenge_mode#:#Dieses LiveVoting wurde im Modus „Challenge“ erstellt. In diesem Modus sind nur „Single/Multiple Choice“-Fragen möglich.

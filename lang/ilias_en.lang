@@ -175,7 +175,6 @@ qtype_6_display_mode_nr_0#:#Effective estimates (in ascending order)
 qtype_6_display_mode_nr_2#:#Effective estimates inc. mean, median and mode
 qtype_6_display_mode_nr_1#:#Bar graph
 results_title#:#Results
-rminable_select_start_time#:#Start
 root_create_xlvo#:#Create LiveVoting
 show_attendees#:#Show Attendees (Online)
 show_attendees_info#:#Show the count of attendees, this has an impact on performance and should only be activated for a small live voting.
@@ -270,30 +269,10 @@ xlvo_mode_basic#:#Standard
 xlvo_mode_basic_info#:#The classic LiveVoting mode
 xlvo_mode_challenge#:#Challenge
 xlvo_mode_challenge_info#:#With the Challenge mode, the participants play a game earning points for answering questions correctly. In this mode, only "Single/Multiple Choice" questions are possible.
-qtype_1_total_obj_results_alway_on_info#:#MISSING qtype_1_total_obj_results_alway_on_info
 obj_frozen_alway_ofxlvo_edit#:#MISSING obj_frozen_alway_ofxlvo_edit
 playplayer_msg_no_start_2#:#MISSING playplayer_msg_no_start_2
 voting_short_link#:#Short URL
 voting_permanent_link#:#Permanent-Link
-config_ppt_export_info_manual#:#Embedding LiveVotings in PowerPoint:
-config_ppt_export_info_manual_1#:#Export LiveVoting
-config_ppt_export_info_manual_2#:#Start PowerPoint
-config_ppt_export_info_manual_3#:#Search for "Web Viewer" in the Office AddIn's Store (Insert > AddIns > My AddIns)
-config_ppt_export_info_manual_4#:#Add Web-Viewer AddIn
-config_ppt_link_info_manual#:#LiveVotings in PowerPoint einbetten und nutzen:
-config_ppt_link_info_manual_1#:#Einmalig: In Powerpoint: "Web Viewer" im Office-Add-Ins Store suchen (Einfügen > Add-Ins > Meine Add-Ins) und Web-Viewer Add-In hinzufügen.
-config_ppt_link_info_manual_2#:#Moderations-Link dieser Frage kopieren
-config_ppt_link_info_manual_3#:#In Präsentation eine leere Folie erstellen und ein Webviewer Element hinzufügen
-config_ppt_link_info_manual_4#:#Moderations-Link einfügen
-config_ppt_link_info_manual_5#:#Präsentation starten
-config_ppt_link_info_manual_6#:#Achtung. Bei Einsatz des LiveVotings in PowerPoint müssen Sie vor jedem Folienwechsel mit LiveVoting das Voting pausieren. Sonst wird das LiveVoting in der Teilnehmendensicht nicht aktualisiert.
-config_ppt_export_info_manual_4#:#Moderations-Link einfügen
-config_ppt_export_info_manual_5#:#Präsentation starten
-config_ppt_export_info_manual_6#:#Achtung. Bei Einsatz des LiveVotings in PowerPoint müssen Sie vor jedem Folienwechsel mit LiveVoting das Voting pausieren. Sonst wird das LiveVoting in der Teilnehmendensicht nicht aktualisiert.
-config_allow_shortlink_presenter#:#Activate Short URL for Presenter
-config_allow_shortlink_presenter_info#:#For example, a short URL can be created by adding a RewriteRule in the .htaccess, which will trigger on https://ilias.domain.com/presenter:
-config_allow_shortlink_link_presenter#:#Short URL
-config_allow_shortlink_link_presenter_info#:#Full Short URL of your Installation , e.g. https://ilias.domain.com/presenter
 rbac_create_xlvo#:#Create LiveVoting
 player_pin#:#PIN: %s
 qtype_6_option_range_step#:#Step
@@ -309,7 +288,6 @@ qtype_2_answer_field_multi_line#:#Multi-line answer field
 qtype_2_answer_field_multi_line_info#:#Multi-line answer field
 start_online#:#%s online
 start_zoom#:#Zoom
-qtype_1_optmsg_success_voting_updated#:#MISSING qtype_1_optmsg_success_voting_updated
 qtype_6_mean#:#Mean
 qtype_6_median#:#Median
 qtype_6_mode#:#Mode
