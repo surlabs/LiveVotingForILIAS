@@ -1,6 +1,6 @@
 ![LiveVoting](https://github.com/user-attachments/assets/bb9eee67-47c1-4a78-bd6c-71a395b49b94)
 
-# LiveVoting Repository Object Plugin for ILIAS 9
+# LiveVoting Repository Object Plugin for ILIAS 10
 This plugin allows to create real time votings within ILIAS.
 It is compatible with the previous LiveVoting plugin for ILIAS < 7.0.
 
@@ -8,13 +8,13 @@ It is compatible with the previous LiveVoting plugin for ILIAS < 7.0.
 Please, notice that previous versions of the plugin were numbered with dates (e.g. 2021.01.01). This version is numbered with the ILIAS version it is compatible with (e.g. ilias9 -> 9.x).
 **You need to change the plugin version in the il_plugin table of the database to something lower than 9.0.0 before running the following commands.**
 
-1. **Ensure you delete any previous LiveVoting folder** in Customizing/global/plugins/Services/Repository/RepositoryObject/ 
+1. **Ensure you delete any previous LiveVoting folder** in `public/Customizing/plugins/Repository/RepositoryObject/`
 
-2. Create subdirectories, if necessary for Customizing/global/plugins/Services/Repository/RepositoryObject/ or run the following script from the ILIAS root
+2. Create subdirectories, if necessary for `public/Customizing/plugins/Repository/RepositoryObject/` or run the following script from the ILIAS root
 
 ```bash
-mkdir -p Customizing/global/plugins/Services/Repository/RepositoryObject
-cd Customizing/global/plugins/Services/Repository/RepositoryObject
+mkdir -p public/Customizing/plugins/Repository/RepositoryObject
+cd public/Customizing/plugins/Repository/RepositoryObject
 ```
 
 3. Then, execute:
@@ -22,7 +22,7 @@ cd Customizing/global/plugins/Services/Repository/RepositoryObject
 ```bash
 git clone https://github.com/surlabs/LiveVotingForILIAS.git ./LiveVoting
 cd LiveVoting
-git checkout ilias9
+git checkout ilias10_dev
 ```
 
 Ensure you run composer and npm install at platform root before you install/update the plugin
@@ -42,7 +42,7 @@ If you want to use the Shortlink mode, you need to rewrite the rule in .htaccess
 ```apacheconf
 <IfModule mod_rewrite.c>
 	RewriteEngine On
-	RewriteRule ^/?vote(/\w*)? /Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/pin.php?xlvo_pin=$1 [L]
+	RewriteRule ^/?vote(/\w*)? /public/Customizing/plugins/Repository/RepositoryObject/LiveVoting/pin.php?xlvo_pin=$1 [L]
 </IfModule>
 ```
 
