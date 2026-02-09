@@ -44,7 +44,7 @@ class HiddenInputGUI extends ilHiddenInputGUI
     public function render(): string
     {
         try {
-            $tpl = new ilTemplate('./Services/Form/templates/default/tpl.property_form.html', true, true);
+            $tpl = new ilTemplate("tpl.property_form.html", true, true, "components/ILIAS/Form");
         } catch (ilSystemStyleException|ilTemplateException $e) {
             throw new LiveVotingException($e->getMessage());
         }
