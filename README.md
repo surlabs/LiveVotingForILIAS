@@ -8,13 +8,13 @@ It is compatible with the previous LiveVoting plugin for ILIAS < 7.0.
 Please, notice that previous versions of the plugin were numbered with dates (e.g. 2021.01.01). This version is numbered with the ILIAS version it is compatible with (e.g. ilias9 -> 9.x).
 **You need to change the plugin version in the il_plugin table of the database to something lower than 9.0.0 before running the following commands.**
 
-1. **Ensure you delete any previous LiveVoting folder** in `public/Customizing/plugins/Repository/RepositoryObject/`
+1. **Ensure you delete any previous LiveVoting folder** in `/Customizing/global/plugins/Services/Repository/RepositoryObject/`
 
-2. Create subdirectories, if necessary for `public/Customizing/plugins/Repository/RepositoryObject/` or run the following script from the ILIAS root
+2. Create subdirectories, if necessary for `public/Customizing/global/plugins/Services/Repository/RepositoryObject/` or run the following script from the ILIAS root
 
 ```bash
-mkdir -p public/Customizing/plugins/Repository/RepositoryObject
-cd public/Customizing/plugins/Repository/RepositoryObject
+mkdir -p public/Customizing/global/plugins/Services/Repository/RepositoryObject
+cd public/Customizing/global/plugins/Services/Repository/RepositoryObject
 ```
 
 3. Then, execute:
