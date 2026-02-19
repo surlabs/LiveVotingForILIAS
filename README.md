@@ -1,4 +1,4 @@
-c![LiveVoting](https://github.com/user-attachments/assets/bb9eee67-47c1-4a78-bd6c-71a395b49b94)
+![LiveVoting](https://github.com/user-attachments/assets/bb9eee67-47c1-4a78-bd6c-71a395b49b94)
 
 # LiveVoting Repository Object Plugin for ILIAS 10
 This plugin allows to create real time votings within ILIAS.
