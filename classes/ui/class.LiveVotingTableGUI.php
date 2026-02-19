@@ -53,7 +53,7 @@ class LiveVotingTableGUI  implements OrderingBinding
     private $request;
     private WrapperFactory $wrapper;
     private \ILIAS\Refinery\Factory $refinery;
-    private array $records;
+    private array $records = [];
 
     /**
      * @throws LiveVotingException
@@ -77,7 +77,6 @@ class LiveVotingTableGUI  implements OrderingBinding
         $this->wrapper = $DIC->http()->wrapper();
         $this->refinery = $DIC->refinery();
 
-        $this->parseData();
     }
 
     public function getRows(OrderingRowBuilder $row_builder, array $visible_column_ids): Generator
@@ -96,6 +95,19 @@ class LiveVotingTableGUI  implements OrderingBinding
      */
     public function getHtml(): string
     {
+        $filter_inputs = $this->getFilterInputs();
+        $active = array_fill(0, count($filter_inputs), true);
+
+        $filter = $this->ui_service->filter()->standard(
+            'live_voting_manage_table',
+            $this->ctrl->getLinkTarget($this->parent_obj, $this->parent_cmd),
+            $filter_inputs,
+            $active,
+            true
+        );
+
+        $this->parseData($this->ui_service->filter()->getData($filter));
+
         $table = $this->factory->table()->ordering(
             "",
             $this->getColumns(),
@@ -107,30 +119,6 @@ class LiveVotingTableGUI  implements OrderingBinding
         if ($this->request->getMethod() == "POST" && $this->wrapper->query()->has('saveOrder') && $this->wrapper->query()->retrieve('saveOrder', $this->refinery->kindlyTo()->int()) == 1) {
             $this->saveOrder($table->getData());
         }
-
-        $filter_inputs = [
-            "title" => $this->factory->input()->field()->text($this->plugin->txt('voting_title')),
-            "question" => $this->factory->input()->field()->text($this->plugin->txt('voting_question')),
-            "type" => $this->factory->input()->field()->select(
-                $this->plugin->txt('voting_type'),
-                [
-                    -1 => $this->plugin->txt('common_all'),
-                    1 => $this->plugin->txt('voting_status_1'),
-                    5 => $this->plugin->txt('voting_status_5'),
-                    2 => $this->plugin->txt('voting_status_2'),
-                ]
-            ),
-        ];
-
-        $active = array_fill(0, count($filter_inputs), true);
-
-        $filter = $this->ui_service->filter()->standard(
-            'results_table',
-            $this->ctrl->getLinkTarget($this->parent_obj, $this->parent_cmd),
-            $filter_inputs,
-            $active,
-            true
-        );
 
         return $this->renderer->render($filter) . $this->renderer->render($table);
     }
@@ -147,43 +135,54 @@ class LiveVotingTableGUI  implements OrderingBinding
     /**
      * @throws LiveVotingException
      */
-    private function parseData(): void
+    private function parseData(?array $filter_data = []): void
     {
+        $filter_data ??= [];
         $database = new LiveVotingDatabase();
 
         $where = array(
             "obj_id" => $this->parent_obj->getObjId(),
         );
 
-        if (isset($this->filter['voting_type']) && $this->filter['voting_type'] != -1 && $this->filter['voting_type'] != "") {
-            $where['voting_type'] = $this->filter['voting_type'];
+        if (isset($filter_data['voting_type']) && $filter_data['voting_type'] != -1 && $filter_data['voting_type'] != "") {
+            $where['voting_type'] = (int) $filter_data['voting_type'];
         }
 
         $collection = $database->select("rep_robj_xlvo_voting_n", $where, null, "ORDER BY position ASC");
 
-        if (isset($this->filter['question']) && isset($this->filter['title']) && $this->filter['title'] != "" || (isset($this->filter['question']) && $this->filter['question'] != "")) {
-            $filtered = array();
+        $title_filter = isset($filter_data['title']) ? trim((string) $filter_data['title']) : '';
+        $question_filter = isset($filter_data['question']) ? trim((string) $filter_data['question']) : '';
 
-            if (isset($this->filter['title']) && $this->filter['title'] != "") {
-                foreach ($collection as $item) {
-                    if (str_contains($item['title'], $this->filter['title'])) {
-                        $filtered[] = $item;
-                    }
+        if ($title_filter !== '' || $question_filter !== '') {
+            $collection = array_values(array_filter(
+                $collection,
+                static function (array $item) use ($title_filter, $question_filter): bool {
+                    $matches_title = $title_filter === '' || stripos((string) ($item['title'] ?? ''), $title_filter) !== false;
+                    $matches_question = $question_filter === '' || stripos((string) ($item['question'] ?? ''), $question_filter) !== false;
+
+                    return $matches_title && $matches_question;
                 }
-            }
-
-            if (isset($this->filter['question']) && $this->filter['question'] != "") {
-                foreach ($collection as $item) {
-                    if (str_contains($item['question'], $this->filter['question'])) {
-                        $filtered[] = $item;
-                    }
-                }
-            }
-
-            $collection = $filtered;
+            ));
         }
 
         $this->records = $collection;
+    }
+
+    private function getFilterInputs(): array
+    {
+        $type_options = [
+            -1 => $this->plugin->txt('common_all'),
+        ];
+
+        foreach (LiveVotingQuestion::QUESTION_TYPES_IDS as $qtype) {
+            $type_options[$qtype] = $this->plugin->txt('voting_type_' . $qtype);
+        }
+
+        return [
+            "title" => $this->factory->input()->field()->text($this->plugin->txt('voting_title')),
+            "question" => $this->factory->input()->field()->text($this->plugin->txt('voting_question')),
+            "voting_type" => $this->factory->input()->field()->select($this->plugin->txt('voting_type'), $type_options),
+        ];
     }
 
     protected function shorten($question): string

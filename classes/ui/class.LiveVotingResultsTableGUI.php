@@ -130,13 +130,13 @@ class LiveVotingResultsTableGUI implements DataRetrieval
             $filter_inputs,
             $active,
             true
-        )->withRequest($this->request);
+        );
 
         $table = $this->factory->table()->data(
             $this->plugin->txt('results_title'),
             $this->getColumns(),
             $this
-        )->withRequest($this->request)->withFilter($filter->getData());
+        )->withRequest($this->request)->withFilter($this->ui_service->filter()->getData($filter));
 
         return $this->renderer->render($filter) . $this->renderer->render($table);
     }
