@@ -42,7 +42,7 @@ If you want to use the Shortlink mode, you need to rewrite the rule in .htaccess
 ```apacheconf
 <IfModule mod_rewrite.c>
 	RewriteEngine On
-	RewriteRule ^/?vote(/\w*)? /public/Customizing/plugins/Repository/RepositoryObject/LiveVoting/pin.php?xlvo_pin=$1 [L]
+	RewriteRule ^/?vote(/\w*)? /Customizing/plugins/Repository/RepositoryObject/LiveVoting/pin.php?xlvo_pin=$1 [L]
 </IfModule>
 ```
 
