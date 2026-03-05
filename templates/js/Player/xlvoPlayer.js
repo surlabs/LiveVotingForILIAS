@@ -352,17 +352,8 @@ var xlvoPlayer = {
 
                         oldNode.remove();
 
-                        if (xlvoPlayer.config.use_mathjax && !!MathJax) {
-                            if (MathJax.version && MathJax.version.charAt(0) === "3") {
-                                MathJax.typeset("xlvo_voter_player");
-                            } else {
-                                MathJax.Hub.Config(xlvoPlayer.mathjax_config);
-                                MathJax.Hub.Queue([
-                                    "Typeset",
-                                    MathJax.Hub,
-                                    "xlvo-display-player",
-                                ]);
-                            }
+                        if (xlvoPlayer.config.use_mathjax) {
+                            il.Util.renderMathJax([document.getElementById('xlvo-display-player')]);
                         }
 
                         xlvoPlayer.counter = 0;
