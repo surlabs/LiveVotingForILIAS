@@ -24,6 +24,32 @@ var xlvoPlayer = {
     mathjax_config: {
         "HTML-CSS": { scale: 80 },
     },
+    renderMathJax: function(elements, reprocess) {
+        reprocess = reprocess || false;
+        if (typeof MathJax !== 'undefined') {
+            if (typeof MathJax.Hub !== 'undefined') {
+                if (reprocess) {
+                    MathJax.Hub.Queue(['Reprocess', MathJax.Hub, elements]);
+                } else {
+                    MathJax.Hub.Queue(['Typeset', MathJax.Hub, elements]);
+                }
+            } else {
+                const interval_id = setInterval(function(resolve, reject) {
+                    if (typeof MathJax.startup.promise !== 'undefined') {
+                        clearInterval(interval_id);
+                        MathJax.startup.promise = MathJax.startup.promise
+                            .then(function() {
+                                if (reprocess) {
+                                    MathJax.typesetClear(elements);
+                                }
+                                MathJax.typesetPromise()
+                                    .catch(function(err) { console.log('MathJax typesetting failed: ' + err.message); });
+                            });
+                    }
+                });
+            }
+        }
+    },
     buttons_handled: false,
     toolbar_loaded: false,
     delay: 1000,
@@ -342,17 +368,8 @@ var xlvoPlayer = {
 
                         oldNode.remove();
 
-                        if (xlvoPlayer.config.use_mathjax && !!MathJax) {
-                            if (MathJax.version && MathJax.version.charAt(0) === "3") {
-                                MathJax.typeset("xlvo_voter_player");
-                            } else {
-                                MathJax.Hub.Config(xlvoPlayer.mathjax_config);
-                                MathJax.Hub.Queue([
-                                    "Typeset",
-                                    MathJax.Hub,
-                                    "xlvo-display-player",
-                                ]);
-                            }
+                        if (xlvoPlayer.config.use_mathjax) {
+                            xlvoPlayer.renderMathJax([document.getElementById('xlvo-display-player')]);
                         }
 
                         xlvoPlayer.counter = 0;

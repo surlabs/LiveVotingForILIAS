@@ -16,6 +16,32 @@ var xlvoVoter = {
 			});
 		}
 	},
+	renderMathJax: function(elements, reprocess) {
+		reprocess = reprocess || false;
+		if (typeof MathJax !== 'undefined') {
+			if (typeof MathJax.Hub !== 'undefined') {
+				if (reprocess) {
+					MathJax.Hub.Queue(['Reprocess', MathJax.Hub, elements]);
+				} else {
+					MathJax.Hub.Queue(['Typeset', MathJax.Hub, elements]);
+				}
+			} else {
+				const interval_id = setInterval(function(resolve, reject) {
+					if (typeof MathJax.startup.promise !== 'undefined') {
+						clearInterval(interval_id);
+						MathJax.startup.promise = MathJax.startup.promise
+							.then(function() {
+								if (reprocess) {
+									MathJax.typesetClear(elements);
+								}
+								MathJax.typesetPromise()
+									.catch(function(err) { console.log('MathJax typesetting failed: ' + err.message); });
+							});
+					}
+				});
+			}
+		}
+	},
 	config: {
 		base_url: '', // Base-URL for API-Calls
 		cmd_voting_data: '', // loadVotingData
@@ -132,14 +158,8 @@ var xlvoVoter = {
 				xlvoVoter.log(data);
 
 				xlvoVoter.player_element.replaceWith('<div id="xlvo_voter_player">' + data + '</div>');
-				if (xlvoVoter.config.use_mathjax && !!MathJax) {
-					if ((MathJax.version.charAt(0) === '3')) {
-						MathJax.typeset('xlvo_voter_player');
-					} else {
-						MathJax.Hub.Queue(
-							["Typeset", MathJax.Hub, 'xlvo_voter_player']
-						);
-					}
+				if (xlvoVoter.config.use_mathjax) {
+					xlvoVoter.renderMathJax([document.getElementById('xlvo_voter_player')]);
 				}
 				xlvoVoter.counter = 0;
 				xlvoVoter.player_element = $('#xlvo_voter_player');
