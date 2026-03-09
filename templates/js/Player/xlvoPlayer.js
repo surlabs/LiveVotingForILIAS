@@ -346,29 +346,32 @@ var xlvoPlayer = {
                         xlvoPlayer.player_html !== playerHtml
                     ) {
                         var node = $(playerHtml);
+                        var previousNode = $(xlvoPlayer.player_html);
 
                         var $container = $("#xlvo-display-player");
                         var $oldQuestion = $container.find(".xlvo-question");
-                        var oldQuestionText = $oldQuestion.text().trim();
-
                         var $newQuestion = node.find(".xlvo-question");
-                        var newQuestionText = $newQuestion.text().trim();
-
-                        var questionChanged = oldQuestionText !== "" &&
-                            newQuestionText !== "" &&
-                            oldQuestionText !== newQuestionText;
+                        var oldQuestionHtml = previousNode.find(".xlvo-question").html();
+                        var newQuestionHtml = $newQuestion.html();
+                        var questionChanged = (oldQuestionHtml || "") !== (newQuestionHtml || "");
 
                         if (!questionChanged && $oldQuestion.length && $newQuestion.length) {
                             $newQuestion.replaceWith($oldQuestion);
                         }
 
-                        var oldNode = $container.children();
+                        var $oldOptions = $container.find("#xlvo-display-options");
+                        var $newOptions = node.find("#xlvo-display-options");
+                        var oldOptionsHtml = previousNode.find("#xlvo-display-options").html();
+                        var newOptionsHtml = $newOptions.html();
+                        var optionsChanged = (oldOptionsHtml || "") !== (newOptionsHtml || "");
 
-                        $container.append(node);
+                        if (!optionsChanged && $oldOptions.length && $newOptions.length) {
+                            $newOptions.replaceWith($oldOptions);
+                        }
 
-                        oldNode.remove();
+                        $container.empty().append(node);
 
-                        if (xlvoPlayer.config.use_mathjax) {
+                        if (xlvoPlayer.config.use_mathjax && (questionChanged || optionsChanged)) {
                             xlvoPlayer.renderMathJax([document.getElementById('xlvo-display-player')]);
                         }
 
