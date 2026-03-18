@@ -369,9 +369,30 @@ var xlvoPlayer = {
                             $newOptions.replaceWith($oldOptions);
                         }
 
+                        var replacements = [];
+                        var anyTitleChanged = false;
+                        node.find(".progress-title").each(function(index, element) {
+                          var $newTitle = $(element);
+                          var newTitleHtml = $newTitle.html();
+                          var $oldTitle = $container.find(".progress-title").eq(index);
+                          var oldTitleHtml = previousNode.find(".progress-title").eq(index).html();
+                            console.log(oldTitleHtml, newTitleHtml);
+
+                          var titleChanged = (oldTitleHtml || "") !== (newTitleHtml || "");
+                            if (titleChanged) {
+                                anyTitleChanged = true;
+                            }
+                            if (!titleChanged && $oldTitle.length && $newTitle.length) {
+                                replacements.push({old: $oldTitle, new: $newTitle});
+                            }
+                        });
+                        replacements.forEach(function(element) {
+                            element.new.replaceWith(element.old);
+                        });
+
                         $container.empty().append(node);
 
-                        if (xlvoPlayer.config.use_mathjax && (questionChanged || optionsChanged)) {
+                        if (xlvoPlayer.config.use_mathjax && (questionChanged || optionsChanged || anyTitleChanged)) {
                             xlvoPlayer.renderMathJax([document.getElementById('xlvo-display-player')]);
                         }
 
