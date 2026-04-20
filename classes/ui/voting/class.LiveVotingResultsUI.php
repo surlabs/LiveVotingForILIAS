@@ -87,6 +87,15 @@ class LiveVotingResultsUI
     {
         global $DIC;
 
+        $DIC->ctrl()->setParameterByClass("ilObjLiveVotingGUI", "round_id", $this->round->getId());
+
+        $export_button = ilLinkButton::getInstance();
+        $export_button->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "exportResultsCsv"));
+        $export_button->setCaption(ilLiveVotingPlugin::getInstance()->txt("voting_export") . ' CSV', false);
+        $DIC->toolbar()->addButtonInstance($export_button);
+
+        $DIC->toolbar()->addSeparator();
+
         $button = ilLinkButton::getInstance();
         $button->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "confirmNewRound"));
         $button->setCaption(ilLiveVotingPlugin::getInstance()->txt("new_round"), false);

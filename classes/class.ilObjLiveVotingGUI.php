@@ -36,6 +36,7 @@ use LiveVoting\UI\LiveVotingManageUI;
 use LiveVoting\UI\LiveVotingPrioritiesUI;
 use LiveVoting\UI\LiveVotingRangeUI;
 use LiveVoting\UI\LiveVotingResultsUI;
+use LiveVoting\UI\LiveVotingResultsTableGUI;
 use LiveVoting\UI\LiveVotingSettingsUI;
 use LiveVoting\UI\LiveVotingUI;
 use LiveVoting\Utils\LiveVotingJs;
@@ -117,6 +118,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'confirmNewRound':
             case 'newRound':
             case 'changeRound':
+            case 'exportResultsCsv':
             case 'apiCall':
             case 'confirmResetAll':
             case 'resetAll':
@@ -1281,6 +1283,54 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $round = $_POST['round_id'];
         $DIC->ctrl()->setParameter($this, 'round_id', $round);
         $DIC->ctrl()->redirect($this, "results");
+    }
+
+    /**
+     * @throws LiveVotingException
+     * @throws ilCtrlException
+     */
+    public function exportResultsCsv(): void
+    {
+        $round_id = isset($_GET['round_id']) ? (int) $_GET['round_id'] : LiveVotingRound::getLatestRound($this->object->getLiveVoting()->getId())->getId();
+
+        $results_table = new LiveVotingResultsTableGUI($this, 'results', $this->object->getLiveVoting()->getId(), $round_id);
+        $records = $results_table->getExportRecords();
+
+        $file_name = 'livevoting_results_obj_' . $this->object->getLiveVoting()->getId() . '_round_' . $round_id . '.csv';
+
+        header('Content-Type: text/csv; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="' . $file_name . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
+        $output = fopen('php://output', 'wb');
+
+        if ($output === false) {
+            throw new LiveVotingException('Unable to open CSV output stream');
+        }
+
+        fwrite($output, "\xEF\xBB\xBF");
+
+        $normalize_csv_value = static function (string $value): string {
+            $value = str_ireplace(['<br>', '<br/>', '<br />'], "\n", $value);
+            $value = html_entity_decode(strip_tags($value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+            return trim($value);
+        };
+
+        foreach ($records as $record) {
+            $row = [
+                $record['participant'],
+                $normalize_csv_value((string) $record['title']),
+                $normalize_csv_value((string) $record['question']),
+                $normalize_csv_value((string) $record['answer'])
+            ];
+
+            fputcsv($output, $row, ';');
+        }
+
+        fclose($output);
+        exit;
     }
 
     /**

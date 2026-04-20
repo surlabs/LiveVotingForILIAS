@@ -106,6 +106,7 @@ class LiveVotingResultsTableGUI implements DataRetrieval
      */
     public function getHtml(): string
     {
+        $this->ctrl->setParameterByClass(ilObjLiveVotingGUI::class, 'round_id', $this->round_id);
 
         $participants = [];
         $voting_titles = [];
@@ -139,6 +140,14 @@ class LiveVotingResultsTableGUI implements DataRetrieval
         )->withRequest($this->request)->withFilter($this->ui_service->filter()->getData($filter));
 
         return $this->renderer->render($filter) . $this->renderer->render($table);
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function getExportRecords(): array
+    {
+        return $this->getRecords();
     }
 
     private function getColumns(): array
