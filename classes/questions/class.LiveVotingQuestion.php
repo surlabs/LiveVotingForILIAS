@@ -323,11 +323,12 @@ abstract class LiveVotingQuestion
 
     public function setQuestion(string $question): void
     {
-        $purifier = new HTMLPurifier();
+        $purifier = new \ilAssHtmlQuestionContentPurifier();
 
+        $question = ilRTE::_replaceMediaObjectImageSrc($question, 1);
         $question = $purifier->purify($question);
 
-        $this->question = $question;
+        $this->question = ilRTE::_replaceMediaObjectImageSrc($question);
     }
 
     public function getPosition(): int
@@ -511,7 +512,7 @@ abstract class LiveVotingQuestion
 
         $question = ilRTE::_replaceMediaObjectImageSrc($question, 1);
 
-        $purifier = new HTMLPurifier();
+        $purifier = new \ilAssHtmlQuestionContentPurifier();
         $clean = $purifier->purify($question);
 
         return ilLegacyFormElementsUtil::prepareTextareaOutput($clean, true);
