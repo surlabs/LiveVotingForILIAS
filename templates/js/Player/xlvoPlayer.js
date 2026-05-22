@@ -42,7 +42,7 @@ var xlvoPlayer = {
                                 if (reprocess) {
                                     MathJax.typesetClear(elements);
                                 }
-                                MathJax.typesetPromise()
+                                MathJax.typesetPromise(elements)
                                     .catch(function(err) { console.log('MathJax typesetting failed: ' + err.message); });
                             });
                     }
@@ -89,6 +89,9 @@ var xlvoPlayer = {
     run: function () {
         xlvoPlayer.log("running player");
         this.registerElements();
+        if (xlvoPlayer.config.use_mathjax) {
+            xlvoPlayer.renderMathJax([document.getElementById('xlvo-display-player')]);
+        }
         this.getPlayerData();
     },
     handleFullScreen: function () {
@@ -392,7 +395,7 @@ var xlvoPlayer = {
 
                         $container.empty().append(node);
 
-                        if (xlvoPlayer.config.use_mathjax && (questionChanged || optionsChanged || anyTitleChanged)) {
+                        if (xlvoPlayer.config.use_mathjax) {
                             xlvoPlayer.renderMathJax([document.getElementById('xlvo-display-player')]);
                         }
 

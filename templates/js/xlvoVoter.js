@@ -34,7 +34,7 @@ var xlvoVoter = {
 								if (reprocess) {
 									MathJax.typesetClear(elements);
 								}
-								MathJax.typesetPromise()
+								MathJax.typesetPromise(elements)
 									.catch(function(err) { console.log('MathJax typesetting failed: ' + err.message); });
 							});
 					}
