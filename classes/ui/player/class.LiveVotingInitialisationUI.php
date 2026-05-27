@@ -864,8 +864,9 @@ class LiveVotingInitialisationUI
                 htmlentities(str_replace([" ", ".", "-"], "_", ILIAS_VERSION_NUMERIC))
             );
         };
-//        $c->globalScreen()->tool()->context()->stack()->clear();
-//        $c->globalScreen()->tool()->context()->claim()->main();
+        $c->globalScreen()->tool()->context()->stack()->clear();
+        $c->globalScreen()->tool()->context()->claim()->main();
+        $c->globalScreen()->tool()->context()->claim()->external();
     }
 
     /**
