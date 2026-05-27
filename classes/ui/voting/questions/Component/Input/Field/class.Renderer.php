@@ -266,6 +266,7 @@ class Renderer extends RendererILIAS
         $rte = new $rte_string();
 
         $rte->addPlugin("emoticons");
+        $rte->addPlugin("image");
         $rte->addPlugin("latex");
         $rte->addButton("latex");
         $rte->addButton("pastelatex");
