@@ -50,8 +50,6 @@ try {
         if ($live_voting && $live_voting->isAnonymous()) {
             $DIC->ctrl()->redirectByClass(["ilObjPluginDispatchGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
         } else if ($live_voting) {
-            $base_url = parse_url(ILIAS_HTTP_PATH, PHP_URL_SCHEME) . "://" . parse_url(ILIAS_HTTP_PATH, PHP_URL_HOST);
-
             $obj_id = LiveVoting::getObjIdFromPin($pin, false);
             $refs = ilObject::_getAllReferences($obj_id);
 
@@ -59,8 +57,7 @@ try {
                 throw new Exception("No references found for pin: {$pin}");
             }
 
-            $ref_id = key($refs);
-            $non_anonymous_voting_link = "{$base_url}/goto.php?target=xlvo_1_pin_" . $pin;
+            $non_anonymous_voting_link = LiveVotingConfig::getBaseVoteUrl() . "goto.php?target=xlvo_1_pin_" . $pin;
 
             $DIC->ctrl()->redirectToURL($non_anonymous_voting_link);
         } else {

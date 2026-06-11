@@ -122,7 +122,7 @@ class LiveVoting
 
                 break;
             default:
-                $url = ILIAS_HTTP_PATH . "/" . "goto.php?target=xlvo_1_pin_" . $this->getPin();
+                $url = LiveVotingConfig::getBaseVoteUrl() . "goto.php?target=xlvo_1_pin_" . $this->getPin();
                 break;
         }
 

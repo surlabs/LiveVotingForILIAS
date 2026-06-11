@@ -86,9 +86,7 @@ class LiveVotingPlayerGUI
                 $is_valid_user = !(is_null($DIC->user()) || $DIC->user()->getId() == 0 || $DIC->user()->getId() == 13);
 
                 if (!$is_voting_anonymous && !$is_valid_user) {
-                    $plugin_path = substr(ilLiveVotingPlugin::getInstance()->getDirectory(), 0);
-                    $ilias_base_path = str_replace($plugin_path, '', ILIAS_HTTP_PATH);
-                    $login_target = "{$ilias_base_path}goto.php?target=xlvo_1_pin_" . $pin;
+                    $login_target = LiveVotingConfig::getBaseVoteUrl() . "goto.php?target=xlvo_1_pin_" . $pin;
 
 
                     $DIC->ctrl()->redirectToURL($login_target);
