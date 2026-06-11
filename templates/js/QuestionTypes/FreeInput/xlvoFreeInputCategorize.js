@@ -19,6 +19,11 @@ var xlvoFreeInputCategorize = {
 	 */
 	request_pending: false,
 
+	auto_scroll_interval: null,
+	auto_scroll_mouse_y: null,
+	auto_scroll_threshold: 80,
+	auto_scroll_speed: 25,
+
 	/**
 	 * activate to see log entries
 	 */
@@ -29,6 +34,7 @@ var xlvoFreeInputCategorize = {
 	 */
 	init: function(base_url) {
 		this.base_url = base_url;
+		this._scroll_parent = this.findScrollParent(document.getElementById('xlvo-display-player'));
 		this.initDragula();
 		this.initButtons();
 		this.initialized = true;
@@ -51,12 +57,87 @@ var xlvoFreeInputCategorize = {
 			mirrorContainer: $('div.ilTabsContentOuter')[0]     // necessary for fullscreen mode
 		})
 			.on('drag', function (el) {
+				xlvoFreeInputCategorize.startAutoScroll();
 				xlvoFreeInputCategorize.recalculatePlayerHeight();
 			}).on('drop', function (el, target, source) {
+				xlvoFreeInputCategorize.stopAutoScroll();
 				xlvoFreeInputCategorize.changeCategory($(el).find('div.xlvo-vote-free-input')[0].getAttribute('data-vote-id'), $(target).parent().attr('data-category-id'));
 				xlvoFreeInputCategorize.recalculatePlayerHeight();
+			}).on('dragend', function () {
+				xlvoFreeInputCategorize.stopAutoScroll();
 			});
 
+	},
+
+	_autoScrollMouseHandler: null,
+	_scroll_parent: null,
+
+	findScrollParent: function (el) {
+		var p = el ? el.parentElement : null;
+		while (p && p !== document.documentElement) {
+			var style = window.getComputedStyle(p);
+			var oy = style.overflowY;
+			if ((oy === 'scroll' || oy === 'auto') && p.scrollHeight > p.clientHeight) {
+				return p;
+			}
+			p = p.parentElement;
+		}
+		return null;
+	},
+
+	startAutoScroll: function () {
+		this.stopAutoScroll();
+		this._autoScrollMouseHandler = function (event) {
+			xlvoFreeInputCategorize.auto_scroll_mouse_y = event.clientY;
+		};
+		document.addEventListener('mousemove', this._autoScrollMouseHandler, true);
+		this.auto_scroll_interval = window.setInterval(function () {
+			xlvoFreeInputCategorize.autoScroll();
+		}, 16);
+	},
+
+	stopAutoScroll: function () {
+		if (this._autoScrollMouseHandler) {
+			document.removeEventListener('mousemove', this._autoScrollMouseHandler, true);
+			this._autoScrollMouseHandler = null;
+		}
+		if (this.auto_scroll_interval !== null) {
+			window.clearInterval(this.auto_scroll_interval);
+			this.auto_scroll_interval = null;
+		}
+	},
+
+	autoScroll: function () {
+		if (this.auto_scroll_mouse_y === null) {
+			return;
+		}
+
+		var scroll_container = $('.xlvo-fullscreen:visible')[0];
+		var top = 0;
+		var bottom = window.innerHeight;
+
+		if (scroll_container) {
+			var rect = scroll_container.getBoundingClientRect();
+			top = rect.top;
+			bottom = rect.bottom;
+		}
+
+		var delta = 0;
+		if (this.auto_scroll_mouse_y < top + this.auto_scroll_threshold) {
+			delta = -this.auto_scroll_speed;
+		} else if (this.auto_scroll_mouse_y > bottom - this.auto_scroll_threshold) {
+			delta = this.auto_scroll_speed;
+		}
+
+		if (delta !== 0) {
+			if (scroll_container) {
+				scroll_container.scrollTop += delta;
+			} else if (this._scroll_parent) {
+				this._scroll_parent.scrollTop += delta;
+			} else {
+				window.scrollBy(0, delta);
+			}
+		}
 	},
 
 	/**
@@ -246,6 +327,8 @@ var xlvoFreeInputCategorize = {
 	 * called in addCategory and addAnswer
 	 */
 	recalculatePlayerHeight: function () {
+		var player_children = $('#xlvo-display-player').children();
+		$('#xlvo-display-player').css('height', player_children.css('height'));
 	},
 
 	startRequest: function () {
