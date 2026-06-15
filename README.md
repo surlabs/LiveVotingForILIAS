@@ -1,16 +1,11 @@
-<div alt style="text-align: center; transform: scale(.5);">
-	<picture>
-		<source media="(prefers-color-scheme: dark)" srcset="https://github.com/surlabs/LiveVotingRW/blob/ilias9/templates/images/GitBannerLiveVoting.png" />
-		<img alt="LiveVoting" src="https://github.com/surlabs/LiveVotingRW/blob/ilias9/templates/images/GitBannerLiveVoting.png" />
-	</picture>
-</div>
+![LiveVoting](https://github.com/user-attachments/assets/bb9eee67-47c1-4a78-bd6c-71a395b49b94)
 
 # LiveVoting Repository Object Plugin for ILIAS 9
 This plugin allows to create real time votings within ILIAS.
 It is compatible with the previous LiveVoting plugin for ILIAS < 7.0.
 
 ## Installation & Update
-Please, notice that previous versions of the plugin were numbered with dates (e.g. 2021.01.01). This version is numbered with the ILIAS version it is compatible with (e.g. ilias9 -> 9.x).
+Please, notice that previous versions of the plugin were numbered with dates (e.g. 2021.01.01). This version is numbered with the ILIAS version it is compatible with (e.g. release_9 -> 9.x).
 **You need to change the plugin version in the il_plugin table of the database to something lower than 9.0.0 before running the following commands.**
 
 1. **Ensure you delete any previous LiveVoting folder** in Customizing/global/plugins/Services/Repository/RepositoryObject/ 
@@ -33,8 +28,6 @@ git checkout ilias9
 Ensure you run composer and npm install at platform root before you install/update the plugin
 ```bash
 composer install --no-dev
-
-npm install
 ```
 
 Run ILIAS update script at platform root
@@ -63,6 +56,6 @@ If you want to use the Shortlink mode, you need to rewrite the rule in .htaccess
 - SIG LiveVoting: [Forum](https://docu.ilias.de/goto_docu_frm_13535.html)
 
 # Version History
-* The version 9.x.x for **ILIAS 9** maintained by SURLABS can be found in the Github branch **ilias9**
-* The version 8.x.x for **ILIAS 8** maintained by SURLABS can be found in the Github branch **ilias8**
+* The version 9.x.x for **ILIAS 9** maintained by SURLABS can be found in the Github branch **release_9**
+* The version 8.x.x for **ILIAS 8** maintained by SURLABS can be found in the Github branch **release_8**
 * The previous plugin versions for ILIAS <8 is archived. It can be found in https://github.com/fluxapps/LiveVoting
