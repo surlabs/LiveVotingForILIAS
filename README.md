@@ -29,7 +29,7 @@ cd Customizing/global/plugins/Services/Repository/RepositoryObject
 ```bash
 git clone https://github.com/surlabs/LiveVotingForILIAS.git ./LiveVoting
 cd LiveVoting
-git checkout ilias8
+git checkout release_8
 ```
 
 Ensure you run composer install at platform root before you install/update the plugin
