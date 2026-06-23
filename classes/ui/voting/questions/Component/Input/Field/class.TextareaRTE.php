@@ -52,6 +52,12 @@ class TextareaRTE extends Input implements Textarea {
     protected ?int $min_limit = null;
     private array $rteSupport = [];
 
+    /**
+     * RTE content is HTML by default, so tags are never stripped. The flag exists
+     * to satisfy the Textarea interface introduced in ILIAS 10 (#7642).
+     */
+    private bool $strip_tags_from_input = false;
+
     public function __construct(string $label, ?string $byline = null)
     {
         global $DIC;
@@ -205,6 +211,17 @@ class TextareaRTE extends Input implements Textarea {
         return $this->refinery->string()->hasMinLength(1);
     }
 
+    /**
+     * Disable removing tags on user input. RTE content is HTML, so stripping is
+     * already disabled by default; this only fulfills the Textarea interface.
+     */
+    public function withoutStripTags(): Textarea
+    {
+        $clone = clone $this;
+        $clone->strip_tags_from_input = false;
+        return $clone;
+    }
+
     protected function getOperations(): Generator
     {
         if ($this->isRequired()) {
@@ -212,6 +229,10 @@ class TextareaRTE extends Input implements Textarea {
             if ($op !== null) {
                 yield $op;
             }
+        }
+
+        if ($this->strip_tags_from_input) {
+            yield $this->refinery->custom()->transformation(fn($v) => strip_tags($v));
         }
 
         yield from parent::getOperations();
