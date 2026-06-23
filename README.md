@@ -8,7 +8,7 @@ It is compatible with the previous LiveVoting plugin for ILIAS < 7.0.
 Please, notice that previous versions of the plugin were numbered with dates (e.g. 2021.01.01). This version is numbered with the ILIAS version it is compatible with (e.g. release_10 -> 10.x).
 **You need to change the plugin version in the il_plugin table of the database to something lower than 9.0.0 before running the following commands.**
 
-1. **Ensure you delete any previous LiveVoting folder** in `/Customizing/global/plugins/Services/Repository/RepositoryObject/`
+1. **Ensure you delete any previous LiveVoting folder** in `public/Customizing/global/plugins/Services/Repository/RepositoryObject/`
 
 2. Create subdirectories, if necessary for `public/Customizing/global/plugins/Services/Repository/RepositoryObject/` or run the following script from the ILIAS root
 
@@ -32,17 +32,19 @@ composer install --no-dev
 
 Run ILIAS update script at platform root
 ```bash
-php setup/setup.php update
+php cli/setup.php update
 ```
 
 **Ensure you don't ignore plugins at the ilias .gitignore files and don't use --no-plugins option at ILIAS setup**
 
 ## Configuration
 If you want to use the Shortlink mode, you need to rewrite the rule in .htaccess or Apache-Config
+This rewrite rule must be placed inside an Apache `<VirtualHost>` context. A global `<IfModule mod_rewrite.c>` block or a `<Directory>` block outside a VirtualHost will not be evaluated for VirtualHost requests.
+
 ```apacheconf
 <IfModule mod_rewrite.c>
 	RewriteEngine On
-	RewriteRule ^/?vote(/\w*)? /Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/pin.php?xlvo_pin=$1 [L]
+	RewriteRule ^/?vote/(\w+) /Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/pin.php?xlvo_pin=$1 [L]
 </IfModule>
 ```
 
