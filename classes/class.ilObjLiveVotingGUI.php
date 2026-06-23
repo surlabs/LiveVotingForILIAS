@@ -872,14 +872,25 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $this->tabs->activateTab("tab_manage");
 
+        if (!ilObjLiveVotingAccess::hasWriteAccess()) {
+            $this->tpl->setContent($this->renderer->render($this->factory->messageBox()->failure($this->plugin->txt("permission_denied"))));
+            return;
+        }
+
         $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
+
+        if ($question == null || $question->getObjId() != $this->getObjId()) {
+            $DIC->ui()->mainTemplate()->setOnScreenMessage("failure", $this->txt('voting_msg_duplicated_failed'), true);
+            $this->ctrl->redirect($this, "manage");
+            return;
+        }
 
         $DIC->ui()->mainTemplate()->setContent($this->getDuplicateToAnotherObjectSelectTree($question));
     }
 
     private function getDuplicateToAnotherObjectSelectTree(LiveVotingQuestion $question): string
     {
-        $treeData = $this->buildOptimizedTreeStructure();
+        $treeData = $this->buildOptimizedTreeStructure($question);
 
         $recursion = new class () implements \ILIAS\UI\Component\Tree\TreeRecursion {
             public function getChildren($record, $environment = null): array
@@ -915,7 +926,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         return $this->renderer->render($tree);
     }
 
-    private function buildOptimizedTreeStructure(): array
+    private function buildOptimizedTreeStructure(LiveVotingQuestion $question): array
     {
         global $DIC;
 
@@ -935,7 +946,14 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $liveVotingRefs = [];
         while ($row = $db->fetchAssoc($result)) {
-            $liveVotingRefs[] = (int)$row['ref_id'];
+            $refId = (int)$row['ref_id'];
+            $objId = (int)$row['obj_id'];
+
+            if (ilObjLiveVotingAccess::hasWriteAccess($refId)
+                && $this->isQuestionSupportedForTarget($question, $objId)
+            ) {
+                $liveVotingRefs[] = $refId;
+            }
         }
 
         if (empty($liveVotingRefs)) {
@@ -1050,11 +1068,23 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     {
         global $DIC;
 
+        if (!ilObjLiveVotingAccess::hasWriteAccess()) {
+            $DIC->ui()->mainTemplate()->setOnScreenMessage("failure", $this->txt('permission_denied'), true);
+            $this->ctrl->redirect($this, "manage");
+            return;
+        }
+
         $question_id = isset($this->request->getQueryParams()["question_id"]) ? intval($this->request->getQueryParams()["question_id"]) : 0;
         $to_ref_id = isset($this->request->getQueryParams()["to_ref_id"]) ? intval($this->request->getQueryParams()["to_ref_id"]) : 0;
 
         if ($question_id == 0 || $to_ref_id == 0) {
             $DIC->ui()->mainTemplate()->setOnScreenMessage("failure", $this->txt('voting_msg_duplicated_failed'), true);
+            $this->ctrl->redirect($this, "manage");
+            return;
+        }
+
+        if (!ilObjLiveVotingAccess::hasWriteAccess($to_ref_id)) {
+            $DIC->ui()->mainTemplate()->setOnScreenMessage("failure", $this->txt('permission_denied'), true);
             $this->ctrl->redirect($this, "manage");
             return;
         }
@@ -1075,10 +1105,32 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             return;
         }
 
+        if ($question->getObjId() != $this->getObjId()
+            || !$this->isQuestionSupportedForTarget($question, $obj_id)
+        ) {
+            $DIC->ui()->mainTemplate()->setOnScreenMessage("failure", $this->txt('voting_msg_duplicated_failed'), true);
+            $this->ctrl->redirect($this, "manage");
+            return;
+        }
+
         $question->fullClone(true, true, $obj_id);
 
         $DIC->ui()->mainTemplate()->setOnScreenMessage("success", $this->txt('voting_msg_duplicated'), true);
         $this->ctrl->redirect($this, "manage");
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    private function isQuestionSupportedForTarget(LiveVotingQuestion $question, int $targetObjId): bool
+    {
+        $targetLiveVoting = new LiveVoting($targetObjId, false);
+
+        if ($targetLiveVoting->getMode()->getMode() !== LiveVotingMode::CHALLENGE_MODE) {
+            return true;
+        }
+
+        return $question->getQuestionTypeId() === LiveVotingQuestion::QUESTION_TYPES_IDS["Choices"];
     }
 
     /**
