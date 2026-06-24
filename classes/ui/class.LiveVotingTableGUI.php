@@ -82,7 +82,7 @@ class LiveVotingTableGUI  implements OrderingBinding
     public function getRows(OrderingRowBuilder $row_builder, array $visible_column_ids): Generator
     {
         foreach ($this->records as $record) {
-            $record['question'] = htmlentities($this->shorten($record['question']));
+            $record['question'] = htmlentities($this->shorten(strip_tags($record['question'])));
             $record['type'] = $this->plugin->txt('voting_type_' . $record['voting_type']);
 
             yield $row_builder->buildOrderingRow((string) $record['id'], $record);
