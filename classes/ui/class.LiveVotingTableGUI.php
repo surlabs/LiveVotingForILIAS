@@ -118,6 +118,7 @@ class LiveVotingTableGUI  implements OrderingBinding
 
         if ($this->request->getMethod() == "POST" && $this->wrapper->query()->has('saveOrder') && $this->wrapper->query()->retrieve('saveOrder', $this->refinery->kindlyTo()->int()) == 1) {
             $this->saveOrder($table->getData());
+            $this->ctrl->redirect($this->parent_obj, $this->parent_cmd);
         }
 
         return $this->renderer->render($filter) . $this->renderer->render($table);
@@ -256,6 +257,6 @@ class LiveVotingTableGUI  implements OrderingBinding
             $question->save();
         }
 
-        $DIC->ui()->mainTemplate()->setOnScreenMessage("success", $this->plugin->txt('sorting_msg_saved'));
+        $DIC->ui()->mainTemplate()->setOnScreenMessage("success", $this->plugin->txt('sorting_msg_saved'), true);
     }
 }
