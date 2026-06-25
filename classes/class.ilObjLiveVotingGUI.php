@@ -1503,7 +1503,12 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $liveVoting->getPlayer()->setCountdown(0);
 
                 if ($liveVoting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE && $liveVoting->getPlayer()->getActiveVotingObject()->getCountdown() == -1) {
-                    $liveVoting->getPlayer()->setStatus(LiveVotingPlayer::STAT_SCOREBOARD);
+                    if ($liveVoting->isScoreboard()) {
+                        $liveVoting->getPlayer()->setStatus(LiveVotingPlayer::STAT_SCOREBOARD);
+                    } else {
+                        $liveVoting->getPlayer()->nextQuestionCM();
+                        break;
+                    }
                 }
 
                 $liveVoting->getPlayer()->save();

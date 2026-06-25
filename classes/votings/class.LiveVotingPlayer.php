@@ -519,7 +519,13 @@ class LiveVotingPlayer
 
         if ($this->remainingCountDown() <= 0 && $this->getCountdownStart() > 0) {
             if ($mode->getMode() == LiveVotingMode::CHALLENGE_MODE) {
-                $this->showScoreboard();
+                $liveVoting = new LiveVoting($this->obj_id, false);
+
+                if ($liveVoting->isScoreboard()) {
+                    $this->showScoreboard();
+                } else {
+                    $this->nextQuestionCM();
+                }
             } else {
                 $this->freeze();
             }
