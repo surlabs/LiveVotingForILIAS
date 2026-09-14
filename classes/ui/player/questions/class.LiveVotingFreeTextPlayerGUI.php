@@ -104,18 +104,6 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
     }
 
     /**
-     * @throws LiveVotingException
-     * @throws ilCtrlException
-     */
-    protected function clear(): void
-    {
-        $live_voting = LiveVoting::getLiveVotingFromPin(ParamManager::getInstance()->getPin());
-        $this->player = $live_voting->getPlayer();
-        $this->player->unvoteAll();
-        $this->afterSubmit();
-    }
-
-    /**
      * @return string
      * @throws ilTemplateException
      * @throws ilSystemStyleException
@@ -133,9 +121,6 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
                     'VOTER_HINT',
                     ilLiveVotingPlugin::getInstance()->txt('qtype_2_multi_free_input_info')
                 );
-            }
-            if (count($this->player->getVotesOfUser()) > 0) {
-                $this->tpl->setVariable('STATE_CLASS', 'xlvo-has-voted');
             }
         }
 
@@ -226,9 +211,6 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         $form->addItem($an);
         $form->addItem($hi2);
         $form->addCommandButton('submit', ilLiveVotingPlugin::getInstance()->txt('qtype_2_send'));
-        if ($vote instanceof LiveVotingVote && $vote->isActive() && $this->isUsingNewUI()) {
-            $form->addCommandButton('clear', $DIC->language()->txt('edit'));
-        }
 
         return $form;
     }
@@ -282,9 +264,6 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
 
         $form->setValuesByArray(array('vote_multi_line_input' => $array));
         $form->addCommandButton('submit', ilLiveVotingPlugin::getInstance()->txt('qtype_2_send'));
-        if (count($xlvoVotes) > 0 && $this->isUsingNewUI()) {
-            $form->addCommandButton('clear', $DIC->language()->txt('edit'));
-        }
 
         return $form;
     }

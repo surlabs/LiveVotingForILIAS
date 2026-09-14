@@ -1,5 +1,5 @@
 <script src="./Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/QuestionTypes/NumberRange/xlvoNumberRange.js?v=2"></script>
-<div class="xlvo-number-range {STATE_CLASS}">
+<div class="xlvo-number-range">
 	<p class="xlvo-voter-type-hint">{VOTER_HINT}</p>
 	<form id="{FORM_ID}" class="xlvo-number-range-form" action="{ACTION}" method="post">
 		<div class="xlvo-number-range-panel">
@@ -31,7 +31,9 @@
 			</div>
 		</div>
 
+		<!-- BEGIN clear -->
 		<input type="submit" class="btn btn-default" name="cmd[clear]" value="{BTN_CLEAR}" {BTN_RESET_DISABLED} />
+		<!-- END clear -->
 		<input type="submit" class="btn btn-default" name="cmd[submit]" value="{BTN_SAVE}" />
 		<input id="percentage" name="percentage" type="hidden" value="{SHOW_PERCENTAGE}" />
 	</form>

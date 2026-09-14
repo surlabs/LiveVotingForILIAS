@@ -359,35 +359,9 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     width: 100%;
 }
 
-.xlvo-new-ui .xlvo-free-input input[name='cmd[clear]'],
-.xlvo-new-ui .xlvo-number-range-form input[name='cmd[clear]'] {
-    background: #fca5a5;
-    box-shadow: none;
-    color: #7f1d1d;
-}
-
-.xlvo-new-ui .xlvo-free-input input[name='cmd[clear]']:hover,
-.xlvo-new-ui .xlvo-free-input input[name='cmd[clear]']:focus,
-.xlvo-new-ui .xlvo-number-range-form input[name='cmd[clear]']:hover,
-.xlvo-new-ui .xlvo-number-range-form input[name='cmd[clear]']:focus {
-    background: #f87171;
-    color: #7f1d1d;
-}
-
-.xlvo-new-ui .xlvo-free-input.xlvo-has-voted input[name='cmd[submit]'],
-.xlvo-new-ui .xlvo-number-range.xlvo-has-voted input[name='cmd[submit]'] {
-    display: none;
-}
-
-.xlvo-new-ui .xlvo-free-input.xlvo-has-voted .form-control {
-    background: #f3f4f6;
-    border-color: #e5e7eb;
-    color: #6b7280;
-    pointer-events: none;
-}
-
-.xlvo-new-ui .xlvo-free-input.xlvo-has-voted [data-actions] {
-    display: none;
+.xlvo-new-ui form[aria-busy='true'] input[type='submit'] {
+    cursor: wait;
+    opacity: 0.65;
 }
 
 .xlvo-new-ui .xlvo-free-input .ilFormFooter {
@@ -710,30 +684,6 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     order: 1;
 }
 
-.xlvo-new-ui .xlvo-number-range-form input[name='cmd[clear]'] {
-    margin-top: 12px;
-    order: 2;
-}
-
-.xlvo-new-ui .xlvo-number-range-form input[name='cmd[clear]'][disabled] {
-    background: #f3f4f6;
-    color: #9ca3af;
-}
-
-.xlvo-new-ui .xlvo-number-range.xlvo-has-voted .xlvo-number-range-panel {
-    background: #f9fafb;
-}
-
-.xlvo-new-ui .xlvo-number-range.xlvo-has-voted .slider,
-.xlvo-new-ui .xlvo-number-range.xlvo-has-voted .xlvo-number-range-steppers {
-    opacity: 0.55;
-    pointer-events: none;
-}
-
-.xlvo-new-ui .xlvo-number-range.xlvo-has-voted #number-display {
-    color: var(--xlvo-new-ink);
-}
-
 /* Priorities voting */
 .xlvo-new-ui .xlvo-priorities #lvo_bar_movable {
     counter-reset: priority;
@@ -937,8 +887,7 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 }
 
 .xlvo-new-ui .xlvo-correct-order input[name='cmd[clear]'],
-.xlvo-new-ui .xlvo-priorities input[name='cmd[clear]'],
-.xlvo-new-ui .xlvo-number-range-form input[name='cmd[clear]'] {
+.xlvo-new-ui .xlvo-priorities input[name='cmd[clear]'] {
     background: transparent;
     border: 2px solid var(--xlvo-new-accent);
     box-shadow: none;
@@ -946,8 +895,7 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 }
 
 .xlvo-new-ui .xlvo-correct-order input[type='submit'][disabled],
-.xlvo-new-ui .xlvo-priorities input[type='submit'][disabled],
-.xlvo-new-ui .xlvo-number-range-form input[type='submit'][disabled] {
+.xlvo-new-ui .xlvo-priorities input[type='submit'][disabled] {
     background: transparent;
     border-color: var(--xlvo-new-border);
     box-shadow: none;

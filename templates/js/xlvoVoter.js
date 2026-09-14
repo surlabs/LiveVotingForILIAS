@@ -47,12 +47,54 @@ var xlvoVoter = {
 	run: function () {
 		this.loadVotingData();
 		this.initElements();
+		this.initDynamicForms();
 	},
 	initElements: function () {
 		this.countdown_element = $('#xlvo_countdown');
 		this.player_element = $('#xlvo_voter_player');
 
 		$('.xlvo-nickname').attr('href', xlvoVoter.config.base_url + '&cmd=requestNickname');
+	},
+	initDynamicForms: function () {
+		var selector = '#xlvo_voter_player .xlvo-new-ui .xlvo-free-input form, '
+			+ '#xlvo_voter_player .xlvo-new-ui .xlvo-number-range-form, '
+			+ '#xlvo_voter_player .xlvo-new-ui .xlvo-priorities form, '
+			+ '#xlvo_voter_player .xlvo-new-ui .xlvo-correct-order form';
+
+		$(document).off('submit.xlvoNewUI', selector).on('submit.xlvoNewUI', selector, function (event) {
+			event.preventDefault();
+
+			var form = this;
+			var submitter = event.originalEvent && event.originalEvent.submitter;
+			var formData = new FormData(form);
+			var buttons = $('input[type="submit"], button[type="submit"]', form);
+
+			if (submitter && submitter.name) {
+				formData.append(submitter.name, submitter.value);
+			} else {
+				formData.append('cmd[submit]', 'submit');
+			}
+			formData.append('xlvo_new_ui_async', '1');
+
+			buttons.prop('disabled', true);
+			form.setAttribute('aria-busy', 'true');
+
+			$.ajax({
+				url: form.action,
+				method: 'POST',
+				data: formData,
+				contentType: false,
+				processData: false
+			}).done(function () {
+				xlvoVoter.replaceHTML().fail(function () {
+					buttons.prop('disabled', false);
+					form.removeAttribute('aria-busy');
+				});
+			}).fail(function () {
+				buttons.prop('disabled', false);
+				form.removeAttribute('aria-busy');
+			});
+		});
 	},
 	loadVotingData: function () {
 		$.get(xlvoVoter.config.base_url, {cmd: 'getVotingData'})
@@ -132,7 +174,7 @@ var xlvoVoter = {
 		xlvoVoter.log('replace');
 		success = success ? success : function () {
 		};
-		$.get(xlvoVoter.config.base_url, {cmd: 'getHTML'}).done(function (data) {
+		return $.get(xlvoVoter.config.base_url, {cmd: 'getHTML'}).done(function (data) {
 			if (xlvoVoter.data !== data) { // Only change html if changed (Try prevent blinking images) (Not work because countdown text and/or token links)
 
 				xlvoVoter.log(data);

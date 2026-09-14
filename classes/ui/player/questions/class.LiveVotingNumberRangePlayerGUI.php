@@ -149,19 +149,14 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
         }
         $template->setVariable('SLIDER_VALUE', $value);
         $template->setVariable('BTN_SAVE', ilLiveVotingPlugin::getInstance()->txt(self::SAVE_BUTTON_VOTE));
-        $template->setVariable(
-            'BTN_CLEAR',
-            $is_new_ui
-                ? $DIC->language()->txt('edit')
-                : ilLiveVotingPlugin::getInstance()->txt(self::CLEAR_BUTTON)
-        );
 
-        if ($is_new_ui && $user_has_voted) {
-            $template->setVariable('STATE_CLASS', 'xlvo-has-voted');
-        }
-
-        if (!$user_has_voted) {
-            $template->setVariable('BTN_RESET_DISABLED', 'disabled="disabled"');
+        if (!$is_new_ui) {
+            $template->setCurrentBlock('clear');
+            $template->setVariable('BTN_CLEAR', ilLiveVotingPlugin::getInstance()->txt(self::CLEAR_BUTTON));
+            if (!$user_has_voted) {
+                $template->setVariable('BTN_RESET_DISABLED', 'disabled="disabled"');
+            }
+            $template->parseCurrentBlock();
         }
 
         return $template->get() . LiveVotingJs::getInstance()->name('NumberRange')->category('QuestionTypes/NumberRange')->getRunCode();
