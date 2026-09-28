@@ -298,7 +298,7 @@ class LiveVotingPlayerGUI
                     $question = $this->getLiveVoting()->getPlayer()->getActiveVotingObject();
                     if ($this->live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE && $this->live_voting->usesNewUI()) {
                         $this->getVotingTemplate()->setVariable('TITLE', $question->getTitle());
-                        $this->getVotingTemplate()->setVariable('DESCRIPTION', strip_tags($question->getQuestionForPresentation()));
+                        $this->getVotingTemplate()->setVariable('DESCRIPTION', $question->getQuestionForPresentation());
                     } else {
                         $this->getVotingTemplate()->setVariable('TITLE', $question->getTitle());
                     }

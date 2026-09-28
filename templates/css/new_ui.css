@@ -168,6 +168,15 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     margin: 10px 0 0;
 }
 
+.xlvo-new-ui#xlvo-voter-header .description p {
+    margin: 0 0 6px;
+}
+
+.xlvo-new-ui#xlvo-voter-header .description img {
+    height: auto;
+    max-width: 100%;
+}
+
 .xlvo-new-ui#xlvo-voter-header .xlvo-countdown-container {
     display: flex;
     justify-content: flex-end;
