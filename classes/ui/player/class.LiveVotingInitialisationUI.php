@@ -164,6 +164,7 @@ class LiveVotingInitialisationUI
         $this->initMail();
         $this->initFilesystem();
         $this->initResourceStorage();
+        ilInitialisation::initFileUploadService($DIC);
         $this->initFileDelivery();
         $this->initGlobalScreen($GLOBALS["DIC"]);
         $this->initRbacAdmin();
