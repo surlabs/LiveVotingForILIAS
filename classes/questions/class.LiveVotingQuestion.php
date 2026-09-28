@@ -512,6 +512,14 @@ abstract class LiveVotingQuestion
 
         $question = ilRTE::_replaceMediaObjectImageSrc($question, 1);
 
+        // deliver.php URLs are built from the current script, which is the plugin's ilias.php here
+        $root = strstr(ILIAS_HTTP_PATH, '/Customizing', true);
+        $question = preg_replace(
+            '#src="[^"]*?/deliver\.php/#',
+            'src="' . rtrim($root !== false ? $root : ILIAS_HTTP_PATH, '/') . '/deliver.php/',
+            $question
+        );
+
         $purifier = new \ilAssHtmlQuestionContentPurifier();
         $clean = $purifier->purify($question);
 
