@@ -41,6 +41,7 @@ use ilTextAreaInputGUI;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
 use LiveVoting\questions\LiveVotingQuestionOption;
+use LiveVoting\Utils\LiveVotingJs;
 
 /**
  * Class LiveVotingChoicesCMUI
@@ -207,6 +208,7 @@ class LiveVotingChoicesCMUI
         $r->addPlugin('latex');
         $r->addButton('latex');
         $r->addButton('pastelatex');
+        LiveVotingJs::getInstance()->initLatexButton();
         $r->setRequired(true);
         $r->setRTESupport(ilObject::_lookupObjId((int)$_GET['ref_id']), "dcl", ilLiveVotingPlugin::PLUGIN_ID);
         $r->setUseRte(true);

@@ -29,6 +29,7 @@ use ilRTE;
 use ilTemplate;
 use ilTemplateException;
 use ilTinyMCE;
+use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\LiveVotingUtils;
 
 /**
@@ -270,6 +271,7 @@ class Renderer extends RendererILIAS
         $rte->addPlugin("latex");
         $rte->addButton("latex");
         $rte->addButton("pastelatex");
+        LiveVotingJs::getInstance()->initLatexButton();
 
         $rteSupport = $component->getRTESupport();
 
