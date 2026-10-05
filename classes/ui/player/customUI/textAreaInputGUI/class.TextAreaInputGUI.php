@@ -28,6 +28,7 @@ use ilTemplate;
 use ilTemplateException;
 use ilTextAreaInputGUI;
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\Utils\LiveVotingJs;
 
 
 class TextAreaInputGUI extends ilTextAreaInputGUI
@@ -51,6 +52,7 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
         $this->addPlugin('latex');
         $this->addButton('latex');
         $this->addButton('pastelatex');
+        LiveVotingJs::getInstance()->initLatexButton();
         $this->setUseRte(true);
         $this->setRteTags(array(
             'p',
