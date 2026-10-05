@@ -245,4 +245,19 @@ final class LiveVotingJs
         }
         ilMathJax::getInstance()->includeMathJax();
     }
+
+    /**
+     * Registers the TinyMCE "latex" plugin, which is not shipped with the editor anymore.
+     * Loaded in a later batch than TinyMCE itself, so it is available before the editor is initialised.
+     */
+    public function initLatexButton(): void
+    {
+        global $DIC;
+
+        $DIC->ui()->mainTemplate()->addJavaScript(
+            'Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/libs/tinymce_latex.js',
+            true,
+            3
+        );
+    }
 }
