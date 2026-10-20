@@ -51,6 +51,9 @@ crs_create_xlvo#:#Élőszavazás létrehozása
 fikd_create_xlvo#:#Élőszavazás létrehozása
 grp_create_xlvo#:#Élőszavazás létrehozása
 fold_create_xlvo#:#Élőszavazás létrehozása
+image_picker_invalid_type#:#Válasszon PNG, JPEG vagy GIF formátumú képet.
+image_picker_read_error#:#A kép nem olvasható. Válasszon érvényes képfájlt.
+image_picker_too_large#:#A kép túl nagy. A maximális fájlméret 2 MiB.
 incorrect_order#:#Hibás sorrend
 msg_success_voting_created#:#Szavazást sikeresen létrehozta
 msg_success_voting_updated#:#Szavazást sikeresen módosította

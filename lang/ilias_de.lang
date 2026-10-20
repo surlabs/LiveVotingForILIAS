@@ -51,6 +51,9 @@ crs_create_xlvo#:#LiveVoting erstellen
 fikd_create_xlvo#:#LiveVoting erstellen
 grp_create_xlvo#:#LiveVoting erstellen
 fold_create_xlvo#:#LiveVoting erstellen
+image_picker_invalid_type#:#Bitte wählen Sie ein Bild im Format PNG, JPEG oder GIF aus.
+image_picker_read_error#:#Das Bild konnte nicht gelesen werden. Bitte wählen Sie eine gültige Bilddatei aus.
+image_picker_too_large#:#Das Bild ist zu groß. Die maximale Dateigröße beträgt 2 MiB.
 incorrect_order#:#Falsche Reihenfolge
 msg_success_voting_created#:#Frage wurde erstellt
 msg_success_voting_updated#:#Frage wurde gespeichert

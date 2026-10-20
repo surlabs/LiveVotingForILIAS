@@ -205,10 +205,13 @@ class LiveVotingChoicesCMUI
     private function createForm(string $form_action, array $sections): Form
     {
         $r = new ilTextAreaInputGUI($this->plugin->txt('question'), 'question');
+        $r->addPlugin('image');
+        $r->addPlugin('xlvo_image_picker');
         $r->addPlugin('latex');
         $r->addButton('latex');
         $r->addButton('pastelatex');
         LiveVotingJs::getInstance()->initLatexButton();
+        LiveVotingJs::getInstance()->initImagePicker();
         $r->setRequired(true);
         $r->setRTESupport(ilObject::_lookupObjId((int)$_GET['ref_id']), "dcl", ilLiveVotingPlugin::PLUGIN_ID);
         $r->setUseRte(true);

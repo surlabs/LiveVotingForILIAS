@@ -260,4 +260,29 @@ final class LiveVotingJs
             3
         );
     }
+
+    public function initImagePicker(): void
+    {
+        global $DIC;
+
+        $DIC->ui()->mainTemplate()->addJavaScript(
+            'Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/libs/tinymce_image_picker.js',
+            true,
+            3
+        );
+
+        $plugin = ilLiveVotingPlugin::getInstance();
+        $messages = [
+            'invalid_type' => $plugin->txt('image_picker_invalid_type'),
+            'too_large' => $plugin->txt('image_picker_too_large'),
+            'read_error' => $plugin->txt('image_picker_read_error'),
+        ];
+        $encoded_messages = json_encode(
+            $messages,
+            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+        );
+        $DIC->ui()->mainTemplate()->addOnLoadCode(
+            'window.xlvoImagePickerMessages = ' . $encoded_messages . ';'
+        );
+    }
 }
