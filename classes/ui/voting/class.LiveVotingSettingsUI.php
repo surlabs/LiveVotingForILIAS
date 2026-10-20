@@ -86,7 +86,7 @@ class LiveVotingSettingsUI
                 ));
 
             $descriptionInput = $DIC->ui()->factory()->input()->field()->textarea($this->plugin->txt("obj_description"), '')
-                ->withValue($this->object->getDescription())
+                ->withValue($this->object->getLongDescription())
                 ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                     function ($v) {
                         $this->object->setDescription($v);
