@@ -335,3 +335,30 @@ voting_style_new#:#New style
 empty_input_error#:#There cannot be empty options
 manage_disclaimer_basic_mode#:#This LiveVoting was created in "Standard" mode
 manage_disclaimer_challenge_mode#:#This LiveVoting was created in "Challenge" mode. In this mode, only "Single/Multiple Choice" questions are possible.
+player_option_count#:#%s options
+qtype_5_points_short#:#pts
+qtype_2_total_answers#:#Answers
+results_waiting_answers#:#Waiting for the first answers…
+qtype_6_answers_per_value#:#Answers per value
+qtype_6_answers_per_interval#:#Answers per interval
+voter_submit_vote#:#Submit Vote
+voter_submitted#:#Submitted
+voter_change_answer#:#Change Answer
+voter_select_option_first#:#Please select an option first.
+voter_select_options_first#:#Please select at least one option.
+voter_submit_answer#:#Submit Answer
+voter_hint_number_range#:#Drag the slider or use the buttons to set a value (%s – %s).
+voter_hint_priorities#:#Drag the items to reorder them (1 is the highest priority).
+voter_submit_ranking#:#Submit Ranking
+voter_free_text_placeholder#:#Your answer
+voter_remove_answer#:#Remove this answer
+voter_add_answer#:#Add another answer
+voter_hint_free_text#:#Type your answer below.
+voter_hint_free_text_multi#:#Type your answer(s) below. Press Enter to add more.
+voter_hint_free_text_multi_area#:#Type your answer(s) below. Use the button to add more.
+voter_enter_answer_first#:#Please enter at least one answer to submit.
+voter_submit_answers#:#Submit Answers
+voter_hint_correct_order#:#Drag the items into the correct order.
+voter_submit_order#:#Submit Order
+results_participants#:#Participants
+voter_submitting#:#Submitting…

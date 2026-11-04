@@ -55,8 +55,140 @@ var xlvoVoter = {
 
 		$('.xlvo-nickname').attr('href', xlvoVoter.config.base_url + '&cmd=requestNickname');
 	},
+	/**
+	 * Choice forms need at least one selected option. The message stays visible until the voter picks one.
+	 */
+	validateNewUIForm: function (form) {
+		var feedback = form.querySelector('.xlvo-answer-feedback');
+		var has_selection = true;
+		if (form.getAttribute('data-xlvo-require-selection') === '1') {
+			has_selection = form.querySelector('input[name="option_ids[]"]:checked') !== null;
+		} else if (form.getAttribute('data-xlvo-require-text') === '1') {
+			has_selection = $('.xlvo-free-text-field', form).filter(function () {
+				return this.value.trim() !== '';
+			}).length > 0;
+		} else {
+			return true;
+		}
+		if (feedback) {
+			feedback.hidden = has_selection;
+		}
+		return has_selection;
+	},
+
+	/**
+	 * Short horizontal shake of the answer area when the voter submits nothing, as in the mockups.
+	 */
+	shakeNewUIForm: function (form) {
+		var target = form.querySelector('.xlvo-free-text-inputs, .xlvo-option-cards') || form;
+		target.classList.remove('xlvo-shake');
+		void target.offsetWidth;
+		target.classList.add('xlvo-shake');
+	},
+
+	/**
+	 * "Change Answer" only reopens the form in the browser; the stored answer is replaced on the next submit.
+	 */
+	unlockNewUIForm: function (form) {
+		form.classList.remove('is-locked');
+		$('input, textarea, select, button', form).not('[type="hidden"]').prop('disabled', false);
+		if (form.getAttribute('data-xlvo-clear-on-change') === '1') {
+			$('input[name="option_ids[]"]', form).prop('checked', false);
+		}
+		$('.is-submitted', form).removeClass('is-submitted');
+		var submit_button = form.querySelector('.xlvo-submit-btn');
+		if (submit_button && form.getAttribute('data-xlvo-submit-text')) {
+			submit_button.textContent = form.getAttribute('data-xlvo-submit-text');
+		}
+		var change_button = form.querySelector('.xlvo-change-answer-btn');
+		if (change_button) {
+			change_button.disabled = true;
+		}
+		$(form).trigger('xlvo:unlocked');
+		var first_input = form.querySelector('input:not([type="hidden"]), textarea');
+		if (first_input) {
+			first_input.focus();
+		}
+	},
+
+	/**
+	 * Free text (multi input): adds an empty answer field after the given row, or at the end.
+	 */
+	addFreeTextRow: function (form, after_row) {
+		var rows = $('.xlvo-free-text-row', form);
+		var row = rows.first().clone().removeClass('has-value');
+		var index = parseInt(form.getAttribute('data-xlvo-next-index'), 10) || rows.length;
+		form.setAttribute('data-xlvo-next-index', String(index + 1));
+		row.find('.xlvo-free-text-field').val('').prop('disabled', false)
+			.attr('id', 'xlvo_free_text_' + index)
+			.attr('name', 'vote_multi_line_input[' + index + '][free_input]');
+		row.find('label').attr('for', 'xlvo_free_text_' + index);
+		row.find('input[type="hidden"]').val('').attr('name', 'vote_multi_line_input[' + index + '][vote_id]');
+		if (after_row && after_row.length) {
+			row.insertAfter(after_row);
+		} else {
+			row.appendTo($('.xlvo-free-text-inputs', form));
+		}
+		row.find('.xlvo-free-text-field').trigger('focus');
+	},
+
 	initDynamicForms: function () {
+		var free_text = '#xlvo_voter_player .xlvo-new-ui .xlvo-free-text-form';
+		$(document).off('keydown.xlvoNewUI', free_text + ' input.xlvo-free-text-field')
+			.on('keydown.xlvoNewUI', free_text + ' input.xlvo-free-text-field', function (event) {
+				var form = $(this).closest('form')[0];
+				if (event.key !== 'Enter' || form.getAttribute('data-xlvo-multi') !== '1') {
+					return;
+				}
+				event.preventDefault();
+				if (!form.classList.contains('is-locked')) {
+					xlvoVoter.addFreeTextRow(form, $(this).closest('.xlvo-free-text-row'));
+				}
+			});
+		$(document).off('click.xlvoNewUI', free_text + ' .xlvo-free-text-add')
+			.on('click.xlvoNewUI', free_text + ' .xlvo-free-text-add', function () {
+				var form = $(this).closest('form')[0];
+				if (!form.classList.contains('is-locked')) {
+					xlvoVoter.addFreeTextRow(form, null);
+				}
+			});
+		$(document).off('click.xlvoNewUI', free_text + ' .xlvo-free-text-remove')
+			.on('click.xlvoNewUI', free_text + ' .xlvo-free-text-remove', function () {
+				var form = $(this).closest('form')[0];
+				if (form.classList.contains('is-locked')) {
+					return;
+				}
+				var row = $(this).closest('.xlvo-free-text-row');
+				if ($('.xlvo-free-text-row', form).length > 1) {
+					row.remove();
+				} else {
+					row.find('.xlvo-free-text-field').val('').trigger('focus');
+				}
+			});
+		$(document).off('input.xlvoNewUI', free_text + ' .xlvo-free-text-field')
+			.on('input.xlvoNewUI', free_text + ' .xlvo-free-text-field', function () {
+				$(this).closest('.xlvo-free-text-row').toggleClass('has-value', this.value.trim() !== '');
+				var form = $(this).closest('form')[0];
+				var feedback = form.querySelector('.xlvo-answer-feedback');
+				if (feedback && !feedback.hidden) {
+					xlvoVoter.validateNewUIForm(form);
+				}
+			});
+		$(document).off('click.xlvoNewUI', '#xlvo_voter_player .xlvo-new-ui .xlvo-change-answer-btn')
+			.on('click.xlvoNewUI', '#xlvo_voter_player .xlvo-new-ui .xlvo-change-answer-btn', function () {
+				xlvoVoter.unlockNewUIForm($(this).closest('form')[0]);
+			});
+		$(document).off('change.xlvoNewUI', '#xlvo_voter_player .xlvo-new-ui .xlvo-answer-form input[name="option_ids[]"]')
+			.on('change.xlvoNewUI', '#xlvo_voter_player .xlvo-new-ui .xlvo-answer-form input[name="option_ids[]"]', function () {
+				var form = $(this).closest('form')[0];
+				var feedback = form.querySelector('.xlvo-answer-feedback');
+				if (feedback && !feedback.hidden) {
+					xlvoVoter.validateNewUIForm(form);
+				}
+			});
+
 		var selector = '#xlvo_voter_player .xlvo-new-ui .xlvo-free-input form, '
+			+ '#xlvo_voter_player .xlvo-new-ui .xlvo-answer-form, '
 			+ '#xlvo_voter_player .xlvo-new-ui .xlvo-number-range-form, '
 			+ '#xlvo_voter_player .xlvo-new-ui .xlvo-priorities form, '
 			+ '#xlvo_voter_player .xlvo-new-ui .xlvo-correct-order form';
@@ -65,6 +197,13 @@ var xlvoVoter = {
 			event.preventDefault();
 
 			var form = this;
+			if (form.classList.contains('is-locked')) {
+				return;
+			}
+			if (!xlvoVoter.validateNewUIForm(form)) {
+				xlvoVoter.shakeNewUIForm(form);
+				return;
+			}
 			var submitter = event.originalEvent && event.originalEvent.submitter;
 			var formData = new FormData(form);
 			var buttons = $('input[type="submit"], button[type="submit"]', form);
@@ -78,6 +217,18 @@ var xlvoVoter = {
 
 			buttons.prop('disabled', true);
 			form.setAttribute('aria-busy', 'true');
+			var submit_button = form.querySelector('.xlvo-submit-btn');
+			var submit_label = submit_button ? submit_button.textContent : '';
+			if (submit_button && xlvoVoter.config.lng && xlvoVoter.config.lng.voter_submitting) {
+				submit_button.textContent = xlvoVoter.config.lng.voter_submitting;
+			}
+			var restore = function () {
+				buttons.prop('disabled', false);
+				form.removeAttribute('aria-busy');
+				if (submit_button) {
+					submit_button.textContent = submit_label;
+				}
+			};
 
 			$.ajax({
 				url: form.action,
@@ -86,14 +237,8 @@ var xlvoVoter = {
 				contentType: false,
 				processData: false
 			}).done(function () {
-				xlvoVoter.replaceHTML().fail(function () {
-					buttons.prop('disabled', false);
-					form.removeAttribute('aria-busy');
-				});
-			}).fail(function () {
-				buttons.prop('disabled', false);
-				form.removeAttribute('aria-busy');
-			});
+				xlvoVoter.replaceHTML().fail(restore);
+			}).fail(restore);
 		});
 	},
 	loadVotingData: function () {

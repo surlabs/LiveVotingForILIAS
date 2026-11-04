@@ -71,6 +71,7 @@ class LiveVotingDisplayPlayerUI
      * @var int
      */
     protected int $answer_count = 64;
+    protected bool $stats_in_header = false;
     /**
      * @var ParamManager
      */
@@ -144,7 +145,11 @@ class LiveVotingDisplayPlayerUI
 
         if ($player->isShowResults()) {
             //add result view to player
-            $this->tpl->setVariable('OPTION_CONTENT', $xlvoInputResultGUI->getHTML());
+            $results_html = $xlvoInputResultGUI->getHTML();
+            if ($this->liveVoting->usesNewUI()) {
+                $results_html = $this->moveStatsToHeader($results_html);
+            }
+            $this->tpl->setVariable('OPTION_CONTENT', $results_html);
         } else {
             //add options to player
             $xlvoOptions = LiveVotingQuestionOption::loadAllOptionsByVotingId($question->getId());
@@ -156,6 +161,9 @@ class LiveVotingDisplayPlayerUI
 
         $this->tpl->setVariable('TITLE', $question->getTitle());
         $this->tpl->setVariable('QUESTION', $question->getQuestionForPresentation());
+        if ($this->liveVoting->usesNewUI()) {
+            $this->tpl->setVariable('QUESTION_TYPE', $this->getQuestionTypeLine($question));
+        }
         $this->tpl->setVariable('VOTING_ID', $this->liveVoting->getId());
         $this->tpl->setVariable('OBJ_ID', $this->liveVoting->getId());
         $this->tpl->setVariable('FROZEN', $player->isFrozen());
@@ -173,7 +181,11 @@ class LiveVotingDisplayPlayerUI
             $this->tpl->parseCurrentBlock();
         }
 
-        $this->tpl->setVariable('VOTERS_TEXT', vsprintf(ilLiveVotingPlugin::getInstance()->txt("player_voters_description"), [LiveVotingVote::countVoters($player->getActiveVoting(), $player->getRoundId())]));
+        if (!$this->stats_in_header) {
+            $this->tpl->setCurrentBlock('voters');
+            $this->tpl->setVariable('VOTERS_TEXT', vsprintf(ilLiveVotingPlugin::getInstance()->txt("player_voters_description"), [LiveVotingVote::countVoters($player->getActiveVoting(), $player->getRoundId())]));
+            $this->tpl->parseCurrentBlock();
+        }
 
         $this->tpl->setVariable('COUNT', $this->liveVoting->countQuestions());
         $this->tpl->setVariable('POSITION', $this->liveVoting->getQuestionPosition() + 1);
@@ -183,6 +195,47 @@ class LiveVotingDisplayPlayerUI
      * @throws ilTemplateException
      * @throws LiveVotingException
      */
+    /**
+     * Subtitle under the question in the new UI, e.g. "Multiple Choice • 4 options".
+     */
+    /**
+     * The mockups show the totals (votes, participants, mean...) in the header next to the question, not above the
+     * chart. The result renderers keep emitting them first, and the new player lifts them into the header.
+     */
+    protected function moveStatsToHeader(string $results_html): string
+    {
+        if (!preg_match('#<div class="xlvo-bar-stats">.*?</div>#s', $results_html, $match)) {
+            return $results_html;
+        }
+        if (trim(strip_tags($match[0])) === '') {
+            return $results_html;
+        }
+
+        $this->stats_in_header = true;
+        $this->tpl->setVariable('STATS', str_replace('xlvo-bar-stats', 'xlvo-bar-stats xlvo-results-stats', $match[0]));
+
+        return preg_replace('#<div class="xlvo-bar-stats">.*?</div>#s', '', $results_html, 1);
+    }
+
+    protected function getQuestionTypeLine(LiveVotingQuestion $question): string
+    {
+        $line = $question->getQuestionTypeLabel();
+        $types_with_options = [
+            LiveVotingQuestion::QUESTION_TYPES_IDS['Choices'],
+            LiveVotingQuestion::QUESTION_TYPES_IDS['CorrectOrder'],
+            LiveVotingQuestion::QUESTION_TYPES_IDS['Priorities'],
+        ];
+        if (in_array($question->getQuestionTypeId(), $types_with_options, true)) {
+            $option_count = count($question->getOptions());
+            $line .= ' • ' . sprintf($this->pl->txt('player_option_count'), $option_count);
+        } elseif ($question->getQuestionTypeId() === LiveVotingQuestion::QUESTION_TYPES_IDS['NumberRange']) {
+            $percentage = (int) $question->isPercentage() === 1 ? ' %' : '';
+            $line .= ' • ' . $question->getStartRange() . $percentage . ' – ' . $question->getEndRange() . $percentage;
+        }
+
+        return $line;
+    }
+
     protected function addOption(LiveVotingQuestionOption $option)
     {
         if ($option->getType() == LiveVotingQuestion::QUESTION_TYPES_IDS["FreeText"]) {

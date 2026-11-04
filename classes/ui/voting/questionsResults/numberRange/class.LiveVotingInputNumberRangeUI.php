@@ -24,6 +24,7 @@ namespace LiveVoting\UI\QuestionsResults;
 
 use ilException;
 use ilLiveVotingPlugin;
+use ilTemplate;
 use ilTemplateException;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarCollectionUI;
@@ -41,6 +42,8 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
 {
 
     const BAR_COUNT = 5;
+    const MAX_HISTOGRAM_BARS = 12;
+    const TARGET_HISTOGRAM_BINS = 10;
     const DISPLAY_MODE_GROUPED_TEXT = 0;
     const DISPLAY_MODE_BARS = 1;
     const DISPLAY_MODE_GROUPED_TEXT_EXTENDED = 2;
@@ -56,7 +59,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
     {
         switch ($this->player->getActiveVotingObject()->getAltResultDisplayMode()) {
             case self::DISPLAY_MODE_BARS:
-                return $this->renderBarResult();
+                return $this->isUsingNewUI() ? $this->renderHistogramResult() : $this->renderBarResult();
             case self::DISPLAY_MODE_GROUPED_TEXT_EXTENDED:
                 return $this->renderGroupedTextResultWithInfo();
             case self::DISPLAY_MODE_GROUPED_TEXT:
@@ -97,6 +100,111 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
      * @throws LiveVotingException
      * @throws ilTemplateException|ilException
      */
+    /**
+     * New UI bars mode: vertical histogram with Participants, Mean and Median.
+     * Small scales (up to MAX_HISTOGRAM_BARS distinct values, e.g. a 1-5 Likert) get one bar per value;
+     * larger ranges are grouped into about TARGET_HISTOGRAM_BINS intervals of a round width (0-199, not 0-166).
+     *
+     * @throws ilTemplateException
+     * @throws LiveVotingException
+     */
+    private function renderHistogramResult(): string
+    {
+        $plugin = ilLiveVotingPlugin::getInstance();
+        $question = $this->player->getActiveVotingObject();
+        $unit = ((int) $question->isPercentage() === 1) ? ' %' : '';
+        $start = $question->getStartRange();
+        $end = max($start, $question->getEndRange());
+        $step = max(1, $question->getStepRange());
+
+        $values = [];
+        foreach (LiveVotingVote::getVotesOfQuestion($this->player->getActiveVoting(), $this->player->getRoundId()) as $vote) {
+            $values[] = (int) $vote->getFreeInput();
+        }
+        sort($values, SORT_NUMERIC);
+
+        $bins = [];
+        $distinct = intdiv($end - $start, $step) + 1;
+        if ($distinct <= self::MAX_HISTOGRAM_BARS) {
+            for ($value = $start; $value <= $end; $value += $step) {
+                $bins[] = ['lo' => $value, 'hi' => $value + $step - 1, 'count' => 0, 'label' => $value . $unit];
+            }
+        } else {
+            $width = $this->getNiceBinWidth(($end - $start) / self::TARGET_HISTOGRAM_BINS, $step);
+            $bin_count = max(1, (int) ceil(($end - $start) / $width));
+            for ($i = 0; $i < $bin_count; $i++) {
+                $lo = $start + $i * $width;
+                // The last interval absorbs the upper bound, so 0-2000 ends in 1800-2000 instead of a lone 2000.
+                $hi = ($i === $bin_count - 1) ? $end : $lo + $width - 1;
+                $bins[] = ['lo' => $lo, 'hi' => $hi, 'count' => 0, 'label' => $lo . $unit . ' – ' . $hi . $unit];
+            }
+        }
+
+        foreach ($values as $value) {
+            $index = count($bins) - 1;
+            foreach ($bins as $i => $bin) {
+                if ($value <= $bin['hi']) {
+                    $index = $i;
+                    break;
+                }
+            }
+            $bins[$index]['count']++;
+        }
+
+        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/NumberRange/tpl.number_range_histogram_new.html', true, true);
+        $participants = count($values);
+        $mean = $participants > 0 ? round(array_sum($values) / $participants, 1) : null;
+        $median = null;
+        if ($participants > 0) {
+            $middle = intdiv($participants, 2);
+            $median = $participants % 2 === 1 ? $values[$middle] : ($values[$middle - 1] + $values[$middle]) / 2;
+        }
+
+        $tpl->setVariable('PARTICIPANTS', $plugin->txt('results_participants') . ': ' . $participants);
+        $tpl->setVariable('MEAN', $plugin->txt('qtype_6_mean') . ': ' . ($mean === null ? '–' : $mean . $unit));
+        $tpl->setVariable('MEDIAN', $plugin->txt('qtype_6_median') . ': ' . ($median === null ? '–' : $median . $unit));
+        $tpl->setVariable(
+            'AXIS_CAPTION',
+            $plugin->txt($distinct <= self::MAX_HISTOGRAM_BARS ? 'qtype_6_answers_per_value' : 'qtype_6_answers_per_interval')
+        );
+
+        $max_count = max(1, max(array_column($bins, 'count')));
+        foreach ($bins as $bin) {
+            $tpl->setCurrentBlock('bin');
+            $tpl->setVariable('LABEL', $bin['label']);
+            $tpl->setVariable('COUNT', (string) $bin['count']);
+            $tpl->setVariable('HEIGHT', str_replace(',', '.', (string) round($bin['count'] / $max_count * 100, 1)));
+            $tpl->setVariable('EMPTY_CLASS', $bin['count'] === 0 ? ' is-empty' : '');
+            $tpl->parseCurrentBlock();
+        }
+
+        return $tpl->get();
+    }
+
+    /**
+     * Rounds a raw interval width up to 1, 2, 2.5, 5 or 10 times a power of ten, and to a multiple of the question's step.
+     */
+    private function getNiceBinWidth(float $raw, int $step): int
+    {
+        $raw = max(1.0, $raw);
+        $exponent = floor(log10($raw));
+        $fraction = $raw / (10 ** $exponent);
+        if ($fraction <= 1) {
+            $nice = 1;
+        } elseif ($fraction <= 2) {
+            $nice = 2;
+        } elseif ($fraction <= 2.5) {
+            $nice = 2.5;
+        } elseif ($fraction <= 5) {
+            $nice = 5;
+        } else {
+            $nice = 10;
+        }
+        $width = max(1, (int) round($nice * (10 ** $exponent)));
+
+        return (int) (ceil($width / $step) * $step);
+    }
+
     private function renderGroupedTextResultWithInfo(): string
     {
         $votes = LiveVotingVote::getVotesOfQuestion($this->player->getActiveVoting(), $this->player->getRoundId());

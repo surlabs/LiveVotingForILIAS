@@ -63,6 +63,12 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
         $this->player = $liveVoting->getPlayer();
 
+        if (isset($_POST['xlvo_selection'])) {
+            $this->submitSelection();
+
+            return;
+        }
+
         $option_id = (int)$_GET['option_id'];
 
         $vote_id = null;
@@ -135,9 +141,95 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
      * @throws ilCtrlException
      * @throws ilSystemStyleException
      */
+    /**
+     * New UI: the voter selects and then submits the whole selection at once. Votes for options that are no longer
+     * selected are withdrawn, so "Change Answer" followed by a new submit replaces the previous answer.
+     *
+     * @throws LiveVotingException
+     */
+    protected function submitSelection(): void
+    {
+        $question = $this->player->getActiveVotingObject();
+        $selected = array_map('intval', (array) ($_POST['option_ids'] ?? []));
+        $selected = array_values(array_unique(array_filter($selected, static fn(int $option_id): bool => $question->isValidOption($option_id))));
+        if (!$question->isMultiSelection()) {
+            $selected = array_slice($selected, 0, 1);
+        }
+        if ($selected === []) {
+            return;
+        }
+
+        $participant = LiveVotingParticipant::getInstance();
+        foreach ($this->player->getVotesOfUser() as $vote) {
+            if (!in_array((int) $vote->getOptionId(), $selected, true)) {
+                LiveVotingVote::unvote($participant, $this->player->getActiveVoting(), (int) $vote->getOptionId());
+            }
+        }
+        foreach ($selected as $option_id) {
+            if (!$this->player->hasUserVotedForOption($option_id)) {
+                LiveVotingVote::vote($participant, $this->player->getActiveVoting(), $this->player->getRoundId(), $option_id);
+            }
+        }
+
+        $this->player->createHistoryObject();
+    }
+
+    /**
+     * @throws LiveVotingException
+     * @throws ilTemplateException
+     */
+    protected function getNewUIHTML(): string
+    {
+        global $DIC;
+
+        $plugin = ilLiveVotingPlugin::getInstance();
+        $question = $this->getPlayer()->getActiveVotingObject();
+        $is_multi = $question->isMultiSelection();
+        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/SingleVote/tpl.single_vote_new.html', true, true);
+
+        $has_answered = false;
+        foreach ($question->getOptions() as $option) {
+            if ($this->player->hasUserVotedForOption($option->getId())) {
+                $has_answered = true;
+                break;
+            }
+        }
+
+        foreach ($question->getOptions() as $option) {
+            $voted = $this->player->hasUserVotedForOption($option->getId());
+            $tpl->setCurrentBlock('option');
+            $tpl->setVariable('TYPE', $is_multi ? 'checkbox' : 'radio');
+            $tpl->setVariable('OPTION_ID', (string) $option->getId());
+            $tpl->setVariable('OPTION_LETTER', $option->getCipher());
+            $tpl->setVariable('TITLE', $option->getTextForPresentation());
+            $tpl->setVariable('CHECKED', $voted ? 'checked' : '');
+            $tpl->setVariable('DISABLED', $has_answered ? 'disabled' : '');
+            $tpl->setVariable('SUBMITTED_CLASS', $voted && $has_answered ? ' is-submitted' : '');
+            $tpl->parseCurrentBlock();
+        }
+
+        $DIC->ctrl()->clearParameters($this);
+        $tpl->setVariable('ACTION', $DIC->ctrl()->getFormAction($this));
+        $tpl->setVariable('LOCKED_CLASS', $has_answered ? ' is-locked' : '');
+        $tpl->setVariable('VOTER_HINT', $question->getQuestionTypeLabel());
+        $tpl->setVariable('SUBMIT_TEXT', $plugin->txt('voter_submit_vote'));
+        $tpl->setVariable('SUBMIT_LABEL', $plugin->txt($has_answered ? 'voter_submitted' : 'voter_submit_vote'));
+        $tpl->setVariable('SUBMIT_DISABLED', $has_answered ? 'disabled' : '');
+        $tpl->setVariable('CHANGE_TEXT', $plugin->txt('voter_change_answer'));
+        $tpl->setVariable('CHANGE_DISABLED', $has_answered ? '' : 'disabled');
+        $tpl->setVariable('FEEDBACK', $plugin->txt($is_multi ? 'voter_select_options_first' : 'voter_select_option_first'));
+
+        return $tpl->get();
+    }
+
     public function getMobileHTML(): string
     {
         global $DIC;
+
+        $live_voting = new LiveVoting($this->player->getObjId(), false);
+        if ($live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE && $live_voting->usesNewUI()) {
+            return $this->getNewUIHTML();
+        }
         $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/SingleVote/tpl.single_vote.html', false, true);
         $answer_count = 64;
         foreach ($this->getPlayer()->getActiveVotingObject()->getOptions() as $xlvoOption) {

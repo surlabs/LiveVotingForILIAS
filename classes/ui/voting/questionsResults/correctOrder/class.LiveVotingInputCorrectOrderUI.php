@@ -72,6 +72,7 @@ class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
         $correct_option->setText(ilLiveVotingPlugin::getInstance()->txt('qtype_4_correct'));
         $bar = new LiveVotingBarPercentageUI();
         $bar->setUseNewUI($this->isUsingNewUI());
+        $bar->setColorIndex(2); // correct answers: green in the new palette
         $bar->setTitle($correct_option->getTextForPresentation());
         $bar->setVotes($correct_votes);
         $bar->setMaxVotes(LiveVotingVote::countVoters($this->player->getActiveVoting(), $this->player->getRoundId()));
@@ -84,6 +85,7 @@ class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
 
         $bar = new LiveVotingBarPercentageUI();
         $bar->setUseNewUI($this->isUsingNewUI());
+        $bar->setColorIndex(4); // wrong answers: red in the new palette
         $bar->setMaxVotes(LiveVotingVote::countVoters($this->player->getActiveVoting(), $this->player->getRoundId()));
         $bar->setTitle($wrong_option->getTextForPresentation());
         $bar->setVotes($wrong_votes);

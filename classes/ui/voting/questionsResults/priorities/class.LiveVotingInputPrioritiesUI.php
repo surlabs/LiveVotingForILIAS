@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace LiveVoting\UI\QuestionsResults;
 
+use ilLiveVotingPlugin;
 use ilTemplateException;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarCollectionUI;
@@ -63,7 +64,12 @@ class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
             }
         }
 
-        $possible_max = $this->isUsingNewUI() ? $option_amount * max(1, $total_voters) : $option_amount;
+        // The new UI scales every bar against the current leader, so the ranking reads at a glance.
+        $possible_max = $this->isUsingNewUI() ? (int) max(1, max($option_weight ?: [0])) : $option_amount;
+        $color_slots = array();
+        foreach ($this->player->getActiveVotingObject()->getOptions() as $option) {
+            $color_slots[$option->getId()] = count($color_slots) + 1;
+        }
         // Sort button if selected
         if (($this->isUsingNewUI() || $this->isShowCorrectOrder())
             && LiveVotingVote::hasVotes($this->player->getActiveVoting(), $this->player->getRoundId())) {
@@ -86,6 +92,11 @@ class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
         foreach ($options as $xlvoOption) {
             $xlvoBarPercentageGUI = new LiveVotingBarPercentageUI();
             $xlvoBarPercentageGUI->setUseNewUI($this->isUsingNewUI());
+            if ($this->isUsingNewUI()) {
+                // Keep each option's colour while the bars re-sort.
+                $xlvoBarPercentageGUI->setColorIndex($color_slots[$xlvoOption->getId()] ?? 0);
+                $xlvoBarPercentageGUI->setUnit(ilLiveVotingPlugin::getInstance()->txt('qtype_5_points_short'));
+            }
             $xlvoBarPercentageGUI->setRound(2);
             $xlvoBarPercentageGUI->setShowInPercent(false);
             $xlvoBarPercentageGUI->setMaxVotes($possible_max);

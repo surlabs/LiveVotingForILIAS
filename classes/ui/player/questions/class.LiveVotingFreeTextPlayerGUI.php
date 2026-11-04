@@ -111,6 +111,10 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function getMobileHTML(): string
     {
+        if ($this->isUsingNewUI()) {
+            return $this->getNewUIHTML();
+        }
+
         $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input.html', true, true);
         $this->render();
 
@@ -125,6 +129,90 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         }
 
         return $this->tpl->get() . LiveVotingJs::getInstance()->name('FreeInput')->category('QuestionTypes')->getRunCode();
+    }
+
+    /**
+     * New UI: one field per answer. Enter opens the next field (multi input), and the form posts the same fields as
+     * the classic widget, so submit() is shared. After submitting, the answers stay visible but locked.
+     *
+     * @throws LiveVotingException
+     * @throws ilTemplateException
+     */
+    protected function getNewUIHTML(): string
+    {
+        global $DIC;
+
+        $plugin = ilLiveVotingPlugin::getInstance();
+        $question = $this->player->getActiveVotingObject();
+        $is_multi = $question->isMultiFreeInput();
+        $is_textarea = (int) $question->getAnswerField() === 2;
+        $max_length = $is_textarea ? 1000 : 200;
+
+        $answers = [];
+        foreach ($this->player->getVotesOfUser() as $vote) {
+            $text = (string) $vote->getFreeInput();
+            if ($vote->isActive() && $text !== '') {
+                $answers[] = ['text' => $text, 'vote_id' => (string) $vote->getId()];
+            }
+        }
+        if (!$is_multi) {
+            $answers = array_slice($answers, 0, 1);
+        }
+        $has_answered = $answers !== [];
+        if (!$has_answered) {
+            $answers[] = ['text' => '', 'vote_id' => ''];
+        }
+
+        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input_new.html', true, true);
+        foreach ($answers as $index => $answer) {
+            $field_id = 'xlvo_free_text_' . $index;
+            $name = $is_multi ? 'vote_multi_line_input[' . $index . '][free_input]' : 'free_input';
+            $attributes = 'id="' . $field_id . '" class="xlvo-free-text-field" name="' . $name . '" maxlength="' . $max_length . '"'
+                . ' placeholder="' . htmlspecialchars($plugin->txt('voter_free_text_placeholder'), ENT_QUOTES) . '"'
+                . ' autocomplete="off"' . ($has_answered ? ' disabled' : '');
+            $value = htmlspecialchars($answer['text'], ENT_QUOTES, 'UTF-8', false);
+            $field = $is_textarea
+                ? '<textarea ' . $attributes . ' rows="3">' . $value . '</textarea>'
+                : '<input type="text" ' . $attributes . ' value="' . $value . '">';
+
+            $tpl->setCurrentBlock('row');
+            $tpl->setVariable('FIELD_ID', $field_id);
+            $tpl->setVariable('ROW_CLASS', $answer['text'] !== '' ? ' has-value' : '');
+            $tpl->setVariable('FIELD_LABEL', $plugin->txt('qtype_2_input') . ' ' . ($index + 1));
+            $tpl->setVariable('FIELD', $field);
+            $tpl->setVariable('VOTE_ID_NAME', $is_multi ? 'vote_multi_line_input[' . $index . '][vote_id]' : 'vote_id');
+            $tpl->setVariable('VOTE_ID', $answer['vote_id']);
+            if ($is_multi) {
+                $tpl->setVariable('REMOVE_LABEL', $plugin->txt('voter_remove_answer'));
+            }
+            $tpl->parseCurrentBlock();
+        }
+
+        if ($is_multi) {
+            $tpl->setCurrentBlock('add');
+            $tpl->setVariable('ADD_TEXT', $plugin->txt('voter_add_answer'));
+            $tpl->parseCurrentBlock();
+        }
+
+        $tpl->setVariable('ACTION', $DIC->ctrl()->getFormAction($this));
+        $tpl->setVariable('FORM_CLASS', $has_answered ? ' is-locked' : '');
+        $tpl->setVariable('MULTI', $is_multi ? '1' : '0');
+        $tpl->setVariable('NEXT_INDEX', (string) count($answers));
+        $tpl->setVariable(
+            'VOTER_HINT',
+            $plugin->txt($is_multi ? ($is_textarea ? 'voter_hint_free_text_multi_area' : 'voter_hint_free_text_multi') : 'voter_hint_free_text')
+        );
+        $tpl->setVariable('FEEDBACK', $plugin->txt('voter_enter_answer_first'));
+        $tpl->setVariable('SUBMIT_TEXT', $plugin->txt($is_multi ? 'voter_submit_answers' : 'voter_submit_answer'));
+        $tpl->setVariable(
+            'SUBMIT_LABEL',
+            $plugin->txt($has_answered ? 'voter_submitted' : ($is_multi ? 'voter_submit_answers' : 'voter_submit_answer'))
+        );
+        $tpl->setVariable('SUBMIT_DISABLED', $has_answered ? 'disabled' : '');
+        $tpl->setVariable('CHANGE_TEXT', $plugin->txt('voter_change_answer'));
+        $tpl->setVariable('CHANGE_DISABLED', $has_answered ? '' : 'disabled');
+
+        return '<div class="col-md-12 xlvo-free-input xlvo-free-input-new">' . $tpl->get() . '</div>';
     }
 
     private function isUsingNewUI(): bool

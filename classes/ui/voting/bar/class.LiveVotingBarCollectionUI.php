@@ -51,6 +51,7 @@ class LiveVotingBarCollectionUI
      * @var bool
      */
     protected bool $use_new_ui = false;
+    protected int $bar_count = 0;
 
     /**
      * @throws ilSystemStyleException
@@ -89,6 +90,10 @@ class LiveVotingBarCollectionUI
      */
     public function addBar(LiveVotingGeneralBarUI $bar_gui)
     {
+        $this->bar_count++;
+        if ($bar_gui instanceof LiveVotingBarPercentageUI && $bar_gui->getColorIndex() === 0) {
+            $bar_gui->setColorIndex($this->bar_count);
+        }
         $this->tpl->setCurrentBlock('bar');
         $this->tpl->setVariable('BAR', $bar_gui->getHTML());
         $this->tpl->parseCurrentBlock();
@@ -192,7 +197,8 @@ class LiveVotingBarCollectionUI
         }
         if ($this->isShowTotalVoters()) {
             $this->tpl->setCurrentBlock('total_voters');
-            $this->tpl->setVariable('TOTAL_VOTERS', ilLiveVotingPlugin::getInstance()->txt('qtype_1_total_voters') . ': ' . $this->getTotalVoters());
+            $voters_key = $this->isUseNewUI() ? 'results_participants' : 'qtype_1_total_voters';
+            $this->tpl->setVariable('TOTAL_VOTERS', ilLiveVotingPlugin::getInstance()->txt($voters_key) . ': ' . $this->getTotalVoters());
             $this->tpl->parseCurrentBlock();
         }
     }

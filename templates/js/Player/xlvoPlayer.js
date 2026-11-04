@@ -13,7 +13,7 @@ var xlvoPlayer = {
 
         if (
             xlvoPlayer.config.use_mathjax &&
-            !!MathJax && MathJax.version &&
+            typeof MathJax !== "undefined" && MathJax.version &&
             MathJax.version.charAt(0) !== "3"
         ) {
             MathJax.Hub.Config({
@@ -291,6 +291,41 @@ var xlvoPlayer = {
             clearTimeout(xlvoPlayer.timeout);
         }
     },
+    /**
+     * The player HTML is replaced on every refresh, so new UI bars would jump to their new width.
+     * Start each bar from its previous width and let the CSS transition move it; bars that grew flash.
+     */
+    animateNewUIBars: function (previousWidths, sameQuestion) {
+        var bars = $("#xlvo-display-player .xlvo-new-ui .xlvo-bar-fill");
+        if (!bars.length) {
+            return;
+        }
+        bars.each(function (index) {
+            var target = this.style.width;
+            var key = xlvoPlayer.getNewUIBarKey(this, index);
+            var previous = sameQuestion && previousWidths[key] !== undefined ? previousWidths[key] : "0%";
+            if (previous === target) {
+                return;
+            }
+            this.style.width = previous;
+            this.getBoundingClientRect();
+            this.style.width = target;
+            if (sameQuestion && parseFloat(target) > parseFloat(previous)) {
+                this.classList.remove("xlvo-bar-flash");
+                this.getBoundingClientRect();
+                this.classList.add("xlvo-bar-flash");
+            }
+        });
+    },
+
+    /**
+     * Bars can be re-sorted between refreshes (priorities), so they are matched by a server-side key, not their position.
+     */
+    getNewUIBarKey: function (bar, index) {
+        var key = $(bar).closest(".xlvo-bar-row-wrap").attr("data-xlvo-key");
+        return key ? key : "#" + index;
+    },
+
     getPlayerData: function () {
         if (xlvoPlayer.isRequestPending()) {
             xlvoPlayer.log("Pause getPlayerData due to running POST");
@@ -354,7 +389,23 @@ var xlvoPlayer = {
                             $newOptions.replaceWith($oldOptions);
                         }
 
+                        var previousBarWidths = {};
+                        $container.find(".xlvo-new-ui .xlvo-bar-fill").each(function (index) {
+                            previousBarWidths[xlvoPlayer.getNewUIBarKey(this, index)] = this.style.width;
+                        });
+
+                        var previousAnswerCount = $container.find(".xlvo-new-ui .xlvo-free-text-answer").length;
+
                         $container.empty().append(node);
+
+                        if (!questionChanged) {
+                            // Newest answers are on top: only the ones that just arrived slide in.
+                            $container.find(".xlvo-new-ui .xlvo-free-text-answer")
+                                .slice(0, Math.max(0, $container.find(".xlvo-new-ui .xlvo-free-text-answer").length - previousAnswerCount))
+                                .addClass("is-new");
+                        }
+
+                        xlvoPlayer.animateNewUIBars(previousBarWidths, !questionChanged);
 
                         if (xlvoPlayer.config.use_mathjax) {
                             il.Util.renderMathJax([document.getElementById('xlvo-display-player')]);
@@ -415,8 +466,16 @@ var xlvoPlayer = {
      * @param button_id
      * @param data
      */
-    callButton: function (button_id, data) {
+    callButton: function (button_id, data, attempt) {
         if (xlvoPlayer.isRequestPending()) {
+            // The player polls every second, so a click often lands while a poll is in flight.
+            // Retry shortly instead of silently dropping the click.
+            attempt = attempt || 0;
+            if (attempt < 30) {
+                setTimeout(function () {
+                    xlvoPlayer.callButton(button_id, data, attempt + 1);
+                }, 100);
+            }
             return;
         }
         xlvoPlayer.startRequest();

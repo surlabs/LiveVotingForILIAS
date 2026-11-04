@@ -335,3 +335,30 @@ voting_style_new#:#Neuer Stil
 empty_input_error#:#Es kann keine leeren Optionen geben
 manage_disclaimer_basic_mode#:#Dieses LiveVoting wurde im Modus „Standard“ erstellt.
 manage_disclaimer_challenge_mode#:#Dieses LiveVoting wurde im Modus „Challenge“ erstellt. In diesem Modus sind nur „Single/Multiple Choice“-Fragen möglich.
+player_option_count#:#%s Optionen
+qtype_5_points_short#:#Pkt.
+qtype_2_total_answers#:#Antworten
+results_waiting_answers#:#Warten auf die ersten Antworten…
+qtype_6_answers_per_value#:#Antworten pro Wert
+qtype_6_answers_per_interval#:#Antworten pro Intervall
+voter_submit_vote#:#Stimme abgeben
+voter_submitted#:#Abgeschickt
+voter_change_answer#:#Antwort ändern
+voter_select_option_first#:#Bitte wählen Sie zuerst eine Option aus.
+voter_select_options_first#:#Bitte wählen Sie mindestens eine Option aus.
+voter_submit_answer#:#Antwort abschicken
+voter_hint_number_range#:#Verschieben Sie den Regler oder nutzen Sie die Schaltflächen, um einen Wert festzulegen (%s – %s).
+voter_hint_priorities#:#Ziehen Sie die Einträge, um sie neu zu ordnen (1 ist die höchste Priorität).
+voter_submit_ranking#:#Rangfolge abschicken
+voter_free_text_placeholder#:#Ihre Antwort
+voter_remove_answer#:#Diese Antwort entfernen
+voter_add_answer#:#Weitere Antwort hinzufügen
+voter_hint_free_text#:#Geben Sie unten Ihre Antwort ein.
+voter_hint_free_text_multi#:#Geben Sie unten Ihre Antwort(en) ein. Mit Enter fügen Sie weitere hinzu.
+voter_hint_free_text_multi_area#:#Geben Sie unten Ihre Antwort(en) ein. Über die Schaltfläche fügen Sie weitere hinzu.
+voter_enter_answer_first#:#Bitte geben Sie mindestens eine Antwort ein.
+voter_submit_answers#:#Antworten abschicken
+voter_hint_correct_order#:#Ziehen Sie die Einträge in die richtige Reihenfolge.
+voter_submit_order#:#Reihenfolge abschicken
+results_participants#:#Teilnehmende
+voter_submitting#:#Wird gesendet…

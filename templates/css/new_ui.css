@@ -115,6 +115,98 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     padding: 24px 28px;
 }
 
+/* Results header: question on the left, session meta on the right */
+
+#xlvo-display-player .xlvo-new-ui .xlvo-results-header {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    justify-content: space-between;
+}
+
+.xlvo-new-ui .xlvo-results-question-box {
+    flex: 1 1 420px;
+    min-width: 0;
+}
+
+#xlvo-display-player .xlvo-new-ui .xlvo-results-header .panel-title {
+    color: var(--xlvo-new-ink);
+    float: none;
+    font-size: 1.8em;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 8px;
+}
+
+.xlvo-new-ui .xlvo-results-header .xlvo-question {
+    background: transparent;
+    border: 0;
+    color: var(--xlvo-new-muted);
+    font-size: 1.05em;
+    margin: 0 0 6px;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-results-header .xlvo-question p:last-child {
+    margin-bottom: 0;
+}
+
+.xlvo-new-ui .xlvo-results-header .xlvo-question img {
+    height: auto;
+    max-width: 100%;
+}
+
+.xlvo-new-ui .xlvo-results-type {
+    color: var(--xlvo-new-muted);
+    font-weight: 500;
+    margin: 0;
+}
+
+.xlvo-new-ui .xlvo-results-type:empty {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-results-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.xlvo-new-ui .xlvo-results-meta-badge {
+    background: #f3f4f6;
+    border-radius: 20px;
+    color: var(--xlvo-new-ink);
+    font-size: 0.9em;
+    font-weight: 600;
+    padding: 6px 14px;
+    white-space: nowrap;
+}
+
+.xlvo-new-ui .xlvo-results-meta-badge.zoom-action {
+    background: #111827;
+    color: #fff;
+    cursor: pointer;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    letter-spacing: 0.05em;
+}
+
+.xlvo-new-ui .xlvo-results-meta-badge.label-cd-running {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.xlvo-new-ui .xlvo-results-meta-badge.label-cd-warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.xlvo-new-ui .xlvo-results-meta-badge.label-cd-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
 #xlvo-display-player .xlvo-new-ui .panel-body {
     background: #f8fafc;
     padding: 28px;
@@ -148,7 +240,14 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 }
 
 .xlvo-new-ui#xlvo-voter-header .panel-body {
-    padding: 0 15px;
+    padding: 0 20px;
+}
+
+/* Keep the answer area flush with the question title above it */
+.xlvo-new-ui#xlvo-voter-header .panel-body > .col-md-12,
+.xlvo-new-ui#xlvo-voter-header .panel-body .xlvo-free-input {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .xlvo-new-ui#xlvo-voter-header .panel-title.pull-left {
@@ -284,7 +383,7 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     font-size: 15px;
     line-height: 1.5;
     margin: -12px 0 20px;
-    text-align: center;
+    text-align: left;
 }
 
 .xlvo-new-ui .xlvo-voter-type-hint:empty {
@@ -1131,23 +1230,23 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     opacity: 1;
 }
 
-.xlvo-new-ui .xlvo-bar-row-wrap:nth-of-type(4n + 1) .xlvo-color-dot,
-.xlvo-new-ui .xlvo-bar-row-wrap:nth-of-type(4n + 1) .xlvo-bar-fill {
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-1 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-1 .xlvo-bar-fill {
     background: #3b82f6;
 }
 
-.xlvo-new-ui .xlvo-bar-row-wrap:nth-of-type(4n + 2) .xlvo-color-dot,
-.xlvo-new-ui .xlvo-bar-row-wrap:nth-of-type(4n + 2) .xlvo-bar-fill {
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-2 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-2 .xlvo-bar-fill {
     background: #10b981;
 }
 
-.xlvo-new-ui .xlvo-bar-row-wrap:nth-of-type(4n + 3) .xlvo-color-dot,
-.xlvo-new-ui .xlvo-bar-row-wrap:nth-of-type(4n + 3) .xlvo-bar-fill {
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-3 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-3 .xlvo-bar-fill {
     background: #f59e0b;
 }
 
-.xlvo-new-ui .xlvo-bar-row-wrap:nth-of-type(4n + 4) .xlvo-color-dot,
-.xlvo-new-ui .xlvo-bar-row-wrap:nth-of-type(4n + 4) .xlvo-bar-fill {
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-4 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-4 .xlvo-bar-fill {
     background: #ef4444;
 }
 
@@ -1451,4 +1550,576 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
         margin-right: -15px;
         padding: 16px;
     }
+}
+
+/* Results — a bar that just received votes flashes once */
+
+@keyframes xlvo-bar-flash {
+    0% {
+        filter: brightness(1);
+    }
+    40% {
+        filter: brightness(1.35);
+    }
+    100% {
+        filter: brightness(1);
+    }
+}
+
+.xlvo-new-ui .xlvo-bar-fill.xlvo-bar-flash {
+    animation: xlvo-bar-flash 0.6s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .xlvo-new-ui .xlvo-bar-fill {
+        transition: none;
+    }
+
+    .xlvo-new-ui .xlvo-bar-fill.xlvo-bar-flash {
+        animation: none;
+    }
+}
+
+/* Results — free text answer list (one entry per submission, newest first) */
+
+.xlvo-new-ui .xlvo-free-text-list-area {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.xlvo-new-ui .xlvo-free-text-answers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-free-text-answer {
+    background: #f9fafb;
+    border: 1px solid var(--xlvo-new-border);
+    border-left: 4px solid #3b82f6;
+    border-radius: 10px;
+    font-size: 1.05em;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+    padding: 12px 16px;
+}
+
+.xlvo-new-ui .xlvo-free-text-accent-2 {
+    border-left-color: #10b981;
+}
+
+.xlvo-new-ui .xlvo-free-text-accent-3 {
+    border-left-color: #f59e0b;
+}
+
+.xlvo-new-ui .xlvo-free-text-accent-4 {
+    border-left-color: #ef4444;
+}
+
+.xlvo-new-ui .xlvo-free-text-empty {
+    align-items: center;
+    color: var(--xlvo-new-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 40px 0;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-free-text-answer.is-new {
+    animation: xlvo-answer-in 0.35s ease-out;
+}
+
+@keyframes xlvo-answer-in {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .xlvo-new-ui .xlvo-free-text-answer {
+        animation: none;
+    }
+}
+
+/* Results — number range histogram */
+
+.xlvo-new-ui .xlvo-histogram {
+    align-items: stretch;
+    display: flex;
+    gap: 8px;
+    height: 320px;
+    padding-top: 26px;
+}
+
+.xlvo-new-ui .xlvo-hist-col {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.xlvo-new-ui .xlvo-hist-plot {
+    align-items: flex-end;
+    border-bottom: 2px solid var(--xlvo-new-border);
+    display: flex;
+    flex: 1;
+}
+
+.xlvo-new-ui .xlvo-hist-bar {
+    background: var(--xlvo-new-accent);
+    border-radius: 8px 8px 0 0;
+    min-height: 2px;
+    position: relative;
+    transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-hist-bar.is-empty {
+    background: transparent;
+}
+
+.xlvo-new-ui .xlvo-hist-count {
+    bottom: 100%;
+    color: var(--xlvo-new-ink);
+    font-size: 0.85em;
+    font-weight: 700;
+    left: 0;
+    margin-bottom: 4px;
+    position: absolute;
+    right: 0;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-hist-bar.is-empty .xlvo-hist-count {
+    color: #d1d5db;
+}
+
+.xlvo-new-ui .xlvo-hist-label {
+    color: var(--xlvo-new-muted);
+    font-size: 0.75em;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-top: 8px;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-hist-caption {
+    color: var(--xlvo-new-muted);
+    font-size: 0.85em;
+    margin-top: 12px;
+    text-align: center;
+}
+
+@media (max-width: 767px) {
+    .xlvo-new-ui .xlvo-histogram {
+        gap: 4px;
+        height: 240px;
+    }
+
+    .xlvo-new-ui .xlvo-hist-label {
+        font-size: 0.65em;
+    }
+}
+
+/* Voting — answer forms: option cards, Submit / Change Answer and the locked state after submitting */
+
+.xlvo-new-ui .xlvo-option-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.xlvo-new-ui .xlvo-option-card {
+    align-items: center;
+    background: var(--xlvo-new-surface);
+    border: 2px solid var(--xlvo-new-border);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    font-weight: 500;
+    gap: 12px;
+    margin: 0;
+    padding: 16px;
+    transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.xlvo-new-ui .xlvo-option-card:hover {
+    border-color: #c7d2fe;
+}
+
+.xlvo-new-ui .xlvo-option-card input {
+    height: 1px;
+    opacity: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.xlvo-new-ui .xlvo-option-indicator {
+    border: 2px solid #cbd5e1;
+    flex: none;
+    height: 22px;
+    position: relative;
+    width: 22px;
+}
+
+.xlvo-new-ui .xlvo-option-indicator-radio {
+    border-radius: 50%;
+}
+
+.xlvo-new-ui .xlvo-option-indicator-checkbox {
+    border-radius: 6px;
+}
+
+.xlvo-new-ui .xlvo-option-card input:checked ~ .xlvo-option-indicator {
+    background: var(--xlvo-new-accent);
+    border-color: var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .xlvo-option-card input:checked ~ .xlvo-option-indicator-radio::after {
+    background: #fff;
+    border-radius: 50%;
+    content: '';
+    height: 8px;
+    left: 5px;
+    position: absolute;
+    top: 5px;
+    width: 8px;
+}
+
+.xlvo-new-ui .xlvo-option-card input:checked ~ .xlvo-option-indicator-checkbox::after {
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    content: '';
+    height: 11px;
+    left: 6px;
+    position: absolute;
+    top: 2px;
+    transform: rotate(45deg);
+    width: 6px;
+}
+
+.xlvo-new-ui .xlvo-option-card:has(input:checked) {
+    background: var(--xlvo-new-wash);
+    border-color: var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .xlvo-option-card:has(input:focus-visible) {
+    outline: 3px solid #a5b4fc;
+    outline-offset: 2px;
+}
+
+.xlvo-new-ui .xlvo-option-card-letter {
+    color: var(--xlvo-new-muted);
+    flex: none;
+    font-weight: 700;
+}
+
+.xlvo-new-ui .xlvo-option-card-text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.xlvo-new-ui .xlvo-option-card-text p {
+    margin: 0;
+}
+
+.xlvo-new-ui .xlvo-option-card-text img {
+    height: auto;
+    max-width: 100%;
+}
+
+/* Locked after submitting: the chosen answer stays visible, everything else fades */
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card {
+    cursor: default;
+    opacity: 0.55;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-submitted {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+    opacity: 1;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-submitted .xlvo-option-indicator {
+    background: #6b7280;
+    border-color: #6b7280;
+}
+
+.xlvo-new-ui .xlvo-answer-feedback {
+    color: #b91c1c;
+    font-weight: 600;
+    margin: 12px 0 0;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-answer-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.xlvo-new-ui .xlvo-submit-btn,
+.xlvo-new-ui .xlvo-change-answer-btn {
+    border: 0;
+    border-radius: 12px;
+    font-size: 1.05em;
+    font-weight: 600;
+    padding: 14px 18px;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-submit-btn {
+    background: var(--xlvo-new-accent);
+    color: #fff;
+}
+
+.xlvo-new-ui .xlvo-submit-btn:hover:not(:disabled) {
+    background: #4338ca;
+}
+
+.xlvo-new-ui .xlvo-submit-btn:disabled {
+    background: #e5e7eb;
+    color: #6b7280;
+    cursor: default;
+}
+
+.xlvo-new-ui .xlvo-change-answer-btn {
+    background: #dc2626;
+    color: #fff;
+}
+
+.xlvo-new-ui .xlvo-change-answer-btn:hover:not(:disabled) {
+    background: #b91c1c;
+}
+
+.xlvo-new-ui .xlvo-change-answer-btn:disabled {
+    background: #e5e7eb;
+    color: #9ca3af;
+    cursor: default;
+}
+
+.xlvo-new-ui form[aria-busy='true'] .xlvo-submit-btn {
+    background: var(--xlvo-new-accent);
+    color: #fff;
+    opacity: 0.85;
+}
+
+/* Locked ranking / number range after submitting */
+
+.xlvo-new-ui .xlvo-answer-form.is-locked #lvo_bar_movable {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-number-range-panel {
+    opacity: 0.7;
+}
+
+/* Voting — free text: one field per answer */
+
+.xlvo-new-ui .xlvo-free-text-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.xlvo-new-ui .xlvo-free-text-row {
+    align-items: flex-start;
+    display: flex;
+    gap: 8px;
+}
+
+.xlvo-new-ui .xlvo-free-text-field {
+    background: var(--xlvo-new-surface);
+    border: 2px solid var(--xlvo-new-border);
+    border-radius: 12px;
+    flex: 1;
+    font-size: 1.05em;
+    min-width: 0;
+    padding: 14px 16px;
+    resize: vertical;
+}
+
+.xlvo-new-ui .xlvo-free-text-field:focus {
+    border-color: var(--xlvo-new-accent);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    outline: none;
+}
+
+.xlvo-new-ui .xlvo-free-text-remove {
+    background: transparent;
+    border: 0;
+    border-radius: 10px;
+    color: var(--xlvo-new-muted);
+    flex: none;
+    font-size: 1.5em;
+    height: 52px;
+    line-height: 1;
+    width: 44px;
+}
+
+.xlvo-new-ui .xlvo-free-text-remove:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.xlvo-new-ui .xlvo-free-text-row:only-child .xlvo-free-text-remove {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-free-text-add {
+    background: transparent;
+    border: 2px dashed #c7d2fe;
+    border-radius: 12px;
+    color: var(--xlvo-new-accent);
+    font-weight: 600;
+    margin-top: 12px;
+    padding: 12px;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-free-text-add:hover {
+    background: var(--xlvo-new-wash);
+}
+
+.xlvo-new-ui .xlvo-free-text-form.is-locked .xlvo-free-text-field {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+    color: var(--xlvo-new-ink);
+}
+
+.xlvo-new-ui .xlvo-free-text-form.is-locked .xlvo-free-text-remove,
+.xlvo-new-ui .xlvo-free-text-form.is-locked .xlvo-free-text-add {
+    display: none;
+}
+
+/* Voter header: avatar bubble next to the participant name, as in the mockups */
+
+.xlvo-new-ui-navbar .xlvo-nickname:not(:empty)::before {
+    align-items: center;
+    background: var(--xlvo-new-accent, #4f46e5);
+    border-radius: 50%;
+    color: #fff;
+    content: 'ID';
+    display: inline-flex;
+    font-size: 11px;
+    font-weight: 700;
+    height: 28px;
+    justify-content: center;
+    margin-right: 8px;
+    width: 28px;
+}
+
+/* Free text: a green check marks every answer field that has content */
+
+.xlvo-new-ui .xlvo-free-text-field-wrap {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+}
+
+.xlvo-new-ui .xlvo-free-text-field-wrap .xlvo-free-text-field {
+    padding-right: 48px;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-free-text-check {
+    display: none;
+    height: 22px;
+    position: absolute;
+    right: 14px;
+    top: 15px;
+    width: 22px;
+}
+
+.xlvo-new-ui .xlvo-free-text-check::after {
+    border: solid #10b981;
+    border-width: 0 3px 3px 0;
+    content: '';
+    height: 14px;
+    left: 7px;
+    position: absolute;
+    top: 2px;
+    transform: rotate(45deg);
+    width: 7px;
+}
+
+.xlvo-new-ui .xlvo-free-text-row.has-value .xlvo-free-text-check {
+    display: block;
+}
+
+/* Empty submit: shake the answer area */
+
+@keyframes xlvo-shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+.xlvo-new-ui .xlvo-shake {
+    animation: xlvo-shake 0.4s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .xlvo-new-ui .xlvo-shake {
+        animation: none;
+    }
+}
+
+/* Submitting: spinner inside the submit button */
+
+.xlvo-new-ui form[aria-busy='true'] .xlvo-submit-btn::before {
+    animation: xlvo-spin 0.8s linear infinite;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    border-top-color: #fff;
+    content: '';
+    display: inline-block;
+    height: 16px;
+    margin-right: 8px;
+    vertical-align: -3px;
+    width: 16px;
+}
+
+@keyframes xlvo-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Ordering questions: the legacy "Your Submission:" caption is replaced by the locked state */
+
+.xlvo-new-ui .xlvo-answer-form > p:not([class]) {
+    display: none;
+}
+
+/* Result totals lifted into the header, next to the session badges */
+
+.xlvo-new-ui .xlvo-results-meta .xlvo-results-stats {
+    display: contents;
+}
+
+.xlvo-new-ui .xlvo-results-meta .xlvo-bar-stat-badge {
+    font-size: 0.95em;
+    padding: 6px 14px;
+    white-space: nowrap;
 }

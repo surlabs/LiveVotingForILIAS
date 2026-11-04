@@ -60,10 +60,10 @@ class LiveVotingSingleVoteResultsUI extends LiveVotingInputResultsGUI
         $voters = LiveVotingVote::countVoters($this->player->getActiveVoting(), $this->player->getRoundId());
 
         $bars = new LiveVotingBarCollectionUI($this->isUsingNewUI());
-        $bars->setShowTotalVoters(false);
+        $bars->setShowTotalVoters($this->isUsingNewUI());
         $bars->setTotalVoters($voters);
         $bars->setShowTotalVotes(true);
-        $bars->setTotalVotes($voters);
+        $bars->setTotalVotes($this->isUsingNewUI() ? $total_votes : $voters);
 
 
         foreach ($this->player->getActiveVotingObject()->getOptions() as $xlvoOption) {
@@ -92,7 +92,7 @@ class LiveVotingSingleVoteResultsUI extends LiveVotingInputResultsGUI
         $voters = LiveVotingVote::countVoters($this->player->getActiveVoting(), $this->player->getRoundId());
 
         $bars = new LiveVotingBarCollectionUI($this->isUsingNewUI());
-        $bars->setShowTotalVoters(false);
+        $bars->setShowTotalVoters($this->isUsingNewUI());
         $bars->setTotalVoters($voters);
         $bars->setShowTotalVotes($this->player->getActiveVotingObject()->isMultiSelection());
         $bars->setTotalVotes($total_votes);
@@ -103,7 +103,8 @@ class LiveVotingSingleVoteResultsUI extends LiveVotingInputResultsGUI
             $xlvoBarPercentageGUI->setOptionLetter($xlvoOption->getCipher());
             $xlvoBarPercentageGUI->setTitle($xlvoOption->getTextForPresentation());
             $xlvoBarPercentageGUI->setVotes(count(LiveVotingVote::getVotesOfOption($xlvoOption->getId(), $this->player->getRoundId())));
-            $xlvoBarPercentageGUI->setMaxVotes($total_votes);
+            // The new UI answers "what share of participants picked this option?", so it divides by voters.
+            $xlvoBarPercentageGUI->setMaxVotes($this->isUsingNewUI() ? $voters : $total_votes);
             $xlvoBarPercentageGUI->setShowInPercent(!$this->isShowAbsolute());
             $bars->addBar($xlvoBarPercentageGUI);
         }
