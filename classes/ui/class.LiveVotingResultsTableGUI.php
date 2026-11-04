@@ -228,7 +228,8 @@ class LiveVotingResultsTableGUI implements DataRetrieval
                     "user_identifier" => $vote->getUserIdentifier(),
                     "question_type" => $question->getQuestionTypeId(),
                     "title" => $question->getTitle(),
-                    "question" => $question->getQuestion(),
+                    // Presentation form resolves the editor's media object placeholders into real image URLs.
+                    "question" => $question->getQuestionForPresentation(),
                     "answer" => $question->getVotesRepresentation($answers),
                     "answer_ids" => $this->concatAnswersIds($answers),
                     "voting_id" => $question->getId(),
