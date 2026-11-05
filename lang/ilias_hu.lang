@@ -362,3 +362,7 @@ voter_hint_correct_order#:#Húzza az elemeket a helyes sorrendbe.
 voter_submit_order#:#Sorrend elküldése
 results_participants#:#Résztvevők
 voter_submitting#:#Küldés…
+voter_nickname_input#:#Becenév
+scoreboard_points_unit#:#PONT
+results_hidden#:#Az eredmények rejtve vannak
+results_answers_received#:#%s válasz érkezett

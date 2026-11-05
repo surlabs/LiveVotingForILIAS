@@ -362,3 +362,7 @@ voter_hint_correct_order#:#Drag the items into the correct order.
 voter_submit_order#:#Submit Order
 results_participants#:#Participants
 voter_submitting#:#Submitting…
+voter_nickname_input#:#Nickname
+scoreboard_points_unit#:#PTS.
+results_hidden#:#Results are hidden
+results_answers_received#:#%s answers received

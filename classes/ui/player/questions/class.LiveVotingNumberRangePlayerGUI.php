@@ -20,7 +20,6 @@ declare(strict_types=1);
  */
 
 
-use LiveVoting\objects\modes\LiveVotingMode;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
@@ -126,8 +125,7 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
 
         $template = new IlTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/NumberRange/tpl.number_range.html', true, true);
         $live_voting = new LiveVoting($this->player->getObjId(), false);
-        $is_new_ui = $live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE
-            && $live_voting->usesNewUI();
+        $is_new_ui = $live_voting->usesNewUI();
         $template->setVariable('ACTION', $DIC->ctrl()->getFormAction($this));
         $template->setVariable('SHOW_PERCENTAGE', (int)$this->getPlayer()->getActiveVotingObject()->isPercentage());
 

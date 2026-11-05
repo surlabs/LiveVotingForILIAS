@@ -362,3 +362,7 @@ voter_hint_correct_order#:#Ziehen Sie die Einträge in die richtige Reihenfolge.
 voter_submit_order#:#Reihenfolge abschicken
 results_participants#:#Teilnehmende
 voter_submitting#:#Wird gesendet…
+voter_nickname_input#:#Spitzname
+scoreboard_points_unit#:#PKT.
+results_hidden#:#Ergebnisse sind ausgeblendet
+results_answers_received#:#%s Antworten eingegangen

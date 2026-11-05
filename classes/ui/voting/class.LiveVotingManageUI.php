@@ -74,12 +74,6 @@ class LiveVotingManageUI
     {
         global $DIC;
 
-        $is_new_ui = $parent->getObject()->getLiveVoting()->getMode()->getMode() === LiveVotingMode::BASIC_MODE
-            && $parent->getObject()->getLiveVoting()->usesNewUI();
-        if ($is_new_ui) {
-            $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_ui.css');
-        }
-
         $f = $DIC->ui()->factory();
         $renderer = $DIC->ui()->renderer();
         $ico = $f->symbol()->icon()->standard('', '')->withSize('medium')->withAbbreviation('+');
@@ -115,9 +109,6 @@ class LiveVotingManageUI
 
         $liveVotingTableGUI = new LiveVotingTableGUI($parent, 'manage');
 
-        $content = '<div class="xlvo-manage-actions">' . $renderer->render($dd) . '</div>'
-            . '<div class="xlvo-manage-table">' . $liveVotingTableGUI->getHTML() . '</div>';
-
-        return $is_new_ui ? '<section class="xlvo-new-manage">' . $content . '</section>' : $content;
+        return $renderer->render($dd) . $liveVotingTableGUI->getHTML();
     }
 }

@@ -366,6 +366,12 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 .xlvo-new-ui .xlvo-option_letter {
     background: var(--xlvo-new-accent);
     border-radius: 50%;
+    color: #fff;
+    flex: none;
+    font-size: 0.9em;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0;
     display: inline-flex;
     height: 30px;
     justify-content: center;
@@ -848,7 +854,7 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 .xlvo-new-ui .xlvo-priorities .move-helper {
     color: #d1d5db;
     margin-right: 16px;
-    order: -1;
+    order: 1;
     width: 24px;
 }
 
@@ -1044,10 +1050,13 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 }
 
 .xlvo-new-ui .xlvo-option {
+    align-items: center;
     background: var(--xlvo-new-surface);
     border: 1px solid var(--xlvo-new-border);
     border-radius: 12px;
+    display: flex;
     font-size: 1.05em;
+    gap: 12px;
     padding: 16px 18px;
 }
 
@@ -1118,7 +1127,7 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     min-width: 0;
 }
 
-.xlvo-new-ui .xlvo-option-name span:last-child {
+.xlvo-new-ui .xlvo-option-name > span:last-child {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1166,8 +1175,37 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     width: 0;
 }
 
+/* Fullscreen projector: the ILIAS grid row's negative margins would add a horizontal scrollbar */
+.xlvo-fullscreen:has(.xlvo-new-ui) {
+    overflow-x: hidden;
+}
+
 .xlvo-new-ui .xlvo-bar-solution {
+    color: var(--xlvo-new-muted);
+    font-weight: 600;
     margin-top: 20px;
+}
+
+.xlvo-new-ui .xlvo-bar-solution p:empty {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-bar-solution .xlvo-option {
+    align-items: center;
+    color: var(--xlvo-new-ink);
+    display: flex;
+    font-weight: 500;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.xlvo-new-ui .xlvo-bar-solution .xlvo-option_letter {
+    color: #fff;
+    flex: none;
+    font-size: 0.9em;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0;
 }
 
 /* Results — free text answers, grouped estimates and mean/median/mode tiles */
@@ -1198,11 +1236,38 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     font-size: 1.4em;
 }
 
+.xlvo-new-ui .xlvo-vote-free-input .well {
+    position: relative;
+}
+
+/* Room for the count on both sides, so a centred value stays centred whether or not it has a count */
+.xlvo-new-ui .xlvo-vote-free-input .well.text-center {
+    padding-left: 64px;
+    padding-right: 64px;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input .well:not(.text-center):has(.label-primary:not(:empty)) {
+    padding-right: 64px;
+}
+
 .xlvo-new-ui .xlvo-vote-free-input .label-primary {
+    align-items: center;
     background: var(--xlvo-new-accent);
-    border-radius: 20px;
-    font-size: 0.8em;
-    padding: 4px 10px;
+    border-radius: 999px;
+    color: #fff;
+    display: inline-flex;
+    float: none !important;
+    font-size: 14px;
+    font-weight: 700;
+    height: 28px;
+    justify-content: center;
+    line-height: 1;
+    min-width: 28px;
+    padding: 0 8px;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .xlvo-new-ui .xlvo-vote-free-input .label-primary:empty {
@@ -1248,6 +1313,26 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 .xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-4 .xlvo-color-dot,
 .xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-4 .xlvo-bar-fill {
     background: #ef4444;
+}
+
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-5 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-5 .xlvo-bar-fill {
+    background: #8b5cf6;
+}
+
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-6 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-6 .xlvo-bar-fill {
+    background: #ec4899;
+}
+
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-7 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-7 .xlvo-bar-fill {
+    background: #06b6d4;
+}
+
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-8 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-8 .xlvo-bar-fill {
+    background: #84cc16;
 }
 
 /* QR join modal */
@@ -1398,157 +1483,6 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 @media (max-width: 767px) {
     .xlvo-new-ui .xlvo-free-text-results #categories {
         grid-template-columns: 1fr;
-    }
-}
-
-/* Moderator question management */
-
-.xlvo-new-manage {
-    --xlvo-new-accent: #4f46e5;
-    --xlvo-new-border: #e2e8f0;
-    --xlvo-new-ink: #111827;
-    --xlvo-new-muted: #64748b;
-    --xlvo-new-surface: #fff;
-    background: #f8fafc;
-    border-radius: 16px;
-    color: var(--xlvo-new-ink);
-    padding: 24px;
-}
-
-.xlvo-new-manage .xlvo-manage-actions {
-    align-items: center;
-    background: var(--xlvo-new-surface);
-    border: 1px solid var(--xlvo-new-border);
-    border-radius: 12px;
-    display: flex;
-    margin-bottom: 20px;
-    padding: 12px;
-}
-
-.xlvo-new-manage .xlvo-manage-actions .btn {
-    background: var(--xlvo-new-accent);
-    border-color: var(--xlvo-new-accent);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.18);
-    color: #fff;
-    font-weight: 600;
-}
-
-.xlvo-new-manage .xlvo-manage-actions .btn:hover,
-.xlvo-new-manage .xlvo-manage-actions .btn:focus {
-    background: #4338ca;
-    border-color: #4338ca;
-    color: #fff;
-}
-
-.xlvo-new-manage .xlvo-manage-table {
-    background: var(--xlvo-new-surface);
-    border: 1px solid var(--xlvo-new-border);
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.xlvo-new-results-history {
-    --xlvo-new-accent: #4f46e5;
-    --xlvo-new-border: #e2e8f0;
-    --xlvo-new-ink: #111827;
-    --xlvo-new-muted: #64748b;
-    --xlvo-new-surface: #fff;
-    background: #f8fafc;
-    border-radius: 16px;
-    color: var(--xlvo-new-ink);
-    padding: 24px;
-}
-
-.xlvo-new-results-history .xlvo-results-history-table {
-    background: var(--xlvo-new-surface);
-    border: 1px solid var(--xlvo-new-border);
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.xlvo-new-manage .xlvo-manage-table .ilTableHeaderTitle,
-.xlvo-new-manage .xlvo-manage-table th,
-.xlvo-new-results-history .xlvo-results-history-table .ilTableHeaderTitle,
-.xlvo-new-results-history .xlvo-results-history-table th {
-    color: var(--xlvo-new-muted);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-}
-
-.xlvo-new-manage .xlvo-manage-table td,
-.xlvo-new-results-history .xlvo-results-history-table td {
-    border-color: var(--xlvo-new-border);
-    color: var(--xlvo-new-ink);
-    vertical-align: middle;
-}
-
-.xlvo-new-manage .xlvo-manage-table tbody tr,
-.xlvo-new-results-history .xlvo-results-history-table tbody tr {
-    transition: background-color 160ms ease;
-}
-
-.xlvo-new-manage .xlvo-manage-table tbody tr:hover,
-.xlvo-new-results-history .xlvo-results-history-table tbody tr:hover {
-    background: #f8faff;
-}
-
-.xlvo-new-manage .xlvo-manage-table input[type='text'],
-.xlvo-new-manage .xlvo-manage-table select {
-    border-color: var(--xlvo-new-border);
-    border-radius: 8px;
-    box-shadow: none;
-}
-
-.xlvo-new-manage .xlvo-manage-table input[type='text']:focus,
-.xlvo-new-manage .xlvo-manage-table select:focus {
-    border-color: var(--xlvo-new-accent);
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
-}
-
-.l-bar__space-keeper #xlvo-export-results,
-.l-bar__space-keeper #xlvo-new-round,
-.l-bar__space-keeper #xlvo-change-round {
-    border-radius: 8px;
-    box-shadow: none;
-    font-weight: 600;
-}
-
-.l-bar__space-keeper #xlvo-export-results {
-    background: #eef2ff;
-    border-color: #c7d2fe;
-    color: #4f46e5;
-}
-
-.l-bar__space-keeper #xlvo-new-round,
-.l-bar__space-keeper #xlvo-change-round {
-    background: #4f46e5;
-    border-color: #4f46e5;
-    color: #fff;
-}
-
-.l-bar__space-keeper #xlvo-new-round:hover,
-.l-bar__space-keeper #xlvo-change-round:hover {
-    background: #4338ca;
-    border-color: #4338ca;
-    color: #fff;
-}
-
-@media (max-width: 767px) {
-    .xlvo-new-manage {
-        border-radius: 0;
-        margin-left: -15px;
-        margin-right: -15px;
-        padding: 16px;
-    }
-
-    .xlvo-new-results-history {
-        border-radius: 0;
-        margin-left: -15px;
-        margin-right: -15px;
-        padding: 16px;
     }
 }
 
@@ -1847,14 +1781,14 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 }
 
 .xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-submitted {
-    background: #f3f4f6;
-    border-color: #9ca3af;
+    background: var(--xlvo-new-wash);
+    border-color: var(--xlvo-new-accent);
     opacity: 1;
 }
 
 .xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-submitted .xlvo-option-indicator {
-    background: #6b7280;
-    border-color: #6b7280;
+    background: var(--xlvo-new-accent);
+    border-color: var(--xlvo-new-accent);
 }
 
 .xlvo-new-ui .xlvo-answer-feedback {
@@ -1897,16 +1831,18 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 }
 
 .xlvo-new-ui .xlvo-change-answer-btn {
-    background: #dc2626;
-    color: #fff;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
 }
 
 .xlvo-new-ui .xlvo-change-answer-btn:hover:not(:disabled) {
-    background: #b91c1c;
+    background: #fecaca;
 }
 
 .xlvo-new-ui .xlvo-change-answer-btn:disabled {
     background: #e5e7eb;
+    border-color: #e5e7eb;
     color: #9ca3af;
     cursor: default;
 }
@@ -1920,12 +1856,47 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 /* Locked ranking / number range after submitting */
 
 .xlvo-new-ui .xlvo-answer-form.is-locked #lvo_bar_movable {
-    opacity: 0.7;
     pointer-events: none;
 }
 
+.xlvo-new-ui .xlvo-answer-form.is-locked #lvo_bar_movable .list-group-item {
+    background: #e5e7eb;
+    box-shadow: none;
+    color: #9ca3af;
+    cursor: default;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked #lvo_bar_movable .move-helper {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-priorities .xlvo-answer-form.is-locked #lvo_bar_movable .list-group-item::before,
+.xlvo-new-ui .xlvo-correct-order .xlvo-answer-form.is-locked .option-letter {
+    background: #d1d5db;
+    color: #9ca3af;
+}
+
 .xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-number-range-panel {
-    opacity: 0.7;
+    pointer-events: none;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-number-range-value #number-display {
+    color: var(--xlvo-new-ink);
+}
+
+.xlvo-new-ui .xlvo-number-range .xlvo-answer-form.is-locked #btn-slider-left,
+.xlvo-new-ui .xlvo-number-range .xlvo-answer-form.is-locked #btn-slider-right {
+    border-color: #e5e7eb;
+    color: #9ca3af;
+}
+
+.xlvo-new-ui .xlvo-number-range .xlvo-answer-form.is-locked .slider-selection {
+    background: #9ca3af;
+}
+
+.xlvo-new-ui .xlvo-number-range .xlvo-answer-form.is-locked .slider-handle {
+    background: #f3f4f6;
+    border-color: #9ca3af;
 }
 
 /* Voting — free text: one field per answer */
@@ -1982,9 +1953,9 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 
 .xlvo-new-ui .xlvo-free-text-add {
     background: transparent;
-    border: 2px dashed #c7d2fe;
+    border: 2px dashed #cbd5e1;
     border-radius: 12px;
-    color: var(--xlvo-new-accent);
+    color: var(--xlvo-new-muted);
     font-weight: 600;
     margin-top: 12px;
     padding: 12px;
@@ -1993,12 +1964,14 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 
 .xlvo-new-ui .xlvo-free-text-add:hover {
     background: var(--xlvo-new-wash);
+    border-color: var(--xlvo-new-accent);
+    color: var(--xlvo-new-accent);
 }
 
 .xlvo-new-ui .xlvo-free-text-form.is-locked .xlvo-free-text-field {
     background: #f3f4f6;
-    border-color: #9ca3af;
-    color: var(--xlvo-new-ink);
+    border-color: #e5e7eb;
+    color: #9ca3af;
 }
 
 .xlvo-new-ui .xlvo-free-text-form.is-locked .xlvo-free-text-remove,
@@ -2023,7 +1996,7 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     width: 28px;
 }
 
-/* Free text: a green check marks every answer field that has content */
+/* Free text: once submitted, a green check marks every answer field that has content */
 
 .xlvo-new-ui .xlvo-free-text-field-wrap {
     flex: 1;
@@ -2034,6 +2007,12 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 .xlvo-new-ui .xlvo-free-text-field-wrap .xlvo-free-text-field {
     padding-right: 48px;
     width: 100%;
+}
+
+/* Text areas grow with the answer (xlvoVoter.fitTextareas), so they never need their own scrollbar */
+.xlvo-new-ui textarea.xlvo-free-text-field {
+    overflow-y: hidden;
+    resize: none;
 }
 
 .xlvo-new-ui .xlvo-free-text-check {
@@ -2057,7 +2036,7 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     width: 7px;
 }
 
-.xlvo-new-ui .xlvo-free-text-row.has-value .xlvo-free-text-check {
+.xlvo-new-ui .xlvo-free-text-form.is-locked .xlvo-free-text-row.has-value .xlvo-free-text-check {
     display: block;
 }
 
@@ -2122,4 +2101,512 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     font-size: 0.95em;
     padding: 6px 14px;
     white-space: nowrap;
+}
+
+/* Challenge mode */
+
+/* In a challenge the first answer counts, so there is no way back */
+.xlvo-new-ui.xlvo-challenge .xlvo-change-answer-btn {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-challenge-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.xlvo-new-ui .xlvo-challenge-info-item {
+    background: var(--xlvo-new-surface);
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 999px;
+    color: var(--xlvo-new-muted);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 14px;
+}
+
+.xlvo-new-ui .xlvo-challenge-info-item:empty,
+.xlvo-new-ui .xlvo-challenge-info:not(:has(.xlvo-challenge-info-item:not(:empty))) {
+    display: none;
+}
+
+/* Scoreboard, shared by the projector and the voter */
+
+.xlvo-new-ui.xlvo-scoreboard-panel {
+    background: var(--xlvo-new-surface);
+}
+
+.xlvo-new-ui .xlvo-scoreboard-header .panel-title {
+    color: var(--xlvo-new-ink);
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-header:has(.panel-title:empty) {
+    display: none;
+}
+
+.xlvo-new-ui#xlvo-voter-header .xlvo-scoreboard-panel,
+.xlvo-new-ui#xlvo-voter-header .xlvo-scoreboard-panel .panel-body {
+    background: transparent;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-scoreboard {
+    counter-reset: xlvo-rank;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style: none;
+    margin: 0 0 24px;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-row {
+    align-items: center;
+    background: var(--xlvo-new-surface);
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 14px;
+    counter-increment: xlvo-rank;
+    display: flex;
+    gap: 14px;
+    padding: 14px 18px;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-row::before {
+    align-items: center;
+    background: var(--xlvo-new-wash);
+    border-radius: 50%;
+    color: var(--xlvo-new-accent);
+    content: counter(xlvo-rank);
+    display: inline-flex;
+    flex: none;
+    font-weight: 700;
+    height: 32px;
+    justify-content: center;
+    width: 32px;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-row:nth-child(1)::before {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-row:nth-child(2)::before {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-row:nth-child(3)::before {
+    background: #fde8d7;
+    color: #9a3412;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-name {
+    flex: 1 1 auto;
+    font-size: 18px;
+    font-weight: 600;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-points {
+    color: #16a34a;
+    flex: none;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Start screen (PIN, link, QR) of both modes */
+
+.xlvo-new-ui.xlvo-start-screen {
+    background: #f8fafc;
+    border: 0;
+    border-radius: 18px;
+    box-shadow: 0 16px 44px rgba(24, 33, 51, 0.12);
+    overflow: hidden;
+}
+
+.xlvo-new-ui.xlvo-start-screen .well {
+    background: var(--xlvo-new-surface);
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 14px;
+    box-shadow: none;
+}
+
+.xlvo-new-ui.xlvo-start-screen .well h3 {
+    color: var(--xlvo-new-ink);
+    font-weight: 600;
+    margin: 0;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo_list_nickname {
+    background: var(--xlvo-new-wash);
+    border: 1px solid #c7d2fe;
+    border-radius: 999px;
+    box-shadow: none;
+    color: var(--xlvo-new-accent);
+    font-weight: 600;
+    padding: 10px 16px;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo_shortlink {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    overflow-wrap: anywhere;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-pin h3 {
+    color: var(--xlvo-new-accent);
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+/* PIN, link and attendees stacked on the left, a large QR on the right, both columns the same height */
+.xlvo-new-ui.xlvo-start-screen > .panel-body.row:first-child {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.xlvo-new-ui.xlvo-start-screen > .panel-body.row::before,
+.xlvo-new-ui.xlvo-start-screen > .panel-body.row::after {
+    content: none;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-info,
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-qr-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-info .xlvo_shortlink {
+    flex: 1 1 auto;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-qr-col .xlvo_cm_qr {
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 14px;
+    height: auto;
+    margin-bottom: 10px;
+    padding: 24px;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-qr {
+    background: none;
+    border: 0;
+    border-radius: 8px;
+    cursor: zoom-in;
+    line-height: 0;
+    padding: 0;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-qr img {
+    height: auto;
+    max-width: 100%;
+    width: 280px;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-qr:focus-visible,
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-zoom:focus-visible {
+    outline: 3px solid #a5b4fc;
+    outline-offset: 3px;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-zoom {
+    background: var(--xlvo-new-wash);
+    border: 0;
+    border-radius: 999px;
+    color: var(--xlvo-new-accent);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 18px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-zoom:hover {
+    background: var(--xlvo-new-accent);
+    color: #fff;
+}
+
+@media (max-width: 991px) {
+    .xlvo-new-ui.xlvo-start-screen .xlvo-start-info,
+    .xlvo-new-ui.xlvo-start-screen .xlvo-start-qr-col {
+        width: 100%;
+    }
+}
+
+/* Challenge nickname screen: same card as the PIN screen, with a plain text field */
+
+.xlvo-nickname-screen #il_prop_cont_nickname_input > label {
+    color: var(--xlvo-new-muted);
+    display: block;
+    float: none;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin: 0 0 10px;
+    padding: 0;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.xlvo-nickname-screen #il_prop_cont_nickname_input > div {
+    padding: 0;
+    width: 100%;
+}
+
+.xlvo-nickname-screen #il_prop_cont_nickname_input input#nickname_input {
+    background: var(--xlvo-new-surface);
+    border: 2px solid var(--xlvo-new-border);
+    border-radius: 14px;
+    box-shadow: none;
+    color: var(--xlvo-new-ink);
+    font-size: 22px;
+    font-weight: 600;
+    height: auto;
+    margin: 0;
+    padding: 14px 12px;
+    text-align: center;
+    width: 100%;
+}
+
+.xlvo-nickname-screen #il_prop_cont_nickname_input input#nickname_input:focus {
+    border-color: var(--xlvo-new-accent);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+}
+
+.xlvo-nickname-screen .ilFormCmds input[name='cmd[requestNickname]'] {
+    background: var(--xlvo-new-accent);
+    border: 0;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25);
+    color: #fff;
+}
+
+/* Scoreboard with results shown: the question the bars belong to */
+.xlvo-new-ui .xlvo-scoreboard-results-title {
+    color: var(--xlvo-new-ink);
+    font-size: 18px;
+    font-weight: 700;
+    margin: 8px 0 12px;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-results-title:empty {
+    display: none;
+}
+
+/* Free text — categorise mode */
+
+/* Remove button centred on the right of the card; the count moves left of it */
+.xlvo-new-ui .xlvo-vote-free-input > .close {
+    align-items: center;
+    border-radius: 50%;
+    display: inline-flex;
+    font-size: 20px;
+    height: 28px;
+    justify-content: center;
+    padding: 0;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input > .close:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input:has(> .close) .well {
+    cursor: grab;
+    padding-right: 52px;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input:has(> .close) .well:has(.label-primary:not(:empty)) {
+    padding-right: 92px;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input:has(> .close) .label-primary {
+    right: 50px;
+}
+
+/* Categories: white cards with their title, each one a drop zone */
+.xlvo-new-ui .xlvo-free-text-results #categories > div {
+    float: none;
+    padding: 0;
+    position: relative;
+    width: auto;
+}
+
+.xlvo-new-ui .xlvo-free-text-results #categories:empty {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-free-text-results fieldset.xlvo-category {
+    background: var(--xlvo-new-surface);
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    margin: 0;
+    min-height: 140px;
+    padding: 16px;
+}
+
+.xlvo-new-ui .xlvo-free-text-results fieldset.xlvo-category legend {
+    border: 0;
+    color: var(--xlvo-new-ink);
+    float: left;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    padding: 0 32px 0 0;
+    position: static;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-free-text-results fieldset.xlvo-category .xlvo-bars {
+    border: 2px dashed var(--xlvo-new-border);
+    border-radius: 10px;
+    clear: both;
+    min-height: 72px;
+    padding: 8px;
+}
+
+.xlvo-new-ui .xlvo-free-text-results fieldset.xlvo-category .xlvo-bar-stats:empty,
+.xlvo-new-ui .xlvo-free-text-results fieldset.xlvo-category .xlvo-bar-stats:not(:has(*)) {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-free-text-results fieldset.xlvo-category .xlvo-vote-free-input:last-child {
+    margin-bottom: 0;
+}
+
+.xlvo-new-ui .xlvo-free-text-results fieldset.xlvo-category .well.zoom {
+    font-size: 1em;
+}
+
+.xlvo-new-ui .xlvo-free-text-results #categories > div > .close {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
+    color: var(--xlvo-new-muted);
+    display: inline-flex;
+    font-size: 20px;
+    height: 28px;
+    justify-content: center;
+    opacity: 0.7;
+    padding: 0;
+    position: absolute;
+    right: 12px;
+    top: 14px;
+    width: 28px;
+    z-index: 1;
+}
+
+.xlvo-new-ui .xlvo-free-text-results #categories > div > .close:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+    opacity: 1;
+}
+
+/* The uncategorised list is a drop zone too, so answers can be dragged back */
+.xlvo-new-ui .xlvo-free-text-results #answers .xlvo-bars {
+    min-height: 60px;
+}
+
+/* Dragging */
+.xlvo-new-ui .xlvo-free-text-results .gu-transit {
+    opacity: 0.4;
+}
+
+.gu-mirror.xlvo-vote-free-input .well {
+    background: #fff;
+    border: 1px solid #4f46e5;
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(24, 33, 51, 0.18);
+    padding: 16px 18px;
+}
+
+/* Add category / add answer: field and button joined, same height */
+.xlvo-new-ui .xlvo-free-text-results .inputs .input-group {
+    align-items: stretch;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .inputs .form-control {
+    flex: 1 1 auto;
+    font-size: 15px;
+    height: auto;
+    padding: 10px 14px;
+    width: auto;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .inputs .form-control:focus {
+    border-color: var(--xlvo-new-accent);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    position: relative;
+    z-index: 1;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .inputs .input-group-append {
+    display: flex;
+    width: auto;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .inputs .input-group-append .btn {
+    align-items: center;
+    background: var(--xlvo-new-accent);
+    border: 1px solid var(--xlvo-new-accent);
+    color: #fff;
+    display: inline-flex;
+    padding: 0 18px;
+    white-space: nowrap;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .inputs .input-group-append .btn:hover {
+    background: #4338ca;
+    border-color: #4338ca;
+}
+
+/* free_input.css pins the remove button of categorised answers to the corner with an id selector */
+.xlvo-new-ui #categories .xlvo-vote-free-input > .close {
+    right: 12px;
+    top: 50%;
+}
+
+/* Free text with results hidden: say so instead of showing an empty panel */
+.xlvo-new-ui .xlvo-results-hidden {
+    align-items: center;
+    color: var(--xlvo-new-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+    min-height: 220px;
+    padding: 32px 16px;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-results-hidden .glyphicon {
+    color: #c7d2fe;
+    font-size: 44px;
+    margin-bottom: 6px;
+}
+
+.xlvo-new-ui .xlvo-results-hidden strong {
+    color: var(--xlvo-new-ink);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.xlvo-new-ui .xlvo-results-hidden span:last-child {
+    font-size: 15px;
 }

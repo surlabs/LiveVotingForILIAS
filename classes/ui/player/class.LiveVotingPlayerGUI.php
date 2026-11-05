@@ -152,8 +152,7 @@ class LiveVotingPlayerGUI
         // yet, so the PIN gate always uses the new look.
         $has_voting = isset($this->live_voting);
         $is_new_ui = !$has_voting
-            || ($this->live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE
-                && $this->live_voting->usesNewUI());
+            || $this->live_voting->usesNewUI();
         $main_template = $DIC->ui()->mainTemplate();
         $main_template->setVariable('BODY_CLASS', $is_new_ui ? 'xlvo-new-ui-page' : '');
         $main_template->setVariable('NAVBAR_CLASS', $is_new_ui ? 'xlvo-new-ui-navbar' : '');
@@ -176,8 +175,7 @@ class LiveVotingPlayerGUI
     {
         global $DIC;
 
-        $is_new_ui = $this->live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE
-            && $this->live_voting->usesNewUI();
+        $is_new_ui = $this->live_voting->usesNewUI();
         $template = $is_new_ui ? 'tpl.voter_player_new.html' : 'tpl.voter_player.html';
         $tpl_voter_player = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/' . $template, false, false);
 
@@ -267,8 +265,7 @@ class LiveVotingPlayerGUI
     {
         $template = $this->live_voting->getMode()->getInnerTemplate();
         if (
-            $this->live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE
-            && $this->live_voting->usesNewUI()
+            $this->live_voting->usesNewUI()
         ) {
             $template .= '_new';
         }
@@ -296,7 +293,7 @@ class LiveVotingPlayerGUI
                     break;
                 case LiveVotingPlayer::STAT_RUNNING:
                     $question = $this->getLiveVoting()->getPlayer()->getActiveVotingObject();
-                    if ($this->live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE && $this->live_voting->usesNewUI()) {
+                    if ($this->live_voting->usesNewUI()) {
                         $this->getVotingTemplate()->setVariable('TITLE', $question->getTitle());
                         $this->getVotingTemplate()->setVariable('DESCRIPTION', $question->getQuestionForPresentation());
                     } else {
@@ -337,15 +334,16 @@ class LiveVotingPlayerGUI
                         $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_end'));
                         $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_end'));;
 
-                        $tpl_scoreboard = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard.html', true, false);
+                        $tpl_scoreboard = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard' . ($this->live_voting->usesNewUI() ? '_new' : '') . '.html', true, false);
 
                         $players = LiveVotingPlayer::getPlayersForScoreboard($this->live_voting->getPlayer());
 
                         $html = '';
                         foreach ($players as $player) {
-                            $tpl_scoreboard_points = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score.html', true    , false);
-                            $tpl_scoreboard_points->setVariable('PLAYER', $player['nickname']);
+                            $tpl_scoreboard_points = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score' . ($this->live_voting->usesNewUI() ? '_new' : '') . '.html', true, false);
+                            $tpl_scoreboard_points->setVariable('PLAYER', htmlspecialchars((string) $player['nickname'], ENT_QUOTES));
                             $tpl_scoreboard_points->setVariable('POINTS', $player['points']);
+                            $tpl_scoreboard_points->setVariable('POINTS_UNIT', $this->txt('scoreboard_points_unit'));
                             $html .= $tpl_scoreboard_points->get();
                         }
 
@@ -366,15 +364,16 @@ class LiveVotingPlayerGUI
                 case LiveVotingPlayer::STAT_SCOREBOARD:
                     $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_scoreboard'));
 
-                    $tpl_scoreboard = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard.html', true, false);
+                    $tpl_scoreboard = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard' . ($this->live_voting->usesNewUI() ? '_new' : '') . '.html', true, false);
 
                     $players = LiveVotingPlayer::getPlayersForScoreboard($this->live_voting->getPlayer());
 
                     $html = '';
                     foreach ($players as $player) {
-                        $tpl_scoreboard_points = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score.html', true    , false);
-                        $tpl_scoreboard_points->setVariable('PLAYER', $player['nickname']);
+                        $tpl_scoreboard_points = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score' . ($this->live_voting->usesNewUI() ? '_new' : '') . '.html', true, false);
+                        $tpl_scoreboard_points->setVariable('PLAYER', htmlspecialchars((string) $player['nickname'], ENT_QUOTES));
                         $tpl_scoreboard_points->setVariable('POINTS', $player['points']);
+                        $tpl_scoreboard_points->setVariable('POINTS_UNIT', $this->txt('scoreboard_points_unit'));
                         $html .= $tpl_scoreboard_points->get();
                     }
 
@@ -444,7 +443,7 @@ class LiveVotingPlayerGUI
         }
 
         // Show nickname form
-        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Voter/tpl.nickname.html', true, false);
+        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Voter/tpl.nickname' . ($this->live_voting->usesNewUI() ? '_new' : '') . '.html', true, false);
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/Voter/pin.css'); // Por ahora usamos el mismo css que el de pin
         $nickname_form = new ilPropertyFormGUI();
         $nickname_form->setFormAction($DIC->ctrl()->getLinkTarget($this, 'requestNickname'));
@@ -452,7 +451,6 @@ class LiveVotingPlayerGUI
 
         $te = new ilTextInputGUI($this->txt('voter_nickname_input'), 'nickname_input');
         $te->setMaxLength(50);
-        $te->setTitle("Nickname"); // Debemos usar internacionalización
         $nickname_form->addItem($te);
 
         $tpl->setVariable('TITLE', $this->txt('player_start_voting'));

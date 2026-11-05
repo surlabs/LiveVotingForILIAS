@@ -86,6 +86,8 @@ class LiveVotingResultsTableGUI implements DataRetrieval
         $records = $this->getRecords($filter_data, $order);
 
         foreach ($records as $record) {
+            // Nicknames are typed by anonymous voters, so they must not reach the page as markup.
+            $record['participant'] = htmlspecialchars((string) $record['participant'], ENT_QUOTES);
             yield $row_builder->buildDataRow((string) $record['id'], $record);
         }
     }

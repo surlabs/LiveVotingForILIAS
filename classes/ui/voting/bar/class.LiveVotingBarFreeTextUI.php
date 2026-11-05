@@ -52,6 +52,10 @@ class LiveVotingBarFreeTextUI extends LiveVotingAbstractBarUI implements LiveVot
      * @var bool
      */
     private bool $big = false;
+    /**
+     * Number range lists show how many voters picked each value, also when it is only one.
+     */
+    private bool $always_show_count = false;
 
 
     /**
@@ -91,7 +95,7 @@ class LiveVotingBarFreeTextUI extends LiveVotingAbstractBarUI implements LiveVot
             $this->tpl->touchBlock('strong_end');
         }
 
-        if ($this->occurrences > 1) {
+        if ($this->occurrences > 1 || ($this->always_show_count && $this->occurrences > 0)) {
             $this->tpl->setVariable('GROUPED_BARS_COUNT', $this->occurrences);
         }
     }
@@ -139,6 +143,12 @@ class LiveVotingBarFreeTextUI extends LiveVotingAbstractBarUI implements LiveVot
     public function setOccurrences(int $occurrences)
     {
         $this->occurrences = $occurrences;
+    }
+
+
+    public function setAlwaysShowCount(bool $always_show_count): void
+    {
+        $this->always_show_count = $always_show_count;
     }
 
 

@@ -519,6 +519,8 @@ var xlvoPlayer = {
                 let nicknames = "";
 
                 Object.entries(data.nicknames).forEach(([identifier, nickname]) => {
+                    nickname = $("<div>").text(nickname).html();
+                    identifier = $("<div>").text(identifier).html();
                     nicknames += `
                         <div class="col-md-3">
                             <div class="well text-center xlvo_list_nickname">

@@ -48,8 +48,7 @@ class LiveVotingQRModal
 
         $param_manager = ParamManager::getInstance();
 
-        $is_new_ui = $liveVoting->getMode()->getMode() === \LiveVoting\objects\modes\LiveVotingMode::BASIC_MODE
-            && $liveVoting->usesNewUI();
+        $is_new_ui = $liveVoting->usesNewUI();
         if ($is_new_ui) {
             $short_link = $liveVoting->getShortLink($param_manager->getRefId());
             $template = new ilTemplate(

@@ -152,19 +152,22 @@ class LiveVotingUI
         }
 
         $start_template = $this->liveVoting->getMode()->getStartTemplate();
-        if ($this->liveVoting->getMode()->getMode() === LiveVotingMode::BASIC_MODE && $this->liveVoting->usesNewUI()) {
+        if ($this->liveVoting->usesNewUI()) {
             $start_template .= '_new';
         }
 
         $template = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl." . $start_template . ".html", true, true);
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/default.css');
+        if ($this->liveVoting->usesNewUI()) {
+            $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_ui.css');
+        }
 
 
         $template->setVariable('PIN', $this->liveVoting->getPin());
 
         $param_manager = ParamManager::getInstance();
 
-        if ($this->liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
+        if ($this->liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE && !$this->liveVoting->usesNewUI()) {
             $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId(), 180));
         } else {
             $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId(), 280));
@@ -232,7 +235,7 @@ class LiveVotingUI
 
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/player.css');
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/bar.css');
-        if ($this->liveVoting->getMode()->getMode() === LiveVotingMode::BASIC_MODE && $this->liveVoting->usesNewUI()) {
+        if ($this->liveVoting->usesNewUI()) {
             $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_ui.css');
         }
 

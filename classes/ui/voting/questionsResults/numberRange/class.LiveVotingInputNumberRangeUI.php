@@ -296,6 +296,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
             $bar = new LiveVotingBarFreeTextUI($value);
             $bar->setBig(true);
             $bar->setCenter(true);
+            $bar->setAlwaysShowCount($this->isUsingNewUI());
             $bars->addBar($bar);
         }
 

@@ -92,9 +92,6 @@ var xlvoVoter = {
 	unlockNewUIForm: function (form) {
 		form.classList.remove('is-locked');
 		$('input, textarea, select, button', form).not('[type="hidden"]').prop('disabled', false);
-		if (form.getAttribute('data-xlvo-clear-on-change') === '1') {
-			$('input[name="option_ids[]"]', form).prop('checked', false);
-		}
 		$('.is-submitted', form).removeClass('is-submitted');
 		var submit_button = form.querySelector('.xlvo-submit-btn');
 		if (submit_button && form.getAttribute('data-xlvo-submit-text')) {
@@ -132,6 +129,16 @@ var xlvoVoter = {
 		row.find('.xlvo-free-text-field').trigger('focus');
 	},
 
+	/**
+	 * Free text areas grow with their content, so a long answer is never cut behind a scrollbar.
+	 */
+	fitTextareas: function (scope) {
+		$('.xlvo-new-ui textarea.xlvo-free-text-field', scope || document).each(function () {
+			this.style.height = 'auto';
+			this.style.height = (this.scrollHeight + 2) + 'px';
+		});
+	},
+
 	initDynamicForms: function () {
 		var free_text = '#xlvo_voter_player .xlvo-new-ui .xlvo-free-text-form';
 		$(document).off('keydown.xlvoNewUI', free_text + ' input.xlvo-free-text-field')
@@ -167,6 +174,9 @@ var xlvoVoter = {
 			});
 		$(document).off('input.xlvoNewUI', free_text + ' .xlvo-free-text-field')
 			.on('input.xlvoNewUI', free_text + ' .xlvo-free-text-field', function () {
+				if (this.tagName === 'TEXTAREA') {
+					xlvoVoter.fitTextareas($(this).parent());
+				}
 				$(this).closest('.xlvo-free-text-row').toggleClass('has-value', this.value.trim() !== '');
 				var form = $(this).closest('form')[0];
 				var feedback = form.querySelector('.xlvo-answer-feedback');
@@ -258,7 +268,7 @@ var xlvoVoter = {
 				}
 
 				if (data.nickname) {
-					$('.xlvo-nickname').html(data.nickname);
+					$('.xlvo-nickname').text(data.nickname);
 				}
 
 				if (data.online_voters) {
@@ -330,6 +340,7 @@ var xlvoVoter = {
 				}
 				xlvoVoter.counter = 0;
 				xlvoVoter.player_element = $('#xlvo_voter_player');
+				xlvoVoter.fitTextareas(xlvoVoter.player_element);
 				xlvoVoter.countdown_element = $('#xlvo_countdown');
 			}
 			success();

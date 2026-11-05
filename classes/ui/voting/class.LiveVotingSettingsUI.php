@@ -187,24 +187,22 @@ class LiveVotingSettingsUI
             $sections["object"] = $section;
         }
 
-        if ($this->object->getLiveVoting()->getMode()->getMode() === LiveVotingMode::BASIC_MODE) {
-            $styles['voting_style'] = $DIC->ui()->factory()->input()->field()->select($this->plugin->txt('voting_style'), [
-                'classic' => $this->plugin->txt('voting_style_classic'),
-                'new' => $this->plugin->txt('voting_style_new'),
-            ], $this->plugin->txt('voting_style_info'))
-                ->withValue($this->object->getLiveVoting()->getVotingStyle())
-                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
-                    function ($value): void {
-                        $this->object->getLiveVoting()->setVotingStyle($value);
-                    }
-                ))->withRequired(true);
+        $styles['voting_style'] = $DIC->ui()->factory()->input()->field()->select($this->plugin->txt('voting_style'), [
+            'classic' => $this->plugin->txt('voting_style_classic'),
+            'new' => $this->plugin->txt('voting_style_new'),
+        ], $this->plugin->txt('voting_style_info'))
+            ->withValue($this->object->getLiveVoting()->getVotingStyle())
+            ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
+                function ($value): void {
+                    $this->object->getLiveVoting()->setVotingStyle($value);
+                }
+            ))->withRequired(true);
 
-            $sections['style'] = $DIC->ui()->factory()->input()->field()->section(
-                $styles,
-                $this->plugin->txt('styles'),
-                ''
-            );
-        }
+        $sections['style'] = $DIC->ui()->factory()->input()->field()->section(
+            $styles,
+            $this->plugin->txt('styles'),
+            ''
+        );
 
         return $sections;
 

@@ -29,7 +29,6 @@ use ilLiveVotingPlugin;
 use ilObjLiveVotingGUI;
 use ilSelectInputGUI;
 use ilSubmitButton;
-use LiveVoting\objects\modes\LiveVotingMode;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingRound;
@@ -43,7 +42,6 @@ class LiveVotingResultsUI
 {
     private LiveVoting $liveVoting;
     private ?LiveVotingRound $round;
-    private bool $is_new_ui;
 
     /**
      * @throws LiveVotingException
@@ -51,8 +49,6 @@ class LiveVotingResultsUI
     public function __construct(LiveVoting $liveVoting)
     {
         $this->liveVoting = $liveVoting;
-        $this->is_new_ui = $liveVoting->getMode()->getMode() === LiveVotingMode::BASIC_MODE
-            && $liveVoting->usesNewUI();
         $this->buildRound();
     }
 
@@ -76,18 +72,11 @@ class LiveVotingResultsUI
      */
     public function showResults(ilObjLiveVotingGUI $parent): string
     {
-        global $DIC;
-
-        if ($this->is_new_ui) {
-            $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_ui.css');
-        }
         $this->buildToolbar();
 
         $liveVotingTableGUI = new LiveVotingResultsTableGUI($parent, 'results', $this->liveVoting->getId(), $this->round->getId());
 
-        $content = '<div class="xlvo-results-history-table">' . $liveVotingTableGUI->getHTML() . '</div>';
-
-        return $this->is_new_ui ? '<section class="xlvo-new-results-history">' . $content . '</section>' : $content;
+        return $liveVotingTableGUI->getHTML();
     }
 
     /**
@@ -103,9 +92,6 @@ class LiveVotingResultsUI
         $export_button = ilLinkButton::getInstance();
         $export_button->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "exportResultsCsv"));
         $export_button->setCaption(ilLiveVotingPlugin::getInstance()->txt("voting_export") . ' CSV', false);
-        if ($this->is_new_ui) {
-            $export_button->setId('xlvo-export-results');
-        }
         $DIC->toolbar()->addButtonInstance($export_button);
 
         $DIC->toolbar()->addSeparator();
@@ -113,9 +99,6 @@ class LiveVotingResultsUI
         $button = ilLinkButton::getInstance();
         $button->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "confirmNewRound"));
         $button->setCaption(ilLiveVotingPlugin::getInstance()->txt("new_round"), false);
-        if ($this->is_new_ui) {
-            $button->setId('xlvo-new-round');
-        }
         $DIC->toolbar()->addButtonInstance($button);
 
         $DIC->toolbar()->addSeparator();
@@ -137,9 +120,6 @@ class LiveVotingResultsUI
             $button = ilSubmitButton::getInstance();
             $button->setCaption(ilLiveVotingPlugin::getInstance()->txt('common_change'), false);
             $button->setCommand("changeRound");
-            if ($this->is_new_ui) {
-                $button->setId('xlvo-change-round');
-            }
             $DIC->toolbar()->addButtonInstance($button);
         }
     }

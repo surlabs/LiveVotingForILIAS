@@ -121,7 +121,7 @@ class LiveVotingBarPercentageUI implements LiveVotingGeneralBarUI
         }
 
         if ($this->isUseNewUI()) {
-            $tpl->setVariable('COLOR_INDEX', (string) ((max(1, $this->getColorIndex()) - 1) % 4 + 1));
+            $tpl->setVariable('COLOR_INDEX', (string) ((max(1, $this->getColorIndex()) - 1) % 8 + 1));
             // Stable key so the player can animate a bar from its previous width, even when MathJax rewrites the label.
             $tpl->setVariable('BAR_KEY', md5($this->getTitle()));
         }

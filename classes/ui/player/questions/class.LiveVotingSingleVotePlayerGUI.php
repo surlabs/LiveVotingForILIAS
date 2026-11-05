@@ -63,6 +63,16 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
         $this->player = $liveVoting->getPlayer();
 
+        if ($liveVoting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE && $this->isAnswerTimeOver()) {
+            if (isset($_GET['isRequest']) && (bool) $_GET['isRequest']) {
+                header('Content-type: application/json');
+                echo json_encode(["ok" => false]);
+                exit();
+            }
+
+            return;
+        }
+
         if (isset($_POST['xlvo_selection'])) {
             $this->submitSelection();
 
@@ -147,6 +157,20 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
      *
      * @throws LiveVotingException
      */
+    /**
+     * In a challenge the countdown is part of the game: an answer sent after it ran out does not count.
+     * Two seconds of grace cover the request travelling while the timer hits zero. Once the presenter has moved on
+     * to the scoreboard the countdown is reset, so the status is checked too.
+     */
+    private function isAnswerTimeOver(): bool
+    {
+        if ($this->player->getStatus() !== LiveVotingPlayer::STAT_RUNNING) {
+            return true;
+        }
+
+        return $this->player->getCountdownStart() > 0 && $this->player->remainingCountDown() < -2;
+    }
+
     protected function submitSelection(): void
     {
         $question = $this->player->getActiveVotingObject();
@@ -169,6 +193,10 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
             if (!$this->player->hasUserVotedForOption($option_id)) {
                 LiveVotingVote::vote($participant, $this->player->getActiveVoting(), $this->player->getRoundId(), $option_id);
             }
+        }
+
+        if (LiveVoting::getModeFromObjId($this->player->getObjId()) == LiveVotingMode::CHALLENGE_MODE) {
+            $this->calculateReachedPoints();
         }
 
         $this->player->createHistoryObject();
@@ -227,7 +255,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         global $DIC;
 
         $live_voting = new LiveVoting($this->player->getObjId(), false);
-        if ($live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE && $live_voting->usesNewUI()) {
+        if ($live_voting->usesNewUI()) {
             return $this->getNewUIHTML();
         }
         $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/SingleVote/tpl.single_vote.html', false, true);

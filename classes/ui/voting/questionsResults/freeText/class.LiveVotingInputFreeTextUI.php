@@ -73,7 +73,7 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
         $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input_results.html', true, true);
         $tpl->setVariable('RESULTS_CLASS', $this->isUsingNewUI() ? ' xlvo-new-free-text-results' : '');
 
-        $categories = new LiveVotingInputFreeTextCategoriesUI($this->player, $this->edit_mode);
+        $categories = new LiveVotingInputFreeTextCategoriesUI($this->player, $this->edit_mode, $this->isUsingNewUI());
 
         $bars = new LiveVotingBarGroupingCollectionUI($this->isUsingNewUI());
         $bars->setRemovable($this->edit_mode);

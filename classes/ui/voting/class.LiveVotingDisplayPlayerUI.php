@@ -157,6 +157,19 @@ class LiveVotingDisplayPlayerUI
             foreach ($xlvoOptions as $item) {
                 $this->addOption($item);
             }
+
+            // Free text has no options to list, so the hidden state would be an empty panel.
+            if ($this->liveVoting->usesNewUI() && $question->getQuestionTypeId() === LiveVotingQuestion::QUESTION_TYPES_IDS['FreeText']) {
+                $answers = count(LiveVotingVote::getVotesOfOption($question->getFirstOption()->getId(), $player->getRoundId()));
+                $this->tpl->setVariable(
+                    'OPTION_CONTENT',
+                    '<div class="xlvo-results-hidden">'
+                    . '<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>'
+                    . '<strong>' . $this->pl->txt('results_hidden') . '</strong>'
+                    . '<span>' . sprintf($this->pl->txt('results_answers_received'), $answers) . '</span>'
+                    . '</div>'
+                );
+            }
         }
 
         $this->tpl->setVariable('TITLE', $question->getTitle());
@@ -181,7 +194,11 @@ class LiveVotingDisplayPlayerUI
             $this->tpl->parseCurrentBlock();
         }
 
-        if (!$this->stats_in_header) {
+        if (!$this->stats_in_header && $this->liveVoting->usesNewUI()) {
+            $voters = LiveVotingVote::countVoters($player->getActiveVoting(), $player->getRoundId());
+            $this->tpl->setVariable('STATS', '<span class="xlvo-bar-stat-badge xlvo-bar-stat-badge-alt">'
+                . $this->pl->txt('results_participants') . ': ' . $voters . '</span>');
+        } elseif (!$this->stats_in_header) {
             $this->tpl->setCurrentBlock('voters');
             $this->tpl->setVariable('VOTERS_TEXT', vsprintf(ilLiveVotingPlugin::getInstance()->txt("player_voters_description"), [LiveVotingVote::countVoters($player->getActiveVoting(), $player->getRoundId())]));
             $this->tpl->parseCurrentBlock();
@@ -204,17 +221,22 @@ class LiveVotingDisplayPlayerUI
      */
     protected function moveStatsToHeader(string $results_html): string
     {
-        if (!preg_match('#<div class="xlvo-bar-stats">.*?</div>#s', $results_html, $match)) {
+        // Free text categories carry their own, empty, stats block before the main list: take the first one with content.
+        if (!preg_match_all('#<div class="xlvo-bar-stats">.*?</div>#s', $results_html, $matches, PREG_OFFSET_CAPTURE)) {
             return $results_html;
         }
-        if (trim(strip_tags($match[0])) === '') {
-            return $results_html;
+        foreach ($matches[0] as [$stats, $offset]) {
+            if (trim(strip_tags($stats)) === '') {
+                continue;
+            }
+
+            $this->stats_in_header = true;
+            $this->tpl->setVariable('STATS', str_replace('xlvo-bar-stats', 'xlvo-bar-stats xlvo-results-stats', $stats));
+
+            return substr_replace($results_html, '', $offset, strlen($stats));
         }
 
-        $this->stats_in_header = true;
-        $this->tpl->setVariable('STATS', str_replace('xlvo-bar-stats', 'xlvo-bar-stats xlvo-results-stats', $match[0]));
-
-        return preg_replace('#<div class="xlvo-bar-stats">.*?</div>#s', '', $results_html, 1);
+        return $results_html;
     }
 
     protected function getQuestionTypeLine(LiveVotingQuestion $question): string
@@ -279,9 +301,10 @@ class LiveVotingDisplayPlayerUI
      */
     private function buildTpl(): void
     {
+        $suffix = $this->liveVoting->usesNewUI() ? '_new' : '';
         $this->tpl = match ($this->liveVoting->getPlayer()->getStatus()) {
-            LiveVotingPlayer::STAT_END_VOTING, LiveVotingPlayer::STAT_SCOREBOARD => new ilTemplate($this->pl->getDirectory() . "/templates/default/Voter/tpl.scoreboard.html", true, false),
-            default => new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.player.html", true, true),
+            LiveVotingPlayer::STAT_END_VOTING, LiveVotingPlayer::STAT_SCOREBOARD => new ilTemplate($this->pl->getDirectory() . "/templates/default/Voter/tpl.scoreboard$suffix.html", true, false),
+            default => new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.player$suffix.html", true, true),
         };
     }
 
@@ -315,9 +338,10 @@ class LiveVotingDisplayPlayerUI
         $html = '';
 
         foreach ($players as $player) {
-            $tpl_scoreboard_points = new ilTemplate($this->pl->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score.html', true    , false);
-            $tpl_scoreboard_points->setVariable('PLAYER', $player['nickname']);
+            $tpl_scoreboard_points = new ilTemplate($this->pl->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score' . ($this->liveVoting->usesNewUI() ? '_new' : '') . '.html', true, false);
+            $tpl_scoreboard_points->setVariable('PLAYER', htmlspecialchars((string) $player['nickname'], ENT_QUOTES));
             $tpl_scoreboard_points->setVariable('POINTS', $player['points']);
+            $tpl_scoreboard_points->setVariable('POINTS_UNIT', $this->pl->txt('scoreboard_points_unit'));
 
             $html .= $tpl_scoreboard_points->get();
         }
@@ -325,8 +349,16 @@ class LiveVotingDisplayPlayerUI
         if ($this->liveVoting->getPlayer()->isShowResults() && $this->liveVoting->getPlayer()->getStatus() == LiveVotingPlayer::STAT_SCOREBOARD) {
             $xlvoInputResultGUI = LiveVotingInputResultsGUI::getInstance($this->liveVoting->getPlayer());
             $this->tpl->setVariable('OPTION_CONTENT', $xlvoInputResultGUI->getHTML());
+            if ($this->liveVoting->usesNewUI()) {
+                // Without it the bars under the ranking do not say which question they belong to.
+                $question = $this->liveVoting->getPlayer()->getActiveVotingObject();
+                $this->tpl->setVariable('RESULTS_TITLE', $question->getTitle());
+            }
         }
 
         $this->tpl->setVariable('POINTS', $html);
+        if ($this->liveVoting->usesNewUI()) {
+            $this->tpl->setVariable('SCOREBOARD_TITLE', $this->pl->txt('voter_header_scoreboard'));
+        }
     }
 }

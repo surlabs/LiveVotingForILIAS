@@ -20,7 +20,6 @@ declare(strict_types=1);
  */
 
 
-use LiveVoting\objects\modes\LiveVotingMode;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestionOption;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarMovableUI;
@@ -135,7 +134,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
     {
         $live_voting = new LiveVoting($this->player->getObjId(), false);
 
-        return $live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE && $live_voting->usesNewUI();
+        return $live_voting->usesNewUI();
     }
 
     protected function getFormContent(): string
