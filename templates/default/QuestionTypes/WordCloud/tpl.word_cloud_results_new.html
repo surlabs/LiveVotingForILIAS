@@ -1,0 +1,19 @@
+<div class="xlvo-word-cloud" data-xlvo-words="{WORDS}" data-xlvo-total="{TOTAL}" data-txt-vote="{TXT_VOTE}" data-txt-votes="{TXT_VOTES}" data-txt-share="{TXT_SHARE}" data-txt-remove="{TXT_REMOVE}" data-txt-overflow-one="{TXT_OVERFLOW_ONE}" data-txt-overflow-many="{TXT_OVERFLOW_MANY}">
+	<div class="xlvo-bar-stats">
+		<span class="xlvo-bar-stat-badge xlvo-bar-stat-badge-alt">{PARTICIPANTS}</span>
+		<span class="xlvo-bar-stat-badge">{ANSWERS}</span>
+		<span class="xlvo-bar-stat-badge">{UNIQUE}</span>
+	</div>
+	<div class="xlvo-word-cloud-canvas">
+		<div class="xlvo-word-cloud-empty" {EMPTY_HIDDEN}>
+			<svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+			<span>{EMPTY_TEXT}</span>
+		</div>
+		<div class="xlvo-word-cloud-tooltip" role="tooltip">
+			<span class="xlvo-word-cloud-tooltip-word"></span>
+			<span class="xlvo-word-cloud-tooltip-stats"></span>
+			<button type="button" class="xlvo-word-cloud-remove">{TXT_REMOVE}</button>
+		</div>
+	</div>
+	<p class="xlvo-word-cloud-overflow" role="status"></p>
+</div>

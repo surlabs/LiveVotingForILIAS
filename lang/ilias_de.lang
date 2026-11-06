@@ -376,3 +376,16 @@ challenge_your_place#:#Ihr Platz: %1$s von %2$s
 challenge_final_results#:#Endergebnis
 challenge_final_info#:#Die Challenge ist beendet.
 challenge_no_ranking#:#In dieser Challenge hat niemand geantwortet.
+voting_type_7#:#WordCloud
+voting_type_7_info#:#Benutzer geben einzelne Wörter ein, die als Wortwolke angezeigt werden
+voter_word_cloud_placeholder#:#Ein Wort
+voter_word_cloud_space_hint#:#Ein Wort pro Antwort: Ein Leerzeichen beginnt die nächste.
+voter_hint_word_cloud#:#Ein Wort pro Antwort. Mit Enter fügen Sie weitere hinzu.
+qtype_7_unique_words#:#Verschiedene
+qtype_7_vote#:#%s Stimme
+qtype_7_votes#:#%s Stimmen
+qtype_7_share#:#%s % aller Antworten
+qtype_7_remove_word#:#Wort entfernen
+qtype_7_overflow_one#:#%s Antwort passt nicht auf den Bildschirm
+qtype_7_overflow_many#:#%s Antworten passen nicht auf den Bildschirm
+voting_style_word_cloud_blocked#:#Dieses Objekt enthält WordCloud-Fragen, die es nur im neuen Stil gibt. Löschen Sie sie, um zum klassischen Stil zu wechseln.

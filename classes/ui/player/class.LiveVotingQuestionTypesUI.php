@@ -96,6 +96,7 @@ abstract class LiveVotingQuestionTypesUI
                 $gui = new LiveVotingCorrectOrderPlayerGUI();
                 break;
             case "FreeText":
+            case "WordCloud":
                 $gui = new LiveVotingFreeTextPlayerGUI();
                 break;
             case "Priorities":

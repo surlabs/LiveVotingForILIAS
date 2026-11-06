@@ -407,6 +407,10 @@ var xlvoPlayer = {
 
                         xlvoPlayer.animateNewUIBars(previousBarWidths, !questionChanged);
 
+                        if (window.xlvoWordCloud) {
+                            xlvoWordCloud.render($container);
+                        }
+
                         if (xlvoPlayer.config.use_mathjax) {
                             il.Util.renderMathJax([document.getElementById('xlvo-display-player')]);
                         }

@@ -121,12 +121,76 @@ var xlvoVoter = {
 			.attr('name', 'vote_multi_line_input[' + index + '][free_input]');
 		row.find('label').attr('for', 'xlvo_free_text_' + index);
 		row.find('input[type="hidden"]').val('').attr('name', 'vote_multi_line_input[' + index + '][vote_id]');
+		row.find('.xlvo-word-hint').removeClass('is-visible');
 		if (after_row && after_row.length) {
 			row.insertAfter(after_row);
 		} else {
 			row.appendTo($('.xlvo-free-text-inputs', form));
 		}
+		xlvoVoter.refreshWordCounter(row.find('.xlvo-free-text-field')[0]);
 		row.find('.xlvo-free-text-field').trigger('focus');
+		return row;
+	},
+
+	/**
+	 * Word cloud: "12/30" next to the field, amber near the limit and red at it.
+	 */
+	refreshWordCounter: function (field) {
+		var counter = field ? $(field).siblings('.xlvo-word-counter') : $();
+		if (!counter.length) {
+			return;
+		}
+		var max = parseInt($(field).closest('form').attr('data-xlvo-max-length'), 10) || 30;
+		var length = field.value.length;
+		counter.text(length + '/' + max)
+			.toggleClass('is-near', length >= max - 6 && length < max)
+			.toggleClass('is-full', length >= max);
+	},
+
+	/**
+	 * Word cloud: an answer is a single word. A space works like Enter and opens the next field, and a pasted phrase is
+	 * spread over one field per word, instead of silently gluing the words together.
+	 */
+	handleWordCloudInput: function (field) {
+		var form = $(field).closest('form')[0];
+		var row = $(field).closest('.xlvo-free-text-row');
+		var max = parseInt(form.getAttribute('data-xlvo-max-length'), 10) || 30;
+		var raw = field.value;
+
+		if (/\s/.test(raw)) {
+			var words = raw.split(/\s+/).filter(Boolean);
+			field.value = (words[0] || '').slice(0, max);
+			var rest = words.slice(1);
+			var last_row = row;
+			if (rest.length) {
+				rest.forEach(function (word) {
+					last_row = xlvoVoter.addFreeTextRow(form, last_row);
+					var next_field = last_row.find('.xlvo-free-text-field')[0];
+					next_field.value = word.slice(0, max);
+					last_row.toggleClass('has-value', next_field.value !== '');
+					xlvoVoter.refreshWordCounter(next_field);
+				});
+				xlvoVoter.flashWordHint(row);
+			} else if (/\s$/.test(raw) && field.value) {
+				xlvoVoter.addFreeTextRow(form, row);
+			} else {
+				xlvoVoter.flashWordHint(row);
+			}
+		} else if (raw.length > max) {
+			// maxlength only guards typing; paste and autofill need the cut too.
+			field.value = raw.slice(0, max);
+		}
+
+		xlvoVoter.refreshWordCounter(field);
+	},
+
+	flashWordHint: function (row) {
+		var hint = row.find('.xlvo-word-hint');
+		hint.addClass('is-visible');
+		clearTimeout(hint.data('xlvo-timer'));
+		hint.data('xlvo-timer', setTimeout(function () {
+			hint.removeClass('is-visible');
+		}, 2500));
 	},
 
 	/**
@@ -174,6 +238,9 @@ var xlvoVoter = {
 			});
 		$(document).off('input.xlvoNewUI', free_text + ' .xlvo-free-text-field')
 			.on('input.xlvoNewUI', free_text + ' .xlvo-free-text-field', function () {
+				if ($(this).closest('form').attr('data-xlvo-word-cloud') === '1') {
+					xlvoVoter.handleWordCloudInput(this);
+				}
 				if (this.tagName === 'TEXTAREA') {
 					xlvoVoter.fitTextareas($(this).parent());
 				}

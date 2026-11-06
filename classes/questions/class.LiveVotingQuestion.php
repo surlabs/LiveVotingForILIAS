@@ -29,6 +29,7 @@ use LiveVoting\questions\QuestionTypes\LiveVotingChoicesQuestion;
 use LiveVoting\questions\QuestionTypes\LiveVotingFreeTextQuestion;
 use LiveVoting\questions\QuestionTypes\LiveVotingNumberRangeQuestion;
 use LiveVoting\questions\QuestionTypes\LiveVotingOrderQuestion;
+use LiveVoting\questions\QuestionTypes\LiveVotingWordCloudQuestion;
 
 /**
  * Abstract Class LiveVotingQuestion
@@ -42,6 +43,7 @@ abstract class LiveVotingQuestion
         "CorrectOrder" => 4,
         "Priorities" => 5,
         "NumberRange" => 6,
+        "WordCloud" => 7,
     );
 
     protected int $id = 0;
@@ -119,6 +121,9 @@ abstract class LiveVotingQuestion
                     case self::QUESTION_TYPES_IDS["NumberRange"]:
                         $question = new LiveVotingNumberRangeQuestion($row);
                         break;
+                    case self::QUESTION_TYPES_IDS["WordCloud"]:
+                        $question = new LiveVotingWordCloudQuestion($row);
+                        break;
                 }
 
                 $questions[] = $question;
@@ -162,6 +167,9 @@ abstract class LiveVotingQuestion
                 case self::QUESTION_TYPES_IDS["NumberRange"]:
                     $question = new LiveVotingNumberRangeQuestion($result[0]);
                     break;
+                case self::QUESTION_TYPES_IDS["WordCloud"]:
+                    $question = new LiveVotingWordCloudQuestion($result[0]);
+                    break;
             }
         }
 
@@ -195,6 +203,9 @@ abstract class LiveVotingQuestion
                 break;
             case "NumberRange":
                 $question = new LiveVotingNumberRangeQuestion();
+                break;
+            case "WordCloud":
+                $question = new LiveVotingWordCloudQuestion();
                 break;
         }
 

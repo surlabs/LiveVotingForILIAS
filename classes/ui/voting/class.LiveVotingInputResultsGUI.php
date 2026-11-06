@@ -89,6 +89,8 @@ abstract class LiveVotingInputResultsGUI
                 return new LiveVotingSingleVoteResultsUI($player);
             case "FreeText":
                 return new LiveVotingInputFreeTextUI($player);
+            case "WordCloud":
+                return new LiveVotingInputWordCloudUI($player);
             case "CorrectOrder":
                 return new LiveVotingInputCorrectOrderUI($player);
             case "Priorities":

@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\questions\QuestionTypes\LiveVotingWordCloudQuestion;
 use LiveVoting\UI\Player\CustomUI\HiddenInputGUI\HiddenInputGUI;
 use LiveVoting\UI\Player\CustomUI\MultiLineNewInputGUI;
 use LiveVoting\UI\Player\CustomUI\TextAreaInputGUI\TextAreaInputGUI;
@@ -73,6 +74,7 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         $input_gui = $this->getTextInputGUI("", 'free_input');
 
         $this->getPlayer()->unvoteAll();
+        $is_word_cloud = $this->player->getActiveVotingObject() instanceof LiveVotingWordCloudQuestion;
         if ($this->player->getActiveVotingObject()->isMultiFreeInput()) {
             $array = array();
 
@@ -80,6 +82,18 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
 
             if (!empty($inputs)) {
                 foreach ($inputs as $item) {
+                    // The voting screen already splits on spaces; the server does it too, so a word cloud answer is
+                    // always a single word.
+                    if ($is_word_cloud) {
+                        foreach (LiveVotingWordCloudQuestion::splitWords(LiveVotingUtils::secureString((string) ($item['free_input'] ?? ''))) as $word_index => $word) {
+                            $array[] = array(
+                                "input" => $word,
+                                "vote_id" => $word_index === 0 ? $item['vote_id'] : '',
+                            );
+                        }
+                        continue;
+                    }
+
                     $input = LiveVotingUtils::secureString($item['free_input']);
                     if (!empty($input) && strlen($input) <= $input_gui->getMaxLength()) {
                         $array[] = array(
@@ -143,9 +157,10 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
 
         $plugin = ilLiveVotingPlugin::getInstance();
         $question = $this->player->getActiveVotingObject();
+        $is_word_cloud = $question instanceof LiveVotingWordCloudQuestion;
         $is_multi = $question->isMultiFreeInput();
-        $is_textarea = (int) $question->getAnswerField() === 2;
-        $max_length = $is_textarea ? 1000 : 200;
+        $is_textarea = !$is_word_cloud && (int) $question->getAnswerField() === 2;
+        $max_length = $is_word_cloud ? LiveVotingWordCloudQuestion::MAX_WORD_LENGTH : ($is_textarea ? 1000 : 200);
 
         $answers = [];
         foreach ($this->player->getVotesOfUser() as $vote) {
@@ -167,7 +182,7 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
             $field_id = 'xlvo_free_text_' . $index;
             $name = $is_multi ? 'vote_multi_line_input[' . $index . '][free_input]' : 'free_input';
             $attributes = 'id="' . $field_id . '" class="xlvo-free-text-field" name="' . $name . '" maxlength="' . $max_length . '"'
-                . ' placeholder="' . htmlspecialchars($plugin->txt('voter_free_text_placeholder'), ENT_QUOTES) . '"'
+                . ' placeholder="' . htmlspecialchars($plugin->txt($is_word_cloud ? 'voter_word_cloud_placeholder' : 'voter_free_text_placeholder'), ENT_QUOTES) . '"'
                 . ' autocomplete="off"' . ($has_answered ? ' disabled' : '');
             $value = htmlspecialchars($answer['text'], ENT_QUOTES, 'UTF-8', false);
             $field = $is_textarea
@@ -184,6 +199,10 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
             if ($is_multi) {
                 $tpl->setVariable('REMOVE_LABEL', $plugin->txt('voter_remove_answer'));
             }
+            if ($is_word_cloud) {
+                $tpl->setVariable('COUNTER', mb_strlen($answer['text']) . '/' . $max_length);
+                $tpl->setVariable('WORD_HINT', $plugin->txt('voter_word_cloud_space_hint'));
+            }
             $tpl->parseCurrentBlock();
         }
 
@@ -196,10 +215,12 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         $tpl->setVariable('ACTION', $DIC->ctrl()->getFormAction($this));
         $tpl->setVariable('FORM_CLASS', $has_answered ? ' is-locked' : '');
         $tpl->setVariable('MULTI', $is_multi ? '1' : '0');
+        $tpl->setVariable('WORD_CLOUD', $is_word_cloud ? '1' : '0');
+        $tpl->setVariable('MAX_LENGTH', (string) $max_length);
         $tpl->setVariable('NEXT_INDEX', (string) count($answers));
         $tpl->setVariable(
             'VOTER_HINT',
-            $plugin->txt($is_multi ? ($is_textarea ? 'voter_hint_free_text_multi_area' : 'voter_hint_free_text_multi') : 'voter_hint_free_text')
+            $plugin->txt($is_word_cloud ? 'voter_hint_word_cloud' : ($is_multi ? ($is_textarea ? 'voter_hint_free_text_multi_area' : 'voter_hint_free_text_multi') : 'voter_hint_free_text'))
         );
         $tpl->setVariable('FEEDBACK', $plugin->txt('voter_enter_answer_first'));
         $tpl->setVariable('SUBMIT_TEXT', $plugin->txt($is_multi ? 'voter_submit_answers' : 'voter_submit_answer'));
@@ -360,7 +381,8 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function getButtonInstances(): array
     {
-        if (!$this->player->isShowResults()) {
+        // Word clouds are moderated in the cloud itself, there is nothing to categorize.
+        if (!$this->player->isShowResults() || $this->player->getActiveVotingObject() instanceof LiveVotingWordCloudQuestion) {
             return array();
         }
 

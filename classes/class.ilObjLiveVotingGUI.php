@@ -47,6 +47,8 @@ use LiveVoting\votings\LiveVotingParticipant;
 use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingRound;
 use LiveVoting\votings\LiveVotingVote;
+use LiveVoting\UI\QuestionsResults\LiveVotingInputWordCloudUI;
+use LiveVoting\questions\QuestionTypes\LiveVotingWordCloudQuestion;
 use LiveVoting\votings\LiveVotingVoter;
 
 /**
@@ -110,6 +112,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'selectType':
             case 'selectedChoices':
             case 'selectedFreeInput':
+            case 'selectedWordCloud':
             case 'selectedCorrectOrder':
             case 'selectedPriorities':
             case 'selectedRange':
@@ -283,6 +286,33 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $DIC->ctrl()->setParameter($this, "show_success", true);
                 $DIC->ctrl()->redirect($this, "edit");
 
+            } else {
+                $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
+                $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+            }
+        } else {
+            $this->tpl->setContent($DIC->ui()->renderer()->render($form));
+        }
+    }
+
+    /**
+     * @throws ilException
+     * @throws LiveVotingException
+     */
+    public function selectedWordCloud(): void
+    {
+        global $DIC;
+        $this->tabs->activateTab("tab_manage");
+
+        $liveVotingFreeInputUI = new LiveVotingFreeInputUI(null, true);
+        $form = $liveVotingFreeInputUI->getFreeForm();
+        if ($DIC->http()->request()->getMethod() == "POST") {
+            $id = $liveVotingFreeInputUI->save($form->withRequest($DIC->http()->request())->getData());
+
+            if ($id !== 0) {
+                $DIC->ctrl()->setParameter($this, "question_id", $id);
+                $DIC->ctrl()->setParameter($this, "show_success", true);
+                $DIC->ctrl()->redirect($this, "edit");
             } else {
                 $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
                 $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
@@ -531,6 +561,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                     }
                     break;
                 case "FreeText":
+                case "WordCloud":
                     $liveVotingFreeInputUI = new LiveVotingFreeInputUI($question->getId());
                     $form = $liveVotingFreeInputUI->getFreeForm();
                     $saving_info = "";
@@ -1445,6 +1476,29 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'remove_vote':
                 $vote = new LiveVotingVote((int)$_POST['vote_id']);
                 $vote->delete();
+                break;
+            case 'remove_word':
+                // Word cloud moderation: removes a word with all its repetitions (any case) from the current round.
+                if (!ilObjLiveVotingAccess::hasWriteAccess()) {
+                    $return_value = false;
+                    break;
+                }
+                $player = $liveVoting->getPlayer();
+                $question = $player->getActiveVotingObject();
+                if ($question->getQuestionType() !== "WordCloud") {
+                    $return_value = false;
+                    break;
+                }
+                $word = LiveVotingInputWordCloudUI::normalise(trim((string) ($_POST['word'] ?? '')));
+                $removed = 0;
+                foreach (LiveVotingVote::getVotesOfOption($question->getFirstOption()->getId(), $player->getRoundId()) as $vote) {
+                    $vote_words = LiveVotingWordCloudQuestion::splitWords((string) $vote->getFreeInput());
+                    if ($word !== '' && isset($vote_words[0]) && LiveVotingInputWordCloudUI::normalise($vote_words[0]) === $word) {
+                        $vote->delete();
+                        $removed++;
+                    }
+                }
+                $return_value = ['removed' => $removed];
                 break;
             case 'add_category':
                 $category = new LiveVotingCategory();

@@ -159,7 +159,7 @@ class LiveVotingDisplayPlayerUI
             }
 
             // Free text has no options to list, so the hidden state would be an empty panel.
-            if ($this->liveVoting->usesNewUI() && $question->getQuestionTypeId() === LiveVotingQuestion::QUESTION_TYPES_IDS['FreeText']) {
+            if ($this->liveVoting->usesNewUI() && in_array($question->getQuestionTypeId(), [LiveVotingQuestion::QUESTION_TYPES_IDS['FreeText'], LiveVotingQuestion::QUESTION_TYPES_IDS['WordCloud']], true)) {
                 $answers = count(LiveVotingVote::getVotesOfOption($question->getFirstOption()->getId(), $player->getRoundId()));
                 $this->tpl->setVariable(
                     'OPTION_CONTENT',
@@ -260,7 +260,7 @@ class LiveVotingDisplayPlayerUI
 
     protected function addOption(LiveVotingQuestionOption $option)
     {
-        if ($option->getType() == LiveVotingQuestion::QUESTION_TYPES_IDS["FreeText"]) {
+        if (in_array((int) $option->getType(), [LiveVotingQuestion::QUESTION_TYPES_IDS["FreeText"], LiveVotingQuestion::QUESTION_TYPES_IDS["WordCloud"]], true)) {
             return;
         }
 

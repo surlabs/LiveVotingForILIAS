@@ -63,12 +63,16 @@ class LiveVotingFreeInputUI
     protected renderer $renderer;
     protected $request;
     private CustomFactory $customFactory;
+    /**
+     * Word cloud questions share this form without the answer settings: their answers are always several single words.
+     */
+    private bool $word_cloud;
 
 
     /**
      * @throws LiveVotingException
      */
-    public function __construct(?int $question_id = null)
+    public function __construct(?int $question_id = null, bool $word_cloud = false)
     {
         global $DIC;
 
@@ -81,7 +85,10 @@ class LiveVotingFreeInputUI
 
         if ($question_id) {
             $this->question = LiveVotingQuestion::loadQuestionById($question_id);
+            $word_cloud = $this->question->getQuestionType() === "WordCloud";
         }
+
+        $this->word_cloud = $word_cloud;
     }
 
     /**
@@ -105,7 +112,7 @@ class LiveVotingFreeInputUI
                 ->withRequired(true);
 
 
-            $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_2"));
+            $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt($this->word_cloud ? "voting_type_7" : "voting_type_2"));
 
 
             //Answers section
@@ -129,12 +136,16 @@ class LiveVotingFreeInputUI
                 "config_answers" => $section_answers
             ];
 
+            if ($this->word_cloud) {
+                unset($sections["config_answers"]);
+            }
+
             if (isset($this->question)) {
                 $this->control->setParameterByClass(ilObjLiveVotingGUI::class, "question_id", $this->question->getId());
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "edit");
 
             } else {
-                $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedFreeInput");
+                $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, $this->word_cloud ? "selectedWordCloud" : "selectedFreeInput");
             }
 
             $DIC->ui()->mainTemplate()->addJavaScript("Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/xlvoForms.js");
@@ -161,20 +172,22 @@ class LiveVotingFreeInputUI
      */
     public function save($result, ?int $question_id = null): int
     {
-        if ($result && isset($result["config_question"]) && isset($result["config_answers"])) {
+        if ($result && isset($result["config_question"]) && ($this->word_cloud || isset($result["config_answers"]))) {
             $question_data = $result["config_question"];
-            $answers_data = $result["config_answers"];
 
             if (empty($question_data["question"])) {
                 return 0;
             }
 
-            $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("FreeText");
+            $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion($this->word_cloud ? "WordCloud" : "FreeText");
 
             $question->setTitle($question_data["title"] ?? null);
             $question->setQuestion(ilRTE::_replaceMediaObjectImageSrc($question_data["question"]));
-            $question->setMultiFreeInput($answers_data["multi_input"] ? (bool)$answers_data["multi_input"] : false);
-            $question->setAnswerField($answers_data["answer_field"] ? (int)$answers_data["answer_field"] : 1);
+            if (!$this->word_cloud) {
+                $answers_data = $result["config_answers"];
+                $question->setMultiFreeInput($answers_data["multi_input"] ? (bool)$answers_data["multi_input"] : false);
+                $question->setAnswerField($answers_data["answer_field"] ? (int)$answers_data["answer_field"] : 1);
+            }
 
             $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
             $question->setObjId($id);

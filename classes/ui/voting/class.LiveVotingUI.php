@@ -240,6 +240,9 @@ class LiveVotingUI
         }
 
         LiveVotingInputFreeTextUI::addJsAndCss();
+        if ($this->liveVoting->usesNewUI()) {
+            $DIC->ui()->mainTemplate()->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/QuestionTypes/WordCloud/xlvoWordCloud.js');
+        }
         /*xlvoCorrectOrderResultsGUI::addJsAndCss();
         xlvoFreeOrderResultsGUI::addJsAndCss();
         xlvoNumberRangeResultsGUI::addJsAndCss();

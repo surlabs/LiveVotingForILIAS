@@ -376,3 +376,16 @@ challenge_your_place#:#Az Ön helyezése: %1$s / %2$s
 challenge_final_results#:#Végeredmény
 challenge_final_info#:#A kihívás véget ért.
 challenge_no_ranking#:#Ebben a kihívásban senki sem válaszolt.
+voting_type_7#:#Szófelhő
+voting_type_7_info#:#Egyes szavak adhatók meg, szófelhőként jelennek meg.
+voter_word_cloud_placeholder#:#Egy szó
+voter_word_cloud_space_hint#:#Válaszonként egy szó: a szóköz újat kezd.
+voter_hint_word_cloud#:#Válaszonként egy szó. Továbbiakat az Enter billentyűvel adhat hozzá.
+qtype_7_unique_words#:#Különböző
+qtype_7_vote#:#%s szavazat
+qtype_7_votes#:#%s szavazat
+qtype_7_share#:#az összes válasz %s %-a
+qtype_7_remove_word#:#Szó törlése
+qtype_7_overflow_one#:#%s válasz nem fér el a képernyőn
+qtype_7_overflow_many#:#%s válasz nem fér el a képernyőn
+voting_style_word_cloud_blocked#:#Ez az objektum szófelhő kérdéseket tartalmaz, amelyek csak az új stílusban léteznek. Törölje őket a klasszikus stílusra váltáshoz.

@@ -376,3 +376,16 @@ challenge_your_place#:#Your place: %1$s of %2$s
 challenge_final_results#:#Final results
 challenge_final_info#:#The challenge is over.
 challenge_no_ranking#:#Nobody answered in this challenge.
+voting_type_7#:#WordCloud
+voting_type_7_info#:#Users hand in single words, shown as a word cloud
+voter_word_cloud_placeholder#:#One word
+voter_word_cloud_space_hint#:#One word per answer: a space starts the next one.
+voter_hint_word_cloud#:#One word per answer. Press Enter to add more.
+qtype_7_unique_words#:#Unique
+qtype_7_vote#:#%s vote
+qtype_7_votes#:#%s votes
+qtype_7_share#:#%s % of all answers
+qtype_7_remove_word#:#Remove word
+qtype_7_overflow_one#:#%s answer does not fit on screen
+qtype_7_overflow_many#:#%s answers do not fit on screen
+voting_style_word_cloud_blocked#:#This object has WordCloud questions, which only exist in the new style. Delete them to switch to the classic style.

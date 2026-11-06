@@ -2852,3 +2852,233 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     color: var(--xlvo-new-muted);
     text-align: center;
 }
+
+/* Word cloud voting: one word per field, character counter and a hint when a space starts the next word */
+
+.xlvo-new-ui .xlvo-free-text-form[data-xlvo-word-cloud='1'] .xlvo-free-text-row {
+    flex-wrap: wrap;
+}
+
+.xlvo-new-ui .xlvo-free-text-form[data-xlvo-word-cloud='1'] .xlvo-free-text-field-wrap .xlvo-free-text-field {
+    padding-right: 96px;
+}
+
+.xlvo-new-ui .xlvo-word-counter {
+    color: #9ca3af;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    pointer-events: none;
+    position: absolute;
+    right: 44px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: color 0.2s;
+}
+
+.xlvo-new-ui .xlvo-word-counter.is-near {
+    color: #d97706;
+}
+
+.xlvo-new-ui .xlvo-word-counter.is-full {
+    color: #dc2626;
+}
+
+.xlvo-new-ui .xlvo-free-text-form.is-locked .xlvo-word-counter {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-word-hint {
+    color: #d97706;
+    flex-basis: 100%;
+    font-size: 0.8rem;
+    font-weight: 500;
+    height: 0;
+    margin: 0 0 0 4px;
+    opacity: 0;
+    overflow: hidden;
+    transition: opacity 0.2s;
+}
+
+.xlvo-new-ui .xlvo-word-hint.is-visible {
+    height: auto;
+    opacity: 1;
+}
+
+/* Word cloud results: the words are placed by xlvoWordCloud.js */
+
+.xlvo-new-ui .xlvo-word-cloud-canvas {
+    height: 400px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-word {
+    background: transparent;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    line-height: 1.1;
+    padding: 2px 4px;
+    position: absolute;
+    transform-origin: center center;
+    transition: opacity 0.4s ease, transform 0.2s ease;
+    white-space: nowrap;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-word:hover,
+.xlvo-new-ui .xlvo-word-cloud-word:focus-visible,
+.xlvo-new-ui .xlvo-word-cloud-word.is-pinned {
+    background: #f3f4f6;
+    transform: scale(1.06);
+    z-index: 100;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-word.is-pinned {
+    outline: 2px solid var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .xlvo-word-cloud-word.is-new {
+    animation: xlvo-word-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes xlvo-word-pop {
+    from {
+        opacity: 0;
+        transform: scale(0.4);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .xlvo-new-ui .xlvo-word-cloud-word.is-new {
+        animation: none;
+    }
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip {
+    background: #1f2937;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    opacity: 0;
+    padding: 8px 12px;
+    pointer-events: none;
+    position: absolute;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+    z-index: 200;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip.is-visible {
+    opacity: 1;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip.is-pinned {
+    pointer-events: auto;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip::after {
+    border: 6px solid transparent;
+    border-top-color: #1f2937;
+    content: '';
+    left: 50%;
+    position: absolute;
+    top: 100%;
+    transform: translateX(-50%);
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip.is-below::after {
+    border-bottom-color: #1f2937;
+    border-top-color: transparent;
+    bottom: 100%;
+    top: auto;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip-word {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 2px;
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip-stats {
+    color: #d1d5db;
+    font-weight: 500;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-remove {
+    background: #dc2626;
+    border: 0;
+    border-radius: 6px;
+    color: #fff;
+    display: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 8px;
+    padding: 6px 10px;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-remove:hover,
+.xlvo-new-ui .xlvo-word-cloud-remove:focus-visible {
+    background: #b91c1c;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip.is-pinned .xlvo-word-cloud-remove {
+    display: block;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-empty {
+    align-items: center;
+    color: var(--xlvo-new-muted);
+    display: flex;
+    flex-direction: column;
+    font-size: 0.95rem;
+    gap: 12px;
+    inset: 0;
+    justify-content: center;
+    position: absolute;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-empty[hidden] {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-empty svg {
+    color: #d1d5db;
+}
+
+/* Words that do not fit even at the minimum size are counted, not dropped silently */
+.xlvo-new-ui .xlvo-word-cloud-overflow {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    border-radius: 20px;
+    color: #92400e;
+    display: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin: 12px auto 0;
+    padding: 8px 14px;
+    text-align: center;
+    width: fit-content;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-overflow.is-visible {
+    display: block;
+}
+
+@media (max-width: 640px) {
+    .xlvo-new-ui .xlvo-word-cloud-canvas {
+        height: 320px;
+    }
+}
