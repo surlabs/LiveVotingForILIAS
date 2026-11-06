@@ -389,3 +389,5 @@ qtype_7_remove_word#:#Wort entfernen
 qtype_7_overflow_one#:#%s Antwort passt nicht auf den Bildschirm
 qtype_7_overflow_many#:#%s Antworten passen nicht auf den Bildschirm
 voting_style_word_cloud_blocked#:#Dieses Objekt enthält WordCloud-Fragen, die es nur im neuen Stil gibt. Löschen Sie sie, um zum klassischen Stil zu wechseln.
+qtype_7_one_word_per_answer#:#ein Wort pro Antwort
+qtype_7_results_caption#:#Je häufiger eine Antwort gegeben wird, desto größer erscheint sie

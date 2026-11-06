@@ -102,6 +102,7 @@ class LiveVotingInputWordCloudUI extends LiveVotingInputResultsGUI
         );
         $tpl->setVariable('ANSWERS', $plugin->txt('qtype_2_total_answers') . ': ' . $total_answers);
         $tpl->setVariable('UNIQUE', $plugin->txt('qtype_7_unique_words') . ': ' . count($words));
+        $tpl->setVariable('CAPTION', $plugin->txt('qtype_7_results_caption'));
         $tpl->setVariable('EMPTY_TEXT', $plugin->txt('results_waiting_answers'));
         $tpl->setVariable('EMPTY_HIDDEN', $words === [] ? '' : 'hidden');
         $tpl->setVariable('WORDS', htmlspecialchars((string) json_encode($words, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8'));

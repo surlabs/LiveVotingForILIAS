@@ -2907,6 +2907,13 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 
 /* Word cloud results: the words are placed by xlvoWordCloud.js */
 
+.xlvo-new-ui .xlvo-word-cloud-caption {
+    color: var(--xlvo-new-muted);
+    font-size: 0.9rem;
+    margin: 0 0 8px;
+    text-align: center;
+}
+
 .xlvo-new-ui .xlvo-word-cloud-canvas {
     height: 400px;
     overflow: hidden;

@@ -389,3 +389,5 @@ qtype_7_remove_word#:#Szó törlése
 qtype_7_overflow_one#:#%s válasz nem fér el a képernyőn
 qtype_7_overflow_many#:#%s válasz nem fér el a képernyőn
 voting_style_word_cloud_blocked#:#Ez az objektum szófelhő kérdéseket tartalmaz, amelyek csak az új stílusban léteznek. Törölje őket a klasszikus stílusra váltáshoz.
+qtype_7_one_word_per_answer#:#válaszonként egy szó
+qtype_7_results_caption#:#Minél gyakrabban adják meg a választ, annál nagyobb

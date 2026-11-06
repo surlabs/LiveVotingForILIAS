@@ -250,6 +250,8 @@ class LiveVotingDisplayPlayerUI
         if (in_array($question->getQuestionTypeId(), $types_with_options, true)) {
             $option_count = count($question->getOptions());
             $line .= ' • ' . sprintf($this->pl->txt('player_option_count'), $option_count);
+        } elseif ($question->getQuestionTypeId() === LiveVotingQuestion::QUESTION_TYPES_IDS['WordCloud']) {
+            $line .= ' • ' . $this->pl->txt('qtype_7_one_word_per_answer');
         } elseif ($question->getQuestionTypeId() === LiveVotingQuestion::QUESTION_TYPES_IDS['NumberRange']) {
             $percentage = (int) $question->isPercentage() === 1 ? ' %' : '';
             $line .= ' • ' . $question->getStartRange() . $percentage . ' – ' . $question->getEndRange() . $percentage;
