@@ -366,3 +366,13 @@ voter_nickname_input#:#Spitzname
 scoreboard_points_unit#:#PKT.
 results_hidden#:#Ergebnisse sind ausgeblendet
 results_answers_received#:#%s Antworten eingegangen
+player_end_voting#:#Abstimmung beenden
+challenge_feedback_correct#:#Richtig! +%s
+challenge_feedback_wrong#:#Leider falsch
+challenge_option_correct#:#Richtig
+challenge_option_wrong#:#Falsch
+challenge_option_solution#:#Richtige Antwort
+challenge_your_place#:#Ihr Platz: %1$s von %2$s
+challenge_final_results#:#Endergebnis
+challenge_final_info#:#Die Challenge ist beendet.
+challenge_no_ranking#:#In dieser Challenge hat niemand geantwortet.

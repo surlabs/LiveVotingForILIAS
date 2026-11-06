@@ -22,6 +22,7 @@ declare(strict_types=1);
 use LiveVoting\platform\ilias\LiveVotingContext;
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\UI\LiveVotingDisplayPlayerUI;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
@@ -330,6 +331,13 @@ class LiveVotingPlayerGUI
                         $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_end'));
                         $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_end'));;
                         $this->getVotingTemplate()->setVariable('GLYPH', '<span class="glyphicon glyphicon-stop"></span>');
+                    } elseif ($this->live_voting->usesNewUI()) {
+                        $this->getVotingTemplate()->setVariable('TITLE', $this->txt('challenge_final_results'));
+                        $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('challenge_final_info'));
+
+                        $tpl_final = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Player/tpl.final_results_new.html', true, true);
+                        LiveVotingDisplayPlayerUI::fillFinalResults($tpl_final, $this->live_voting, false, LiveVotingParticipant::getInstance()->getIdentifier());
+                        $this->getVotingTemplate()->setVariable('QUESTION', $tpl_final->get());
                     } else {
                         $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_end'));
                         $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_end'));;
@@ -362,6 +370,11 @@ class LiveVotingPlayerGUI
                     $this->getVotingTemplate()->setVariable('GLYPH', '<span class="glyphicon glyphicon-pause"></span>');
                     break;
                 case LiveVotingPlayer::STAT_SCOREBOARD:
+                    if ($this->live_voting->usesNewUI()) {
+                        $this->renderClosedChallengeQuestion();
+                        break;
+                    }
+
                     $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_scoreboard'));
 
                     $tpl_scoreboard = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard' . ($this->live_voting->usesNewUI() ? '_new' : '') . '.html', true, false);
@@ -388,6 +401,44 @@ class LiveVotingPlayerGUI
             echo $this->getVotingTemplate()->get();
             exit();
         }
+    }
+
+    /**
+     * New UI challenge, question closed (countdown over, voting ended by the presenter or everybody answered):
+     * feedback on the voter's own answer, their place and the scoreboard with their row highlighted.
+     *
+     * @throws LiveVotingException
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     * @throws ilException
+     */
+    private function renderClosedChallengeQuestion(): void
+    {
+        $player = $this->live_voting->getPlayer();
+        $question = $player->getActiveVotingObject();
+        $own_identifier = LiveVotingParticipant::getInstance()->getIdentifier();
+
+        $this->getVotingTemplate()->setVariable('TITLE', $question->getTitle());
+        $this->getVotingTemplate()->setVariable('DESCRIPTION', $question->getQuestionForPresentation());
+
+        $html = '';
+        $question_ui = LiveVotingQuestionTypesUI::getInstance($player);
+        if ($question_ui instanceof LiveVotingSingleVotePlayerGUI) {
+            $html .= $question_ui->getChallengeFeedbackHTML();
+        }
+
+        $players = LiveVotingPlayer::getPlayersForScoreboard($player);
+        $place = LiveVotingDisplayPlayerUI::getScoreboardPlace($players, $own_identifier);
+        if ($place > 0) {
+            $html .= '<p class="xlvo-own-place">' . sprintf($this->txt('challenge_your_place'), $place, count($players)) . '</p>';
+        }
+
+        $tpl_scoreboard = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard_new.html', true, false);
+        $tpl_scoreboard->setVariable('SCOREBOARD_TITLE', $this->txt('voter_header_scoreboard'));
+        $tpl_scoreboard->setVariable('POINTS', LiveVotingDisplayPlayerUI::renderNewUIScoreboardRows($players, $own_identifier));
+        $html .= $tpl_scoreboard->get();
+
+        $this->getVotingTemplate()->setVariable('QUESTION', $html);
     }
 
     /**
@@ -572,7 +623,10 @@ class LiveVotingPlayerGUI
             }
         }
 
-        if ($this->live_voting->isShowAttendees()) {
+        // The new challenge UI needs to know who is connected to close a question once everybody has answered.
+        $is_new_ui_challenge = $this->live_voting->usesNewUI()
+            && $this->live_voting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE;
+        if ($this->live_voting->isShowAttendees() || $is_new_ui_challenge) {
             LiveVotingVoter::register($this->live_voting->getPlayer()->getId());
         }
 

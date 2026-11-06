@@ -302,10 +302,114 @@ class LiveVotingDisplayPlayerUI
     private function buildTpl(): void
     {
         $suffix = $this->liveVoting->usesNewUI() ? '_new' : '';
-        $this->tpl = match ($this->liveVoting->getPlayer()->getStatus()) {
+        $status = $this->liveVoting->getPlayer()->getStatus();
+        if ($status == LiveVotingPlayer::STAT_END_VOTING && $this->liveVoting->usesNewUI()) {
+            $this->tpl = new ilTemplate($this->pl->getDirectory() . '/templates/default/Player/tpl.final_results_new.html', true, true);
+            return;
+        }
+        $this->tpl = match ($status) {
             LiveVotingPlayer::STAT_END_VOTING, LiveVotingPlayer::STAT_SCOREBOARD => new ilTemplate($this->pl->getDirectory() . "/templates/default/Voter/tpl.scoreboard$suffix.html", true, false),
             default => new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.player$suffix.html", true, true),
         };
+    }
+
+    /**
+     * New UI scoreboard rows, shared by the projector and the voter. With $own_identifier the voter's own row is
+     * highlighted.
+     *
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     */
+    public static function renderNewUIScoreboardRows(array $players, ?string $own_identifier = null): string
+    {
+        $pl = ilLiveVotingPlugin::getInstance();
+        $html = '';
+
+        foreach ($players as $player) {
+            $tpl = new ilTemplate($pl->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score_new.html', true, false);
+            $tpl->setVariable('PLAYER', htmlspecialchars((string) $player['nickname'], ENT_QUOTES));
+            $tpl->setVariable('POINTS', (string) (int) $player['points']);
+            $tpl->setVariable('POINTS_UNIT', $pl->txt('scoreboard_points_unit'));
+            if ($own_identifier !== null && (string) $player['identifier'] === $own_identifier) {
+                $tpl->setVariable('ROW_CLASS', ' is-own');
+            }
+            $html .= $tpl->get();
+        }
+
+        return $html;
+    }
+
+    /**
+     * Place of a participant in the scoreboard (as numbered on screen), 0 if they have no points row.
+     */
+    public static function getScoreboardPlace(array $players, string $identifier): int
+    {
+        foreach (array_values($players) as $index => $player) {
+            if ((string) $player['identifier'] === $identifier) {
+                return $index + 1;
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * Final results of a challenge in the new UI: podium for the first three and the rest of the ranking. The voter
+     * also gets their own place and row highlighted; the projector passes no identifier.
+     *
+     * @throws LiveVotingException
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     */
+    public static function fillFinalResults(ilTemplate $tpl, LiveVoting $live_voting, bool $with_header, ?string $own_identifier = null): void
+    {
+        $pl = ilLiveVotingPlugin::getInstance();
+        $players = array_values(LiveVotingPlayer::getPlayersForScoreboard($live_voting->getPlayer()));
+
+        if ($with_header) {
+            $tpl->setVariable('TITLE', $pl->txt('challenge_final_results'));
+            $tpl->setVariable('INFO', $pl->txt('challenge_final_info'));
+        }
+
+        if ($own_identifier !== null) {
+            $place = self::getScoreboardPlace($players, $own_identifier);
+            if ($place > 0) {
+                $tpl->setCurrentBlock('own_place');
+                $tpl->setVariable('OWN_PLACE', sprintf($pl->txt('challenge_your_place'), $place, count($players)));
+                $tpl->parseCurrentBlock();
+            }
+        }
+
+        if ($players === []) {
+            $tpl->setCurrentBlock('empty');
+            $tpl->setVariable('EMPTY', $pl->txt('challenge_no_ranking'));
+            $tpl->parseCurrentBlock();
+
+            return;
+        }
+
+        foreach (array_slice($players, 0, 3) as $index => $player) {
+            $tpl->setCurrentBlock('podium_place');
+            $tpl->setVariable('PLACE', (string) ($index + 1));
+            $tpl->setVariable('PLAYER', htmlspecialchars((string) $player['nickname'], ENT_QUOTES));
+            $tpl->setVariable('POINTS', (string) (int) $player['points']);
+            $tpl->setVariable('POINTS_UNIT', $pl->txt('scoreboard_points_unit'));
+            if ($own_identifier !== null && (string) $player['identifier'] === $own_identifier) {
+                $tpl->setVariable('ROW_CLASS', ' is-own');
+            }
+            $tpl->parseCurrentBlock();
+        }
+        $tpl->setCurrentBlock('podium');
+        $tpl->parseCurrentBlock();
+
+        $rest = array_slice($players, 3);
+        if ($rest !== []) {
+            $tpl->setCurrentBlock('ranking');
+            $tpl->setVariable('START', '4');
+            $tpl->setVariable('OFFSET', '3');
+            $tpl->setVariable('ROWS', self::renderNewUIScoreboardRows($rest, $own_identifier));
+            $tpl->parseCurrentBlock();
+        }
     }
 
     /**
@@ -315,8 +419,14 @@ class LiveVotingDisplayPlayerUI
     private function renderTpl(): void
     {
         switch ($this->liveVoting->getPlayer()->getStatus()) {
-            case LiveVotingPlayer::STAT_SCOREBOARD:
             case LiveVotingPlayer::STAT_END_VOTING:
+                if ($this->liveVoting->usesNewUI()) {
+                    self::fillFinalResults($this->tpl, $this->liveVoting, true);
+                } else {
+                    $this->renderScoreboard();
+                }
+                break;
+            case LiveVotingPlayer::STAT_SCOREBOARD:
                 $this->renderScoreboard();
                 break;
             default:

@@ -172,6 +172,27 @@ class LiveVotingVoter
     }
 
     /**
+     * Identifiers of the voters seen in the last $seconds. Wider than getVoters(), so a voter whose poll is a little
+     * late is not taken as gone.
+     *
+     * @return string[]
+     * @throws LiveVotingException
+     */
+    public static function getRecentVoterIdentifiers(int $player_id, int $seconds): array
+    {
+        // register() stores the access time two seconds ahead.
+        $cutoff_time = date('Y-m-d H:i:s', (int) (LiveVotingUtils::getTime() + 2 - $seconds));
+
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("xlvo_voter", [
+            "player_id" => $player_id
+        ], ["user_identifier"], "AND last_access > '$cutoff_time'");
+
+        return array_values(array_unique(array_map('strval', array_column($result, "user_identifier"))));
+    }
+
+    /**
      * @throws LiveVotingException
      * @throws Exception
      */

@@ -366,3 +366,13 @@ voter_nickname_input#:#Nickname
 scoreboard_points_unit#:#PTS.
 results_hidden#:#Results are hidden
 results_answers_received#:#%s answers received
+player_end_voting#:#End voting
+challenge_feedback_correct#:#Correct! +%s
+challenge_feedback_wrong#:#Wrong answer
+challenge_option_correct#:#Correct
+challenge_option_wrong#:#Wrong
+challenge_option_solution#:#Correct answer
+challenge_your_place#:#Your place: %1$s of %2$s
+challenge_final_results#:#Final results
+challenge_final_info#:#The challenge is over.
+challenge_no_ranking#:#Nobody answered in this challenge.

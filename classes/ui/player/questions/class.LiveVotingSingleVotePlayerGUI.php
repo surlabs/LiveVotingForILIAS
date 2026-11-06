@@ -250,6 +250,95 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         return $tpl->get();
     }
 
+    /**
+     * New UI challenge, once the question is closed: the voter's own answer with the inputs kept, the chosen options
+     * in green (correct) or red (wrong) and the correct ones marked. A voter who did not answer in time gets the
+     * options without any feedback.
+     *
+     * @throws LiveVotingException
+     * @throws ilTemplateException
+     */
+    public function getChallengeFeedbackHTML(): string
+    {
+        $plugin = ilLiveVotingPlugin::getInstance();
+        $question = $this->getPlayer()->getActiveVotingObject();
+        $is_multi = $question->isMultiSelection();
+        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/SingleVote/tpl.single_vote_new.html', true, true);
+
+        $options = $question->getOptions();
+        $chosen = [];
+        foreach ($options as $option) {
+            if ($this->player->hasUserVotedForOption($option->getId())) {
+                $chosen[] = $option->getId();
+            }
+        }
+        $has_answered = $chosen !== [];
+
+        if ($has_answered) {
+            $is_correct = true;
+            foreach ($options as $option) {
+                if ($option->isCorrect() !== in_array($option->getId(), $chosen, true)) {
+                    $is_correct = false;
+                    break;
+                }
+            }
+
+            $points = LiveVotingPlayer::getPlayerPoints(
+                LiveVotingParticipant::getInstance()->getIdentifier(),
+                $this->player->getObjId(),
+                $this->player->getActiveVoting(),
+                $this->player->getRoundId()
+            );
+
+            $tpl->setCurrentBlock('challenge_result');
+            $tpl->setVariable('RESULT_STATE', $is_correct ? 'correct' : 'wrong');
+            $tpl->setVariable('RESULT_TEXT', sprintf(
+                $plugin->txt($is_correct ? 'challenge_feedback_correct' : 'challenge_feedback_wrong'),
+                $points . ' ' . $plugin->txt('scoreboard_points_unit')
+            ));
+            $tpl->parseCurrentBlock();
+        }
+
+        foreach ($options as $option) {
+            $voted = in_array($option->getId(), $chosen, true);
+            $result_class = '';
+            $result_label = '';
+            if ($has_answered && $voted) {
+                $result_class = $option->isCorrect() ? ' is-correct' : ' is-wrong';
+                $result_label = $plugin->txt($option->isCorrect() ? 'challenge_option_correct' : 'challenge_option_wrong');
+            } elseif ($has_answered && $option->isCorrect()) {
+                $result_class = ' is-solution';
+                $result_label = $plugin->txt('challenge_option_solution');
+            }
+
+            if ($result_label !== '') {
+                $tpl->setCurrentBlock('option_result');
+                $tpl->setVariable('RESULT_LABEL', $result_label);
+                $tpl->parseCurrentBlock();
+            }
+
+            $tpl->setCurrentBlock('option');
+            $tpl->setVariable('TYPE', $is_multi ? 'checkbox' : 'radio');
+            $tpl->setVariable('OPTION_ID', (string) $option->getId());
+            $tpl->setVariable('OPTION_LETTER', $option->getCipher());
+            $tpl->setVariable('TITLE', $option->getTextForPresentation());
+            $tpl->setVariable('CHECKED', $voted ? 'checked' : '');
+            $tpl->setVariable('DISABLED', 'disabled');
+            $tpl->setVariable('RESULT_CLASS', $result_class);
+            $tpl->parseCurrentBlock();
+        }
+
+        // Nothing can be sent any more: the buttons are hidden by the closed-question style.
+        $tpl->setVariable('ACTION', '#');
+        $tpl->setVariable('LOCKED_CLASS', ' is-locked xlvo-challenge-closed');
+        $tpl->setVariable('VOTER_HINT', $question->getQuestionTypeLabel());
+        $tpl->setVariable('SUBMIT_LABEL', $plugin->txt('voter_submitted'));
+        $tpl->setVariable('SUBMIT_DISABLED', 'disabled');
+        $tpl->setVariable('CHANGE_DISABLED', 'disabled');
+
+        return $tpl->get();
+    }
+
     public function getMobileHTML(): string
     {
         global $DIC;

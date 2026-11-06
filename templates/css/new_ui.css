@@ -2610,3 +2610,245 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 .xlvo-new-ui .xlvo-results-hidden span:last-child {
     font-size: 15px;
 }
+
+/* Challenge, question closed: feedback on the voter's own answer. The inputs stay visible but nothing can be sent. */
+
+.xlvo-new-ui .xlvo-challenge-closed .xlvo-answer-buttons,
+.xlvo-new-ui .xlvo-challenge-closed .xlvo-answer-feedback {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-correct,
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-wrong,
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-solution {
+    opacity: 1;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-correct {
+    background: #dcfce7;
+    border-color: #16a34a;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-wrong {
+    background: #fee2e2;
+    border-color: #dc2626;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-solution {
+    background: #f0fdf4;
+    border-color: #16a34a;
+    border-style: dashed;
+}
+
+.xlvo-new-ui .xlvo-option-card.is-correct input:checked ~ .xlvo-option-indicator {
+    background: #16a34a;
+    border-color: #16a34a;
+}
+
+.xlvo-new-ui .xlvo-option-card.is-wrong input:checked ~ .xlvo-option-indicator {
+    background: #dc2626;
+    border-color: #dc2626;
+}
+
+.xlvo-new-ui .xlvo-option-card.is-solution .xlvo-option-indicator {
+    border-color: #16a34a;
+}
+
+.xlvo-new-ui .xlvo-option-result {
+    border-radius: 999px;
+    flex: none;
+    font-size: 13px;
+    font-weight: 700;
+    margin-left: auto;
+    padding: 3px 10px;
+}
+
+.xlvo-new-ui .is-correct .xlvo-option-result,
+.xlvo-new-ui .is-solution .xlvo-option-result {
+    background: #16a34a;
+    color: #fff;
+}
+
+.xlvo-new-ui .is-wrong .xlvo-option-result {
+    background: #dc2626;
+    color: #fff;
+}
+
+.xlvo-new-ui .xlvo-challenge-result {
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-challenge-result.is-correct {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.xlvo-new-ui .xlvo-challenge-result.is-wrong {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* The voter's place, as the blue pill of the mockup */
+.xlvo-new-ui .xlvo-own-place {
+    background: #2563eb;
+    border-radius: 999px;
+    color: #fff;
+    display: table;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 20px auto;
+    padding: 8px 22px;
+}
+
+/* The voter's own row in the scoreboard */
+.xlvo-new-ui .xlvo-scoreboard-row.is-own {
+    background: #dcfce7;
+    border-color: #16a34a;
+    box-shadow: 0 0 0 1px #16a34a;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-row.is-own .xlvo-scoreboard-name {
+    font-weight: 800;
+}
+
+/* Projector: a long scoreboard scrolls inside the panel and starts at the top */
+#xlvo-display-player .xlvo-new-ui .xlvo-scoreboard,
+#xlvo-display-player .xlvo-new-ui.xlvo-final-results .xlvo-scoreboard {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* Challenge final results, projector and voter */
+
+.xlvo-new-ui.xlvo-final-results {
+    background: var(--xlvo-new-surface);
+}
+
+/* Keeps the podium off the bottom edge: its margin would otherwise collapse out of the panel */
+.xlvo-new-ui.xlvo-final-results > .panel-body {
+    display: flow-root;
+    padding-bottom: 16px;
+}
+
+.xlvo-new-ui .xlvo-final-results-header {
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-final-results-header:has(.panel-title:empty) {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-final-results-header .glyphicon {
+    color: var(--xlvo-new-accent);
+    font-size: 30px;
+}
+
+.xlvo-new-ui .xlvo-final-results-header .panel-title {
+    color: var(--xlvo-new-ink);
+    float: none;
+    font-size: 30px;
+    font-weight: 800;
+    margin: 8px 0 4px;
+}
+
+.xlvo-new-ui .xlvo-final-results-info {
+    color: var(--xlvo-new-muted);
+    margin: 0;
+}
+
+.xlvo-new-ui .xlvo-podium {
+    align-items: flex-end;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    list-style: none;
+    margin: 10px 0 24px;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-podium-place {
+    align-items: center;
+    display: flex;
+    flex: 0 1 200px;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-podium-place-1 {
+    order: 2;
+}
+
+.xlvo-new-ui .xlvo-podium-place-2 {
+    order: 1;
+}
+
+.xlvo-new-ui .xlvo-podium-place-3 {
+    order: 3;
+}
+
+.xlvo-new-ui .xlvo-podium-name {
+    font-size: 18px;
+    font-weight: 700;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.xlvo-new-ui .xlvo-podium-points {
+    color: #16a34a;
+    font-weight: 700;
+}
+
+.xlvo-new-ui .xlvo-podium-step {
+    align-items: center;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    font-size: 30px;
+    font-weight: 800;
+    justify-content: center;
+    margin-top: 6px;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-podium-place-1 .xlvo-podium-step {
+    background: #fef3c7;
+    color: #b45309;
+    height: 130px;
+}
+
+.xlvo-new-ui .xlvo-podium-place-2 .xlvo-podium-step {
+    background: #e5e7eb;
+    color: #4b5563;
+    height: 95px;
+}
+
+.xlvo-new-ui .xlvo-podium-place-3 .xlvo-podium-step {
+    background: #fde8d7;
+    color: #9a3412;
+    height: 70px;
+}
+
+.xlvo-new-ui .xlvo-podium-place.is-own .xlvo-podium-name {
+    background: #dcfce7;
+    border-radius: 999px;
+    color: #166534;
+    padding: 2px 12px;
+}
+
+/* Below the podium the ranking goes on from place 4, without the medal colours */
+.xlvo-final-results .xlvo-scoreboard-row:nth-child(n)::before {
+    background: var(--xlvo-new-wash);
+    color: var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .xlvo-final-results-empty {
+    color: var(--xlvo-new-muted);
+    text-align: center;
+}

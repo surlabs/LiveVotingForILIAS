@@ -368,7 +368,7 @@ class LiveVotingUI
 
         if ($this->liveVoting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
             $endTime = ilLinkButton::getInstance();
-            $endTime->setCaption($this->pl->txt("end_time"), false);
+            $endTime->setCaption($this->pl->txt($this->liveVoting->usesNewUI() ? "player_end_voting" : "end_time"), false);
             $endTime->setId('btn-end_time');
             $DIC->toolbar()->addButtonInstance($endTime);
 

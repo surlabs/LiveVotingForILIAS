@@ -366,3 +366,13 @@ voter_nickname_input#:#Becenév
 scoreboard_points_unit#:#PONT
 results_hidden#:#Az eredmények rejtve vannak
 results_answers_received#:#%s válasz érkezett
+player_end_voting#:#Szavazás lezárása
+challenge_feedback_correct#:#Helyes! +%s
+challenge_feedback_wrong#:#Helytelen válasz
+challenge_option_correct#:#Helyes
+challenge_option_wrong#:#Helytelen
+challenge_option_solution#:#Helyes válasz
+challenge_your_place#:#Az Ön helyezése: %1$s / %2$s
+challenge_final_results#:#Végeredmény
+challenge_final_info#:#A kihívás véget ért.
+challenge_no_ranking#:#Ebben a kihívásban senki sem válaszolt.

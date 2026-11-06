@@ -342,6 +342,15 @@ class LiveVoting
     }
 
     /**
+     * Challenge: the classic UI only shows the scoreboard between questions when the "Scoreboard" setting is on.
+     * The new UI always shows it, so every voter gets the feedback and the ranking before the next question.
+     */
+    public function isScoreboardAfterEachQuestion(): bool
+    {
+        return $this->usesNewUI() || $this->isScoreboard();
+    }
+
+    /**
      * @throws LiveVotingException
      */
     public function save(): int

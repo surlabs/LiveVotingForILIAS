@@ -134,13 +134,16 @@ class LiveVotingSettingsUI
                         }
                     ));
 
-                $formFields['scoreboard'] = $DIC->ui()->factory()->input()->field()->checkbox($this->plugin->txt("scoreboard"), $this->plugin->txt("scoreboard_info"))
-                   ->withValue($this->object->getLiveVoting()->isScoreboard())
-                   ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
-                       function ($v) {
-                           $this->object->getLiveVoting()->setScoreboard((bool)$v);
-                       }
-                   ));
+                // The new UI always shows the scoreboard after each question, so the setting only matters in the classic UI.
+                if (!$this->object->getLiveVoting()->usesNewUI()) {
+                    $formFields['scoreboard'] = $DIC->ui()->factory()->input()->field()->checkbox($this->plugin->txt("scoreboard"), $this->plugin->txt("scoreboard_info"))
+                       ->withValue($this->object->getLiveVoting()->isScoreboard())
+                       ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
+                           function ($v) {
+                               $this->object->getLiveVoting()->setScoreboard((bool)$v);
+                           }
+                       ));
+                }
             }
 
             $sectionObject = $DIC->ui()->factory()->input()->field()->section($formFields, $this->plugin->txt("obj_edit_properties"), "");
