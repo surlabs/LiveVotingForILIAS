@@ -13,7 +13,7 @@ var xlvoPlayer = {
 
         if (
             xlvoPlayer.config.use_mathjax &&
-            !!MathJax && MathJax.version &&
+            typeof MathJax !== "undefined" && MathJax.version &&
             MathJax.version.charAt(0) !== "3"
         ) {
             MathJax.Hub.Config({
