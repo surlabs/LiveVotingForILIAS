@@ -326,7 +326,7 @@ abstract class LiveVotingQuestion
     public function getQuestion(bool $forInput = false): string
     {
         if ($forInput) {
-            return ilRTE::_replaceMediaObjectImageSrc($this->question, 1);
+            return self::replaceMediaObjectImageSrc($this->question);
         }
 
         return $this->question;
@@ -336,7 +336,7 @@ abstract class LiveVotingQuestion
     {
         $purifier = new \ilAssHtmlQuestionContentPurifier();
 
-        $question = ilRTE::_replaceMediaObjectImageSrc($question, 1);
+        $question = self::replaceMediaObjectImageSrc($question);
         $question = $purifier->purify($question);
 
         $this->question = ilRTE::_replaceMediaObjectImageSrc($question);
@@ -517,11 +517,29 @@ abstract class LiveVotingQuestion
         return $max + 1;
     }
 
+    /**
+     * Resolves the images of the editor one by one, so that an image whose file is gone does not break the whole question
+     */
+    public static function replaceMediaObjectImageSrc(string $text): string
+    {
+        return (string) preg_replace_callback(
+            '/src="il_[0-9]+_mob_[0-9]+"/',
+            static function (array $match): string {
+                try {
+                    return ilRTE::_replaceMediaObjectImageSrc($match[0], 1);
+                } catch (\Throwable $e) {
+                    return $match[0];
+                }
+            },
+            $text
+        );
+    }
+
     public function getQuestionForPresentation(): string
     {
         $question = $this->question;
 
-        $question = ilRTE::_replaceMediaObjectImageSrc($question, 1);
+        $question = self::replaceMediaObjectImageSrc($question);
 
         // deliver.php URLs are built from the current script, which is the plugin's ilias.php here
         $root = strstr(ILIAS_HTTP_PATH, '/Customizing', true);
