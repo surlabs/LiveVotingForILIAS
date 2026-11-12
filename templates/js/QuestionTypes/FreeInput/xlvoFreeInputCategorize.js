@@ -50,8 +50,7 @@ var xlvoFreeInputCategorize = {
 		if (this.drake) {
 			this.drake.destroy();
 		}
-		// Classic answers live in 'div.bars' (one wrapper per answer), the new UI ones directly in 'div.xlvo-bars'.
-		this.drake = dragula($.find('div.bars, .xlvo-free-text-results div.xlvo-bars'), {
+		this.drake = dragula($.find('.xlvo-free-text-results div.xlvo-bars'), {
 			moves: function (el, source, handle) {
 				return $(el).is("div") && !$(handle).closest('button.close').length;
 			},
@@ -191,12 +190,7 @@ var xlvoFreeInputCategorize = {
 					'</button>' +
 					'<fieldset class="well xlvo-category category_dropzone" data-category-id="' + data.category_id + '">' +
 						'<legend>' + title + '</legend>' +
-						(xlvoFreeInputCategorize.isNewUI()
-							? '<div id="bars_' + data.category_id + '" class="xlvo-bars"></div>'
-							: '<br>' +
-							'<div id="bars_' + data.category_id + '" class="bars">' +
-								'<div class="col-md-4"></div>' +
-							'</div>') +
+						'<div id="bars_' + data.category_id + '" class="xlvo-bars"></div>' +
 					'</fieldset>' +
 				'</div>'
 			);
@@ -269,11 +263,7 @@ var xlvoFreeInputCategorize = {
 					'</div>' +
 				'</div>';
 			// append answer to the uncategorised list
-			if (xlvoFreeInputCategorize.isNewUI()) {
-				$('#answers div.xlvo-bars').first().append(answer);
-			} else {
-				$('#answers div#bars').first().append('<div class="col-md-12">' + answer + '</div>');
-			}
+			$('#answers div.xlvo-bars').first().append(answer);
 
 			// flush input
 			$('#answer_input').val('');
@@ -302,8 +292,7 @@ var xlvoFreeInputCategorize = {
 		if (!vote.length) {
 			return;
 		}
-		// Classic answers sit in a column wrapper of their own; new UI answers are direct children of the list.
-		var item = vote.parent().is('[class*="col-md-"]') ? vote.parent() : vote;
+		var item = vote;
 
 		xlvoFreeInputCategorize.startRequest();
 
@@ -311,16 +300,9 @@ var xlvoFreeInputCategorize = {
 			call: 'remove_vote',
 			vote_id: vote.attr('data-vote-id')
 		}).done(function (data) {
-			if (xlvoFreeInputCategorize.isNewUI()) {
-				item.fadeOut(150, function () {
-					item.remove();
-				});
-				return;
-			}
-			item.remove();
-
-			// recalculate height of player
-			xlvoFreeInputCategorize.recalculatePlayerHeight();
+			item.fadeOut(150, function () {
+				item.remove();
+			});
 		}).always(function(){
 			xlvoFreeInputCategorize.endRequest();
 		});
@@ -353,34 +335,19 @@ var xlvoFreeInputCategorize = {
 	 * called in addCategory and addAnswer
 	 */
 	recalculatePlayerHeight: function () {
-		// The new UI lays out without floats, so the player sizes itself; a fixed height would go stale on the next change.
-		if (xlvoFreeInputCategorize.isNewUI()) {
-			$('#xlvo-display-player').css('height', '');
-			return;
-		}
-		var player_children = $('#xlvo-display-player').children();
-		$('#xlvo-display-player').css('height', player_children.css('height'));
-	},
-
-	isNewUI: function () {
-		return $('.xlvo-new-free-text-results').length > 0;
+		// The layout has no floats, so the player sizes itself; a fixed height would go stale on the next change.
+		$('#xlvo-display-player').css('height', '');
 	},
 
 	escape: function (text) {
 		return $('<div>').text(text).html();
 	},
 
-	// The new UI updates the list in place, so a full-screen spinner for these short requests only makes it flicker.
+	// The list updates in place, so a full-screen spinner for these short requests would only make it flicker.
 	startRequest: function () {
-		if (!xlvoFreeInputCategorize.isNewUI()) {
-			il.waiter.show();
-		}
 		xlvoFreeInputCategorize.request_pending = true;
 	},
 	endRequest: function () {
-		if (!xlvoFreeInputCategorize.isNewUI()) {
-			il.waiter.hide();
-		}
 		xlvoFreeInputCategorize.request_pending = false;
 	},
 	isRequestPending: function () {

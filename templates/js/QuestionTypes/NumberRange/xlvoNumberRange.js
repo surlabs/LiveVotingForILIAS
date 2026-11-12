@@ -52,23 +52,21 @@ var xlvoNumberRange = {
         buttonMoveSliderLeft.onclick = moveLeft;
         buttonMoveSliderRight.onclick = moveRight;
 
-        if ($(".xlvo-new-ui .xlvo-number-range").length) {
-            this.addHoldAction(buttonMoveSliderLeft, moveLeft);
-            this.addHoldAction(buttonMoveSliderRight, moveRight);
+        this.addHoldAction(buttonMoveSliderLeft, moveLeft);
+        this.addHoldAction(buttonMoveSliderRight, moveRight);
 
-            // After submitting, the value stays visible but cannot be changed until "Change Answer".
-            var form = slider.closest("form");
-            var setLocked = function (locked) {
-                slider.bootstrapSlider(locked ? "disable" : "enable");
-                var value = slider.bootstrapSlider("getValue");
-                buttonMoveSliderLeft.disabled = locked || value <= slider.bootstrapSlider("getAttribute", "min");
-                buttonMoveSliderRight.disabled = locked || value >= slider.bootstrapSlider("getAttribute", "max");
-            };
-            setLocked(form.hasClass("is-locked"));
-            form.off("xlvo:unlocked.numberRange").on("xlvo:unlocked.numberRange", function () {
-                setLocked(false);
-            });
-        }
+        // After submitting, the value stays visible but cannot be changed until "Change Answer".
+        var form = slider.closest("form");
+        var setLocked = function (locked) {
+            slider.bootstrapSlider(locked ? "disable" : "enable");
+            var value = slider.bootstrapSlider("getValue");
+            buttonMoveSliderLeft.disabled = locked || value <= slider.bootstrapSlider("getAttribute", "min");
+            buttonMoveSliderRight.disabled = locked || value >= slider.bootstrapSlider("getAttribute", "max");
+        };
+        setLocked(form.hasClass("is-locked"));
+        form.off("xlvo:unlocked.numberRange").on("xlvo:unlocked.numberRange", function () {
+            setLocked(false);
+        });
     },
     addHoldAction: function (button, action) {
         var holdTimeout = null;
