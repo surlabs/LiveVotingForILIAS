@@ -79,7 +79,7 @@ class LiveVoting
     private bool $nicknames = false;
     private bool $scoreboard = false;
     private LiveVotingPlayer $player;
-    private string $voting_style = "classic";
+    private string $voting_style = "new";
 
     /**
      * LiveVoting constructor.
@@ -331,14 +331,17 @@ class LiveVoting
         return $this->voting_style;
     }
 
+    /**
+     * The classic UI is not available anymore: every object, including the ones created with the classic UI, uses the new one.
+     */
     public function setVotingStyle(string $voting_style): void
     {
-        $this->voting_style = $voting_style;
+        $this->voting_style = 'new';
     }
 
     public function usesNewUI(): bool
     {
-        return $this->voting_style === 'new';
+        return true;
     }
 
     /**
@@ -401,7 +404,7 @@ class LiveVoting
             $this->setMode(LiveVotingMode::new((int) $result[0]["mode"]));
             $this->setNicknames((bool)$result[0]["nicknames"]);
             $this->setScoreboard((bool)$result[0]["scoreboard"]);
-            $this->setVotingStyle($result[0]['voting_style'] ?? 'classic');
+            $this->setVotingStyle($result[0]['voting_style'] ?? 'new');
         } else {
             $this->loadDefaultValues();
         }

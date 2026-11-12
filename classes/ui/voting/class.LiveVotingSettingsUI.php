@@ -190,41 +190,8 @@ class LiveVotingSettingsUI
             $sections["object"] = $section;
         }
 
-        $styles['voting_style'] = $DIC->ui()->factory()->input()->field()->select($this->plugin->txt('voting_style'), [
-            'classic' => $this->plugin->txt('voting_style_classic'),
-            'new' => $this->plugin->txt('voting_style_new'),
-        ], $this->plugin->txt('voting_style_info'))
-            ->withValue($this->object->getLiveVoting()->getVotingStyle())
-            // Word clouds only exist in the new UI: an object that has one cannot go back to the classic UI.
-            ->withAdditionalTransformation($DIC->refinery()->custom()->constraint(
-                fn($value): bool => $value === 'new' || !$this->hasWordCloudQuestions(),
-                $this->plugin->txt('voting_style_word_cloud_blocked')
-            ))
-            ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
-                function ($value): void {
-                    $this->object->getLiveVoting()->setVotingStyle($value);
-                }
-            ))->withRequired(true);
-
-        $sections['style'] = $DIC->ui()->factory()->input()->field()->section(
-            $styles,
-            $this->plugin->txt('styles'),
-            ''
-        );
-
         return $sections;
 
-    }
-
-    private function hasWordCloudQuestions(): bool
-    {
-        foreach ($this->object->getLiveVoting()->getQuestions() as $question) {
-            if ($question->getQuestionType() === 'WordCloud') {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
