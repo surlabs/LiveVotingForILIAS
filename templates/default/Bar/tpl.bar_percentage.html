@@ -1,16 +1,15 @@
-<div>
-	<link rel="stylesheet" type="text/css" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/Bar/bar.css">
-	<div class="col-md-12">
-		<p class="progress-title">
+<div class="xlvo-bar-row-wrap xlvo-bar-color-{COLOR_INDEX}" data-xlvo-key="{BAR_KEY}">
+	<div class="xlvo-bar-label-row">
+		<div class="xlvo-option-name">
+			<span class="xlvo-color-dot"></span>
 			<!-- BEGIN option_letter -->
-			<span class="label label-primary">{OPTION_LETTER}</span>
+			<span class="xlvo-option-letter">{OPTION_LETTER}</span>
 			<!-- END option_letter -->
-			{TITLE}
-		</p>
-	</div>
-	<div class="col-md-12">
-		<div class="progress">
-			<div class="progress-bar progress-bar-striped" id="xlvo_bar_{ID}" role="progressbar" aria-valuenow="{PERCENT}" aria-valuemin="0" aria-valuemax="{MAX}" style="white-space: nowrap; width: {PERCENT_STYLE}%;">{PERCENT_TEXT}</div>
+			<span>{TITLE}</span>
 		</div>
+		<div class="xlvo-vote-counts" id="xlvo_bar_text_{ID}" aria-hidden="true">{PERCENT_TEXT}</div>
+	</div>
+	<div class="xlvo-bar-container">
+		<div class="xlvo-bar-fill" id="xlvo_bar_{ID}" role="progressbar" aria-valuenow="{PERCENT}" aria-valuemin="0" aria-valuemax="{MAX}" style="width: {PERCENT_STYLE}%;"></div>
 	</div>
 </div>

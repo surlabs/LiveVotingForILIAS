@@ -1,14 +1,25 @@
-<!-- BEGIN option -->
-<div class="vote-option">
-	<input type="{TYPE}" id="option-{OPTION_LETTER}" class="vote-checkbox" value="{OPTION_LETTER}" {CHECKBOX} link="{LINK}" name="vote-option" />
-	<label for="option-{OPTION_LETTER}" class="vote-label">
-		<div class="vote-question">
-			<span class="label label-primary">{OPTION_LETTER}</span>
-			<span>{TITLE}</span>
-		</div>
-		<div class="btn btn-block {BUTTON_STATE}">
-			<span class="button-text">{ACTION}</span>
-		</div>
-	</label>
-</div>
-<!-- END option -->
+<form class="xlvo-choice-form xlvo-answer-form{LOCKED_CLASS}" action="{ACTION}" method="post" novalidate data-xlvo-submit-text="{SUBMIT_TEXT}" data-xlvo-require-selection="1">
+	<input type="hidden" name="xlvo_selection" value="1">
+	<p class="xlvo-voter-type-hint">{VOTER_HINT}</p>
+	<!-- BEGIN challenge_result -->
+	<p class="xlvo-challenge-result is-{RESULT_STATE}" role="status">{RESULT_TEXT}</p>
+	<!-- END challenge_result -->
+	<div class="xlvo-option-cards">
+		<!-- BEGIN option -->
+		<label class="xlvo-option-card{SUBMITTED_CLASS}{RESULT_CLASS}">
+			<input type="{TYPE}" name="option_ids[]" value="{OPTION_ID}" {CHECKED} {DISABLED}>
+			<span class="xlvo-option-indicator xlvo-option-indicator-{TYPE}" aria-hidden="true"></span>
+			<span class="xlvo-option-card-letter">{OPTION_LETTER}</span>
+			<span class="xlvo-option-card-text">{TITLE}</span>
+			<!-- BEGIN option_result -->
+			<span class="xlvo-option-result">{RESULT_LABEL}</span>
+			<!-- END option_result -->
+		</label>
+		<!-- END option -->
+	</div>
+	<p class="xlvo-answer-feedback" role="alert" hidden>{FEEDBACK}</p>
+	<div class="xlvo-answer-buttons">
+		<button type="submit" name="cmd[submit]" value="submit" class="xlvo-submit-btn" {SUBMIT_DISABLED}>{SUBMIT_LABEL}</button>
+		<button type="button" class="xlvo-change-answer-btn" {CHANGE_DISABLED}>{CHANGE_TEXT}</button>
+	</div>
+</form>

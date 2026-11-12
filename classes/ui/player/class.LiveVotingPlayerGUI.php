@@ -149,22 +149,17 @@ class LiveVotingPlayerGUI
     {
         global $DIC;
 
-        // requestPin() renders this frame before any voting is known. There is no voting style to read
-        // yet, so the PIN gate always uses the new look.
+        // requestPin() renders this frame before any voting is known.
         $has_voting = isset($this->live_voting);
-        $is_new_ui = !$has_voting
-            || $this->live_voting->usesNewUI();
         $main_template = $DIC->ui()->mainTemplate();
-        $main_template->setVariable('BODY_CLASS', $is_new_ui ? 'xlvo-new-ui-page' : '');
-        $main_template->setVariable('NAVBAR_CLASS', $is_new_ui ? 'xlvo-new-ui-navbar' : '');
-        $main_template->setVariable('PIN_LABEL', $has_voting && $is_new_ui ? 'PIN: ' . $this->live_voting->getPin() : 'PIN');
+        $main_template->setVariable('BODY_CLASS', 'xlvo-new-ui-page');
+        $main_template->setVariable('NAVBAR_CLASS', 'xlvo-new-ui-navbar');
+        $main_template->setVariable('PIN_LABEL', $has_voting ? 'PIN: ' . $this->live_voting->getPin() : 'PIN');
 
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/Voter/voter.css');
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/QuestionTypes/NumberRange/bootstrap-slider.min.css');
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/QuestionTypes/NumberRange/number_range.css');
-        if ($is_new_ui) {
-            $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_ui.css');
-        }
+        $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_ui.css');
     }
 
     /**
@@ -176,9 +171,7 @@ class LiveVotingPlayerGUI
     {
         global $DIC;
 
-        $is_new_ui = $this->live_voting->usesNewUI();
-        $template = $is_new_ui ? 'tpl.voter_player_new.html' : 'tpl.voter_player.html';
-        $tpl_voter_player = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/' . $template, false, false);
+        $tpl_voter_player = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.voter_player.html', false, false);
 
         $this->setVoterPlayerTemplate($tpl_voter_player);
 
@@ -221,8 +214,7 @@ class LiveVotingPlayerGUI
         LiveVotingJs::getInstance()->api($this, array(ilObjPluginDispatchGUI::class))->addSettings($settings)->name('Voter')->addTranslations($t)->init()->setRunCode();
 
 
-        LiveVotingJs::getInstance()->api($this)->name('SingleVote')->category('QuestionTypes/SingleVote')
-            ->addLibToHeader('jquery.ui.touch-punch.min.js')->init();
+        LiveVotingJs::getInstance()->addLibToHeader('jquery.ui.touch-punch.min.js');
 
         $DIC->ui()->mainTemplate()->addCss("Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/customUI/MultiLineNewInputGUI/css/multi_line_new_input_gui.css");
         $DIC->ui()->mainTemplate()->addJavaScript("Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/customUI/MultiLineNewInputGUI/js/multi_line_new_input_gui.js");
@@ -258,11 +250,6 @@ class LiveVotingPlayerGUI
     public function getHTML(): void
     {
         $template = $this->live_voting->getMode()->getInnerTemplate();
-        if (
-            $this->live_voting->usesNewUI()
-        ) {
-            $template .= '_new';
-        }
 
         $tpl_voting = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.' . $template . '.html', true, true);
         $this->setVotingTemplate($tpl_voting);
@@ -287,22 +274,13 @@ class LiveVotingPlayerGUI
                     break;
                 case LiveVotingPlayer::STAT_RUNNING:
                     $question = $this->getLiveVoting()->getPlayer()->getActiveVotingObject();
-                    if ($this->live_voting->usesNewUI()) {
-                        $this->getVotingTemplate()->setVariable('TITLE', $question->getTitle());
-                        $this->getVotingTemplate()->setVariable('DESCRIPTION', $question->getQuestionForPresentation());
-                    } else {
-                        $this->getVotingTemplate()->setVariable('TITLE', $question->getTitle());
-                    }
+                    $this->getVotingTemplate()->setVariable('TITLE', $question->getTitle());
+                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $question->getQuestionForPresentation());
                     $this->getVotingTemplate()->setVariable('COUNT', (string)$this->getLiveVoting()->countQuestions());
                     $this->getVotingTemplate()->setVariable('POSITION', (string)$this->getLiveVoting()->getQuestionPosition());
                     $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
 
                     $xlvoQuestionTypesGUI = LiveVotingQuestionTypesUI::getInstance($this->getLiveVoting()->getPlayer());
-                    if (!$this->live_voting->usesNewUI() && $xlvoQuestionTypesGUI->isShowQuestion()) {
-                        $this->getVotingTemplate()->setCurrentBlock('question_text');
-                        $this->getVotingTemplate()->setVariable('QUESTION_TEXT', $question->getQuestionForPresentation());
-                        $this->getVotingTemplate()->parseCurrentBlock();
-                    }
                     $this->getVotingTemplate()->setVariable('QUESTION', $xlvoQuestionTypesGUI->getMobileHTML());
                     $this->getVotingTemplate()->setVariable('QTYPE', $question->getQuestionTypeLabel());
                     $this->getVotingTemplate()->setVariable('QTYPE_DISPLAY', 'display');
@@ -324,17 +302,13 @@ class LiveVotingPlayerGUI
                         $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_end'));
                         $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_end'));;
                         $this->getVotingTemplate()->setVariable('GLYPH', '<span class="glyphicon glyphicon-stop"></span>');
-                    } elseif ($this->live_voting->usesNewUI()) {
+                    } else {
                         $this->getVotingTemplate()->setVariable('TITLE', $this->txt('challenge_final_results'));
                         $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('challenge_final_info'));
 
-                        $tpl_final = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Player/tpl.final_results_new.html', true, true);
+                        $tpl_final = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Player/tpl.final_results.html', true, true);
                         LiveVotingDisplayPlayerUI::fillFinalResults($tpl_final, $this->live_voting, false, LiveVotingParticipant::getInstance()->getIdentifier());
                         $this->getVotingTemplate()->setVariable('QUESTION', $tpl_final->get());
-                    } else {
-                        $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_end'));
-                        $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_end'));
-                        $this->getVotingTemplate()->setVariable('QUESTION', $this->getScoreboardHtml());
                     }
 
                     break;
@@ -347,14 +321,7 @@ class LiveVotingPlayerGUI
                     $this->getVotingTemplate()->setVariable('GLYPH', '<span class="glyphicon glyphicon-pause"></span>');
                     break;
                 case LiveVotingPlayer::STAT_SCOREBOARD:
-                    if ($this->live_voting->usesNewUI()) {
-                        $this->renderClosedChallengeQuestion();
-                        break;
-                    }
-
-                    $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_scoreboard'));
-                    $this->getVotingTemplate()->setVariable('QUESTION', $this->getScoreboardHtml());
-
+                    $this->renderClosedChallengeQuestion();
                     break;
 
 
@@ -364,28 +331,8 @@ class LiveVotingPlayerGUI
         }
     }
 
-    private function getScoreboardHtml(): string
-    {
-        $directory = $this->getPluginObject()->getDirectory() . '/templates/default/Voter/';
-        $suffix = $this->live_voting->usesNewUI() ? '_new' : '';
-        $scoreboard = new ilTemplate($directory . 'tpl.scoreboard' . $suffix . '.html', true, false);
-        $points = '';
-
-        foreach (LiveVotingPlayer::getPlayersForScoreboard($this->live_voting->getPlayer()) as $player) {
-            $score = new ilTemplate($directory . 'tpl.scoreboard_score' . $suffix . '.html', true, false);
-            $score->setVariable('PLAYER', htmlspecialchars((string) $player['nickname'], ENT_QUOTES));
-            $score->setVariable('POINTS', $player['points']);
-            $score->setVariable('POINTS_UNIT', $this->txt('scoreboard_points_unit'));
-            $points .= $score->get();
-        }
-
-        $scoreboard->setVariable('POINTS', $points);
-
-        return $scoreboard->get();
-    }
-
     /**
-     * New UI challenge, question closed (countdown over, voting ended by the presenter or everybody answered):
+     * Challenge, question closed (countdown over, voting ended by the presenter or everybody answered):
      * feedback on the voter's own answer, their place and the scoreboard with their row highlighted.
      *
      * @throws LiveVotingException
@@ -414,9 +361,9 @@ class LiveVotingPlayerGUI
             $html .= '<p class="xlvo-own-place">' . sprintf($this->txt('challenge_your_place'), $place, count($players)) . '</p>';
         }
 
-        $tpl_scoreboard = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard_new.html', true, false);
+        $tpl_scoreboard = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard.html', true, false);
         $tpl_scoreboard->setVariable('SCOREBOARD_TITLE', $this->txt('voter_header_scoreboard'));
-        $tpl_scoreboard->setVariable('POINTS', LiveVotingDisplayPlayerUI::renderNewUIScoreboardRows($players, $own_identifier));
+        $tpl_scoreboard->setVariable('POINTS', LiveVotingDisplayPlayerUI::renderScoreboardRows($players, $own_identifier));
         $html .= $tpl_scoreboard->get();
 
         $this->getVotingTemplate()->setVariable('QUESTION', $html);
@@ -475,7 +422,7 @@ class LiveVotingPlayerGUI
         }
 
         // Show nickname form
-        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Voter/tpl.nickname' . ($this->live_voting->usesNewUI() ? '_new' : '') . '.html', true, false);
+        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Voter/tpl.nickname.html', true, false);
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/Voter/pin.css'); // Por ahora usamos el mismo css que el de pin
         $nickname_form = new ilPropertyFormGUI();
         $nickname_form->setFormAction($DIC->ctrl()->getLinkTarget($this, 'requestNickname'));
@@ -604,10 +551,9 @@ class LiveVotingPlayerGUI
             }
         }
 
-        // The new challenge UI needs to know who is connected to close a question once everybody has answered.
-        $is_new_ui_challenge = $this->live_voting->usesNewUI()
-            && $this->live_voting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE;
-        if ($this->live_voting->isShowAttendees() || $is_new_ui_challenge) {
+        // The challenge needs to know who is connected to close a question once everybody has answered.
+        $is_challenge = $this->live_voting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE;
+        if ($this->live_voting->isShowAttendees() || $is_challenge) {
             LiveVotingVoter::register($this->live_voting->getPlayer()->getId());
         }
 

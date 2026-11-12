@@ -521,21 +521,14 @@ class LiveVotingPlayer
 
         if ($this->remainingCountDown() <= 0 && $this->getCountdownStart() > 0) {
             if ($mode->getMode() == LiveVotingMode::CHALLENGE_MODE) {
-                $liveVoting = new LiveVoting($this->obj_id, false);
-
-                if ($liveVoting->isScoreboardAfterEachQuestion()) {
-                    $this->showScoreboard();
-                } else {
-                    $this->nextQuestionCM();
-                }
+                // Every voter gets the feedback and the ranking before the next question.
+                $this->showScoreboard();
             } else {
                 $this->freeze();
             }
         } elseif ($was_running && $mode->getMode() == LiveVotingMode::CHALLENGE_MODE) {
-            // New UI: the question also closes as soon as everybody connected has answered.
-            $liveVoting = new LiveVoting($this->obj_id, false);
-
-            if ($liveVoting->usesNewUI() && $this->haveAllVotersAnswered()) {
+            // The question also closes as soon as everybody connected has answered.
+            if ($this->haveAllVotersAnswered()) {
                 $this->showScoreboard();
             }
         }

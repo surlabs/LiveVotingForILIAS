@@ -67,15 +67,15 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
         //dump($this->player->getButtonStates());exit;
 
         $this->edit_mode = (array_key_exists('btn_categorize', $button_states) && $button_states['btn_categorize'] == 'true');
-        if ($this->isUsingNewUI() && !$this->edit_mode) {
+        if (!$this->edit_mode) {
             return $this->renderAnswerList();
         }
         $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input_results.html', true, true);
-        $tpl->setVariable('RESULTS_CLASS', $this->isUsingNewUI() ? ' xlvo-new-free-text-results' : '');
+        $tpl->setVariable('RESULTS_CLASS', ' xlvo-new-free-text-results');
 
-        $categories = new LiveVotingInputFreeTextCategoriesUI($this->player, $this->edit_mode, $this->isUsingNewUI());
+        $categories = new LiveVotingInputFreeTextCategoriesUI($this->player, $this->edit_mode);
 
-        $bars = new LiveVotingBarGroupingCollectionUI($this->isUsingNewUI());
+        $bars = new LiveVotingBarGroupingCollectionUI();
         $bars->setRemovable($this->edit_mode);
         $bars->setShowTotalVotes(true);
 
@@ -114,7 +114,7 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
     }
 
     /**
-     * New UI: every submission is its own entry, newest first. Repeated answers are not merged or counted.
+     * every submission is its own entry, newest first. Repeated answers are not merged or counted.
      *
      * @throws ilTemplateException
      * @throws LiveVotingException
@@ -122,7 +122,7 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
     protected function renderAnswerList(): string
     {
         $plugin = ilLiveVotingPlugin::getInstance();
-        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input_list_new.html', true, true);
+        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input_list.html', true, true);
 
         $votes = LiveVotingVote::getVotesOfOption($this->player->getActiveVotingObject()->getFirstOption()->getId(), $this->player->getRoundId());
         usort($votes, static fn(LiveVotingVote $a, LiveVotingVote $b): int => $b->getId() <=> $a->getId());

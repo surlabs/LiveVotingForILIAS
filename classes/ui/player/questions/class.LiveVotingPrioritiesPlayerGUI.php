@@ -58,16 +58,12 @@ class LiveVotingPrioritiesPlayerGUI extends LiveVotingCorrectOrderPlayerGUI
     {
         return ilLiveVotingPlugin::getInstance()->getDirectory()
             . '/templates/default/QuestionTypes/Priorities/'
-            . ($this->isUsingNewUI() ? 'tpl.priorities_new.html' : 'tpl.priorities.html');
+            . 'tpl.priorities.html';
     }
 
     protected function decorateFormTemplate(ilTemplate $tpl, bool $has_answered): void
     {
-        if (!$this->isUsingNewUI()) {
-            return;
-        }
-
-        $this->setNewUIFormVariables($tpl, $has_answered, 'voter_hint_priorities', 'voter_submit_ranking');
+        $this->setFormVariables($tpl, $has_answered, 'voter_hint_priorities', 'voter_submit_ranking');
     }
 
 

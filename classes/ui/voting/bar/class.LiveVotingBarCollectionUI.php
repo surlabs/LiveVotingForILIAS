@@ -47,30 +47,15 @@ class LiveVotingBarCollectionUI
      * @var bool
      */
     protected bool $show_total_voters = false;
-    /**
-     * @var bool
-     */
-    protected bool $use_new_ui = false;
     protected int $bar_count = 0;
 
     /**
      * @throws ilSystemStyleException
      * @throws ilTemplateException
      */
-    public function __construct(bool $use_new_ui = false)
+    public function __construct()
     {
-        $this->use_new_ui = $use_new_ui;
-        $template = $use_new_ui ? 'tpl.bar_collection_new.html' : 'tpl.bar_collection.html';
-        $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Bar/' . $template, true, true);
-    }
-
-
-    /**
-     * @return bool
-     */
-    public function isUseNewUI(): bool
-    {
-        return $this->use_new_ui;
+        $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Bar/tpl.bar_collection.html', true, true);
     }
 
     /**
@@ -197,8 +182,7 @@ class LiveVotingBarCollectionUI
         }
         if ($this->isShowTotalVoters()) {
             $this->tpl->setCurrentBlock('total_voters');
-            $voters_key = $this->isUseNewUI() ? 'results_participants' : 'qtype_1_total_voters';
-            $this->tpl->setVariable('TOTAL_VOTERS', ilLiveVotingPlugin::getInstance()->txt($voters_key) . ': ' . $this->getTotalVoters());
+            $this->tpl->setVariable('TOTAL_VOTERS', ilLiveVotingPlugin::getInstance()->txt('results_participants') . ': ' . $this->getTotalVoters());
             $this->tpl->parseCurrentBlock();
         }
     }

@@ -27,7 +27,6 @@ use ilInitialisation;
 use iljQueryUtil;
 use ilLiveVotingPlugin;
 use ilLoggerFactory;
-use ilObject;
 use ilObjectDefinition;
 use ilTemplateException;
 use ilTree;
@@ -35,7 +34,6 @@ use ilUIFramework;
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\player\LiveVotingContextUI;
-use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 
 /**
@@ -216,25 +214,5 @@ class LiveVotingInitialisation extends ilInitialisation
     public static function setContext(int $context): void
     {
         self::$context = $context;
-    }
-
-    /**
-     * @throws LiveVotingException
-     */
-    private static function getLiveVotingStyle(): string
-    {
-        $param_manager = ParamManager::getInstance();
-
-        if (!empty($param_manager->getPin())) {
-            $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
-        } elseif ($param_manager->getRefId()) {
-            $liveVoting = new LiveVoting(ilObject::_lookupObjId($param_manager->getRefId()), false);
-        }
-
-        if (isset($liveVoting)) {
-            return $liveVoting->getVotingStyle();
-        }
-
-        return "classic";
     }
 }

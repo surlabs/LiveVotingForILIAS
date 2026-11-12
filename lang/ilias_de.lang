@@ -327,11 +327,6 @@ seconds_left#:#Verbleibende Sekunden
 single_choice#:#Einzelauswahl
 multiple_choice#:#Multiple Choice
 next#:#Weiter
-styles#:#Stil
-voting_style#:#Abstimmungsstil
-voting_style_info#:#Wählen Sie den Stil der Abstimmung
-voting_style_classic#:#Klassischer Stil
-voting_style_new#:#Neuer Stil
 empty_input_error#:#Es kann keine leeren Optionen geben
 manage_disclaimer_basic_mode#:#Dieses LiveVoting wurde im Modus „Standard“ erstellt.
 manage_disclaimer_challenge_mode#:#Dieses LiveVoting wurde im Modus „Challenge“ erstellt. In diesem Modus sind nur „Single/Multiple Choice“-Fragen möglich.
@@ -388,6 +383,5 @@ qtype_7_share#:#%s % aller Antworten
 qtype_7_remove_word#:#Wort entfernen
 qtype_7_overflow_one#:#%s Antwort passt nicht auf den Bildschirm
 qtype_7_overflow_many#:#%s Antworten passen nicht auf den Bildschirm
-voting_style_word_cloud_blocked#:#Dieses Objekt enthält WordCloud-Fragen, die es nur im neuen Stil gibt. Löschen Sie sie, um zum klassischen Stil zu wechseln.
 qtype_7_one_word_per_answer#:#ein Wort pro Antwort
 qtype_7_results_caption#:#Je häufiger eine Antwort gegeben wird, desto größer erscheint sie

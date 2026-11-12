@@ -56,11 +56,7 @@ class LiveVotingBarPercentageUI implements LiveVotingGeneralBarUI
      */
     protected int $round = 2;
     /**
-     * @var bool
-     */
-    protected bool $use_new_ui = false;
-    /**
-     * 1-based colour slot of the new UI palette. 0 lets the collection assign it by position.
+     * 1-based colour slot of the palette. 0 lets the collection assign it by position.
      */
     protected int $color_index = 0;
     private static int $id_counter = 0;
@@ -83,8 +79,7 @@ class LiveVotingBarPercentageUI implements LiveVotingGeneralBarUI
      */
     public function getHTML(): string
     {
-        $template = $this->isUseNewUI() ? 'tpl.bar_percentage_new.html' : 'tpl.bar_percentage.html';
-        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Bar/' . $template, true, true);
+        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Bar/tpl.bar_percentage.html', true, true);
 
         $tpl->setVariable('TITLE', $this->getTitle());
 
@@ -107,24 +102,20 @@ class LiveVotingBarPercentageUI implements LiveVotingGeneralBarUI
         $tpl->setVariable('MAX', $this->getMaxVotes());
         $tpl->setVariable('PERCENT', $this->getVotes());
         $tpl->setVariable('PERCENT_STYLE', str_replace(',', '.', (string)round($calculated_percentage, 1)));
-        if ($this->isShowInPercent() && $this->isUseNewUI()) {
+        if ($this->isShowInPercent()) {
             $tpl->setVariable(
                 'PERCENT_TEXT',
                 round($this->getVotes(), $this->getRound()) . ' (' . number_format($calculated_percentage, 1, '.', '') . ' %)'
             );
-        } elseif ($this->isShowInPercent()) {
-            $tpl->setVariable('PERCENT_TEXT', round($calculated_percentage, $this->getRound()) . ' %');
         } elseif ($this->getUnit() !== '') {
             $tpl->setVariable('PERCENT_TEXT', round($this->getVotes(), $this->getRound()) . ' ' . $this->getUnit());
         } else {
             $tpl->setVariable('PERCENT_TEXT', round($this->getVotes(), $this->getRound()));
         }
 
-        if ($this->isUseNewUI()) {
-            $tpl->setVariable('COLOR_INDEX', (string) ((max(1, $this->getColorIndex()) - 1) % 8 + 1));
-            // Stable key so the player can animate a bar from its previous width, even when MathJax rewrites the label.
-            $tpl->setVariable('BAR_KEY', md5($this->getTitle()));
-        }
+        $tpl->setVariable('COLOR_INDEX', (string) ((max(1, $this->getColorIndex()) - 1) % 8 + 1));
+        // Stable key so the player can animate a bar from its previous width, even when MathJax rewrites the label.
+        $tpl->setVariable('BAR_KEY', md5($this->getTitle()));
 
         return $tpl->get();
     }
@@ -255,23 +246,6 @@ class LiveVotingBarPercentageUI implements LiveVotingGeneralBarUI
         $this->round = $round;
     }
 
-
-    /**
-     * @return bool
-     */
-    public function isUseNewUI(): bool
-    {
-        return $this->use_new_ui;
-    }
-
-
-    /**
-     * @param bool $use_new_ui
-     */
-    public function setUseNewUI(bool $use_new_ui)
-    {
-        $this->use_new_ui = $use_new_ui;
-    }
 
     public function getColorIndex(): int
     {

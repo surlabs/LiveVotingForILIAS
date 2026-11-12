@@ -59,7 +59,6 @@ use ilLoggerFactory;
 use ilMailMimeSenderFactory;
 use ilMailMimeTransportFactory;
 use ilNavigationHistory;
-use ilObject;
 use ilObjectDataCache;
 use ilObjectDefinition;
 use ilRbacReview;
@@ -550,26 +549,6 @@ class LiveVotingInitialisationUI
     {
         $ilErr = new ilErrorHandling();
         $this->makeGlobal("ilErr", $ilErr);
-    }
-
-    /**
-     * @throws LiveVotingException
-     */
-    private static function getLiveVotingStyle(): string
-    {
-        $param_manager = ParamManager::getInstance();
-
-        if (!empty($param_manager->getPin())) {
-            $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
-        } elseif (!empty($param_manager->getRefId())) {
-            $liveVoting = new LiveVoting(ilObject::_lookupObjId($param_manager->getRefId()), false);
-        }
-
-        if (isset($liveVoting)) {
-            return $liveVoting->getVotingStyle();
-        }
-
-        return "classic";
     }
 
     /**

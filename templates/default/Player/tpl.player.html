@@ -1,40 +1,38 @@
-<div class="xlvo-display-player-content">
-	<div class="panel-heading clearfix" id="xlvo-player-header">
-		<h1 class="panel-title pull-left" id="xlvo-question-title">{TITLE}</h1>
-		<!-- BEGIN attendees -->
-		<h1 class="panel-title pull-right"><span id="xlvo-attendees" class="label label-default">{ONLINE_TEXT}</span></h1>
-		<!-- END attendees -->
-		<!-- BEGIN voters -->
-		<h1 class="panel-title pull-right"><span id="xlvo-votes" class="label label-default">{VOTERS_TEXT}</span></h1>
-		<!-- END voters -->
-		<!-- BEGIN pin -->
-		<h1 class="panel-title pull-right">
-			<strong class="label label-default zoom-action" modal-signal="QRModal"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>&nbsp;{PIN}</strong>
-		</h1>
-		<!-- END pin -->
-		<!-- BEGIN position -->
-		<h1 class="panel-title pull-right"><span class="label label-default">{POSITION}/{COUNT}</span></h1>
-		<!-- END position -->
-		<!-- BEGIN countdown -->
-		<h1 class="panel-title pull-right"><span id="xlvo-countdown" class="label label-cd-{COUNTDOWN_CSS}">{COUNTDOWN}</span></h1>
-		<!-- END countdown -->
-	</div>
+<div class="xlvo-display-player-content xlvo-new-ui">
+	<header class="panel-heading xlvo-results-header" id="xlvo-player-header">
+		<div class="xlvo-results-question-box">
+			<h1 class="panel-title" id="xlvo-question-title">{TITLE}</h1>
+			<div class="xlvo-question">{QUESTION}</div>
+			<p class="xlvo-results-type">{QUESTION_TYPE}</p>
+		</div>
+		<div class="xlvo-results-meta">
+			{STATS}
+			<!-- BEGIN pin -->
+			<strong class="xlvo-results-meta-badge zoom-action" modal-signal="QRModal"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>&nbsp;{PIN}</strong>
+			<!-- END pin -->
+			<!-- BEGIN position -->
+			<span class="xlvo-results-meta-badge">{POSITION}/{COUNT}</span>
+			<!-- END position -->
+			<!-- BEGIN attendees -->
+			<span id="xlvo-attendees" class="xlvo-results-meta-badge">{ONLINE_TEXT}</span>
+			<!-- END attendees -->
+			<!-- BEGIN voters -->
+			<span id="xlvo-votes" class="xlvo-results-meta-badge">{VOTERS_TEXT}</span>
+			<!-- END voters -->
+			<!-- BEGIN countdown -->
+			<span id="xlvo-countdown" class="xlvo-results-meta-badge label-cd-{COUNTDOWN_CSS}">{COUNTDOWN}</span>
+			<!-- END countdown -->
+		</div>
+	</header>
 	<div class="panel-body">
-		<div class="well xlvo-question">{QUESTION}</div>
 		<div class="row" id="xlvo-display-options">
 			<!-- BEGIN option -->
-			<div class="col-md-{OPTION_COL} xlvo-option_col">
-				<div class="xlvo-option"><span class="label label-primary xlvo-option_letter">{OPTION_LETTER}</span> <span class="xlvo-option_text">{OPTION_TEXT}</span></div>
-			</div>
+			<div class="col-md-{OPTION_COL} xlvo-option_col"><div class="xlvo-option"><span class="label label-primary xlvo-option_letter">{OPTION_LETTER}</span> <span class="xlvo-option_text">{OPTION_TEXT}</span></div></div>
 			<!-- END option -->
 			<!-- BEGIN option2 -->
-			<div class="col-md-{OPTION_COL}">
-				<div><span class="label label-primary">{OPTION_LETTER}</span> <span>{OPTION_TEXT}</span></div>
-			</div>
+			<div class="col-md-{OPTION_COL}"><div><span class="label label-primary">{OPTION_LETTER}</span> <span>{OPTION_TEXT}</span></div></div>
 			<!-- END option2 -->
 		</div>
-		<div class="row" id="xlvo-display-results">
-			{OPTION_CONTENT}
-		</div>
+		<div class="row" id="xlvo-display-results">{OPTION_CONTENT}</div>
 	</div>
 </div>

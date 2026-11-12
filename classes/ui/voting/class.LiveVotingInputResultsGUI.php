@@ -59,16 +59,6 @@ abstract class LiveVotingInputResultsGUI
     /**
      * @throws LiveVotingException
      */
-    protected function isUsingNewUI(): bool
-    {
-        $live_voting = new LiveVoting($this->player->getObjId(), false);
-
-        return $live_voting->usesNewUI();
-    }
-
-    /**
-     * @throws LiveVotingException
-     */
     public function reset(): void
     {
         $database = new LiveVotingDatabase();

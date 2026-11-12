@@ -1,55 +1,12 @@
-<style>
-	.flex{
-		display: flex;
-	}
-
-	.flex-column{
-		flex-direction: column;
-	}
-
-	.w-100{
-		width: 100%;
-	}
-
-	.gap-2{
-		gap: 0.5rem;
-	}
-
-	.shrink-0{
-		flex-shrink: 0;
-	}
-
-	.text-success{
-		color: #289346;
-	}
-
-	.items-center{
-		align-items: center;
-	}
-
-	.points{
-		font-size: 1.5rem;
-	}
-
-	.score{
-		padding: 0.5rem 1rem;
-		border: 1px solid #e9ecef;
-		border-radius: 0.25rem;
-		background-color:#e1e1e1;
-	}
-
-	.score h3{
-		font-size: 1.5rem;
-		margin:0;
-	}
-
-
-</style>
-<div class="flex flex-column gap-2">
-	{POINTS}
-</div>
-<br/>
-<br/>
-<div class="row" id="xlvo-display-results">
-	{OPTION_CONTENT}
+<div class="xlvo-new-ui xlvo-scoreboard-panel">
+	<header class="panel-heading xlvo-scoreboard-header">
+		<h1 class="panel-title">{SCOREBOARD_TITLE}</h1>
+	</header>
+	<div class="panel-body">
+		<ol class="xlvo-scoreboard">
+			{POINTS}
+		</ol>
+		<h2 class="xlvo-scoreboard-results-title">{RESULTS_TITLE}</h2>
+		<div class="row" id="xlvo-display-results">{OPTION_CONTENT}</div>
+	</div>
 </div>

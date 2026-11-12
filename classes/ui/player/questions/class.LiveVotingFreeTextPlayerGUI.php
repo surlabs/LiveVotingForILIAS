@@ -22,14 +22,12 @@ declare(strict_types=1);
 
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\QuestionTypes\LiveVotingWordCloudQuestion;
-use LiveVoting\UI\Player\CustomUI\HiddenInputGUI\HiddenInputGUI;
 use LiveVoting\UI\Player\CustomUI\MultiLineNewInputGUI;
 use LiveVoting\UI\Player\CustomUI\TextAreaInputGUI\TextAreaInputGUI;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\LiveVotingUtils;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
-use LiveVoting\votings\LiveVotingVote;
 
 
 /**
@@ -124,35 +122,6 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function getMobileHTML(): string
     {
-        if ($this->isUsingNewUI()) {
-            return $this->getNewUIHTML();
-        }
-
-        $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input.html', true, true);
-        $this->render();
-
-        if ($this->isUsingNewUI()) {
-            $is_multi_input = $this->player->getActiveVotingObject()->isMultiFreeInput();
-            if ($is_multi_input) {
-                $this->tpl->setVariable(
-                    'VOTER_HINT',
-                    ilLiveVotingPlugin::getInstance()->txt('qtype_2_multi_free_input_info')
-                );
-            }
-        }
-
-        return $this->tpl->get() . LiveVotingJs::getInstance()->name('FreeInput')->category('QuestionTypes')->getRunCode();
-    }
-
-    /**
-     * New UI: one field per answer. Enter opens the next field (multi input), and the form posts the same fields as
-     * the classic widget, so submit() is shared. After submitting, the answers stay visible but locked.
-     *
-     * @throws LiveVotingException
-     * @throws ilTemplateException
-     */
-    protected function getNewUIHTML(): string
-    {
         global $DIC;
 
         $plugin = ilLiveVotingPlugin::getInstance();
@@ -177,7 +146,7 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
             $answers[] = ['text' => '', 'vote_id' => ''];
         }
 
-        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input_new.html', true, true);
+        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input.html', true, true);
         foreach ($answers as $index => $answer) {
             $field_id = 'xlvo_free_text_' . $index;
             $name = $is_multi ? 'vote_multi_line_input[' . $index . '][free_input]' : 'free_input';
@@ -235,13 +204,6 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         return '<div class="col-md-12 xlvo-free-input xlvo-free-input-new">' . $tpl->get() . '</div>';
     }
 
-    private function isUsingNewUI(): bool
-    {
-        $live_voting = new LiveVoting($this->player->getObjId(), false);
-
-        return $live_voting->usesNewUI();
-    }
-
 
     /**
      * @param string $a_title
@@ -266,113 +228,6 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         }
 
         return $input_gui;
-    }
-
-
-    /**
-     * @return ilPropertyFormGUI
-     * @throws LiveVotingException
-     * @throws ilCtrlException
-     */
-    protected function getForm(): ilPropertyFormGUI
-    {
-        if ($this->player->getActiveVotingObject()->isMultiFreeInput()) {
-            return $this->getMultiForm();
-        } else {
-            return $this->getSingleForm();
-        }
-    }
-
-
-    /**
-     * @return ilPropertyFormGUI
-     * @throws LiveVotingException
-     * @throws ilCtrlException
-     */
-    protected function getSingleForm(): ilPropertyFormGUI
-    {
-        global $DIC;
-        $form = new ilPropertyFormGUI();
-        $form->setFormAction($DIC->ctrl()->getFormAction($this));
-        $form->setId('xlvo_free_input');
-
-        $votes = array_values($this->player->getVotesOfUser(true));
-        $vote = array_shift($votes);
-
-        $an = $this->getTextInputGUI(ilLiveVotingPlugin::getInstance()->txt('qtype_2_input'), 'free_input');
-        $hi2 = new HiddenInputGUI('vote_id');
-
-        if ($vote instanceof LiveVotingVote) {
-            if ($vote->isActive()) {
-                $an->setValue($vote->getFreeInput());
-
-                // Same confirmation the multi-input variant shows, so the voter knows the answer was stored.
-                $saved = new ilNonEditableValueGUI();
-                $saved->setValue(ilLiveVotingPlugin::getInstance()->txt('qtype_2_your_input'));
-                $form->addItem($saved);
-            }
-            $hi2->setValue((string)$vote->getId());
-            //$form->addCommandButton(self::CMD_CLEAR, $this->txt(self::CMD_CLEAR));
-        }
-
-        $form->addItem($an);
-        $form->addItem($hi2);
-        $form->addCommandButton('submit', ilLiveVotingPlugin::getInstance()->txt('qtype_2_send'));
-
-        return $form;
-    }
-
-
-    /**
-     * @return ilPropertyFormGUI
-     * @throws LiveVotingException
-     * @throws ilCtrlException
-     */
-    protected function getMultiForm(): ilPropertyFormGUI
-    {
-        global $DIC;
-        $form = new ilPropertyFormGUI();
-        $gui = new LiveVotingPlayerGUI();
-        $form->setFormAction($DIC->ctrl()->getFormAction($this));
-
-        $xlvoVotes = $this->player->getVotesOfUser();
-        if (count($xlvoVotes) > 0) {
-            $te = new ilNonEditableValueGUI();
-            $te->setValue(ilLiveVotingPlugin::getInstance()->txt('qtype_2_your_input'));
-            $form->addItem($te);
-            //$form->addCommandButton(self::CMD_CLEAR, $this->txt('delete_all'));
-        }
-
-        $mli = new MultiLineNewInputGUI(ilLiveVotingPlugin::getInstance()->txt('qtype_2_answers'), 'vote_multi_line_input');
-        $mli->setShowInputLabel(MultiLineNewInputGUI::SHOW_INPUT_LABEL_NONE);
-        $te = $this->getTextInputGUI(ilLiveVotingPlugin::getInstance()->txt('qtype_2_text'), 'free_input');
-
-        $hi2 = new HiddenInputGUI('vote_id');
-        $mli->addInput($te);
-        $mli->addInput($hi2);
-
-        $form->addItem($mli);
-        $array = array();
-
-        foreach ($xlvoVotes as $xlvoVote) {
-            $array[] = array(
-                'free_input' => $xlvoVote->getFreeInput(),
-                'vote_id' => $xlvoVote->getId(),
-            );
-        }
-
-        if (empty($array)) {
-            // Without a seeded line the widget only renders a bare "+" glyph and the voter has no field to type in.
-            $array[] = array(
-                'free_input' => '',
-                'vote_id' => '',
-            );
-        }
-
-        $form->setValuesByArray(array('vote_multi_line_input' => $array));
-        $form->addCommandButton('submit', ilLiveVotingPlugin::getInstance()->txt('qtype_2_send'));
-
-        return $form;
     }
 
 
@@ -412,14 +267,4 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
     }
 
 
-    /**
-     *
-     * @throws LiveVotingException|ilCtrlException
-     */
-    protected function render()
-    {
-        $form = $this->getForm();
-
-        $this->tpl->setVariable('FREE_INPUT_FORM', $form->getHTML());
-    }
 }

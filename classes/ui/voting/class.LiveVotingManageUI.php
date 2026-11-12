@@ -98,10 +98,7 @@ class LiveVotingManageUI
             $buttons[] = $button4;
             $buttons[] = $button5;
 
-            // The word cloud only exists in the new UI.
-            if ($parent->getObject()->getLiveVoting()->usesNewUI()) {
-                $buttons[] = $f->button()->bulky($glyph, '<div style="margin-left:10px">' . $this->plugin->txt("voting_type_7") . ' <br/><small><muted>' . $this->plugin->txt("voting_type_7_info") . '</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedWordCloud'));
-            }
+            $buttons[] = $f->button()->bulky($glyph, '<div style="margin-left:10px">' . $this->plugin->txt("voting_type_7") . ' <br/><small><muted>' . $this->plugin->txt("voting_type_7_info") . '</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedWordCloud'));
         }
 
         $items = [

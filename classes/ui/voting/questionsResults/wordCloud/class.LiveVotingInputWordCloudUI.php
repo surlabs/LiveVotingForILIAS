@@ -89,7 +89,7 @@ class LiveVotingInputWordCloudUI extends LiveVotingInputResultsGUI
     public function getHTML(): string
     {
         $plugin = ilLiveVotingPlugin::getInstance();
-        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/WordCloud/tpl.word_cloud_results_new.html', true, true);
+        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/WordCloud/tpl.word_cloud_results.html', true, true);
 
         $votes = LiveVotingVote::getVotesOfOption($this->player->getActiveVotingObject()->getFirstOption()->getId(), $this->player->getRoundId());
         $words = self::groupWords($votes);

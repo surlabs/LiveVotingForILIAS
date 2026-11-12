@@ -23,7 +23,6 @@ declare(strict_types=1);
 use LiveVoting\objects\modes\LiveVotingMode;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
-use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingParticipant;
@@ -152,7 +151,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
      * @throws ilSystemStyleException
      */
     /**
-     * New UI: the voter selects and then submits the whole selection at once. Votes for options that are no longer
+     * the voter selects and then submits the whole selection at once. Votes for options that are no longer
      * selected are withdrawn, so "Change Answer" followed by a new submit replaces the previous answer.
      *
      * @throws LiveVotingException
@@ -206,14 +205,14 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
      * @throws LiveVotingException
      * @throws ilTemplateException
      */
-    protected function getNewUIHTML(): string
+    protected function getVoterFormHTML(): string
     {
         global $DIC;
 
         $plugin = ilLiveVotingPlugin::getInstance();
         $question = $this->getPlayer()->getActiveVotingObject();
         $is_multi = $question->isMultiSelection();
-        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/SingleVote/tpl.single_vote_new.html', true, true);
+        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/SingleVote/tpl.single_vote.html', true, true);
 
         $has_answered = false;
         foreach ($question->getOptions() as $option) {
@@ -251,7 +250,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
     }
 
     /**
-     * New UI challenge, once the question is closed: the voter's own answer with the inputs kept, the chosen options
+     * Challenge, once the question is closed: the voter's own answer with the inputs kept, the chosen options
      * in green (correct) or red (wrong) and the correct ones marked. A voter who did not answer in time gets the
      * options without any feedback.
      *
@@ -263,7 +262,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         $plugin = ilLiveVotingPlugin::getInstance();
         $question = $this->getPlayer()->getActiveVotingObject();
         $is_multi = $question->isMultiSelection();
-        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/SingleVote/tpl.single_vote_new.html', true, true);
+        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/SingleVote/tpl.single_vote.html', true, true);
 
         $options = $question->getOptions();
         $chosen = [];
@@ -341,34 +340,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
 
     public function getMobileHTML(): string
     {
-        global $DIC;
-
-        $live_voting = new LiveVoting($this->player->getObjId(), false);
-        if ($live_voting->usesNewUI()) {
-            return $this->getNewUIHTML();
-        }
-        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/SingleVote/tpl.single_vote.html', false, true);
-        $answer_count = 64;
-        foreach ($this->getPlayer()->getActiveVotingObject()->getOptions() as $xlvoOption) {
-            $answer_count++;
-            $DIC->ctrl()->setParameter($this, 'option_id', $xlvoOption->getId());
-            $tpl->setCurrentBlock('option');
-            $tpl->setVariable('TITLE', $xlvoOption->getTextForPresentation());
-            $tpl->setVariable('LINK', $DIC->ctrl()->getLinkTarget($this, 'submit'));
-            $tpl->setVariable('OPTION_LETTER', chr($answer_count));
-            $tpl->setVariable('TYPE', $this->getPlayer()->getActiveVotingObject()->isMultiSelection() ? 'checkbox' : 'radio');
-            if ($this->player->hasUserVotedForOption($xlvoOption->getId())) {
-                $tpl->setVariable('BUTTON_STATE', 'btn-primary');
-                $tpl->setVariable('CHECKBOX', 'checked');
-                $tpl->setVariable('ACTION', ilLiveVotingPlugin::getInstance()->txt('qtype_1_unvote'));
-            } else {
-                $tpl->setVariable('BUTTON_STATE', 'btn-default');
-                $tpl->setVariable('ACTION', ilLiveVotingPlugin::getInstance()->txt('qtype_1_vote'));
-            }
-            $tpl->parseCurrentBlock();
-        }
-
-        return $tpl->get() . LiveVotingJs::getInstance()->name('SingleVote')->category('QuestionTypes/SingleVote')->getRunCode();
+        return $this->getVoterFormHTML();
     }
 
     /**

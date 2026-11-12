@@ -26,7 +26,7 @@ use ilLiveVotingPlugin;
  * Class LiveVotingWordCloudQuestion
  *
  * A free text question whose answers are single words, shown as a word cloud. Every voter can hand in several
- * words, one per field, and the answers are stored as free text votes. Only available in the new UI.
+ * words, one per field, and the answers are stored as free text votes.
  *
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */

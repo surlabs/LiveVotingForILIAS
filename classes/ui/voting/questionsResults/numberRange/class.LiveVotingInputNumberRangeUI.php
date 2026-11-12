@@ -31,7 +31,6 @@ use LiveVoting\UI\Voting\Bar\LiveVotingBarCollectionUI;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarFreeTextUI;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarGroupingCollectionUI;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarInfoGUI;
-use LiveVoting\UI\Voting\Bar\LiveVotingBarPercentageUI;
 use LiveVoting\votings\LiveVotingVote;
 
 /**
@@ -59,7 +58,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
     {
         switch ($this->player->getActiveVotingObject()->getAltResultDisplayMode()) {
             case self::DISPLAY_MODE_BARS:
-                return $this->isUsingNewUI() ? $this->renderHistogramResult() : $this->renderBarResult();
+                return $this->renderHistogramResult();
             case self::DISPLAY_MODE_GROUPED_TEXT_EXTENDED:
                 return $this->renderGroupedTextResultWithInfo();
             case self::DISPLAY_MODE_GROUPED_TEXT:
@@ -69,30 +68,6 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
     }
 
 
-    /**
-     * Render 5 horizontal bars which display the distribution of the answers.
-     *
-     * @return string The rendered result page.
-     * @throws ilTemplateException|LiveVotingException
-     */
-    private function renderBarResult(): string
-    {
-        $values = $this->getAllVoteValues();
-
-        $bars = new LiveVotingBarCollectionUI($this->isUsingNewUI());
-        $voteSum = array_sum($values);
-
-        foreach ($values as $key => $value) {
-            $bar = new LiveVotingBarPercentageUI();
-            $bar->setUseNewUI($this->isUsingNewUI());
-            $bar->setMaxVotes($voteSum);
-            $bar->setVotes((int)$value);
-            $bar->setTitle($key);
-            $bars->addBar($bar);
-        }
-
-        return $bars->getHTML();
-    }
 
 
     /**
@@ -101,7 +76,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
      * @throws ilTemplateException|ilException
      */
     /**
-     * New UI bars mode: vertical histogram with Participants, Mean and Median.
+     * Bars mode: vertical histogram with Participants, Mean and Median.
      * Small scales (up to MAX_HISTOGRAM_BARS distinct values, e.g. a 1-5 Likert) get one bar per value;
      * larger ranges are grouped into about TARGET_HISTOGRAM_BINS intervals of a round width (0-199, not 0-166).
      *
@@ -151,7 +126,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
             $bins[$index]['count']++;
         }
 
-        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/NumberRange/tpl.number_range_histogram_new.html', true, true);
+        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/NumberRange/tpl.number_range_histogram.html', true, true);
         $participants = count($values);
         $mean = $participants > 0 ? round(array_sum($values) / $participants, 1) : null;
         $median = null;
@@ -253,7 +228,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
             }
         };
 
-        $info = new LiveVotingBarCollectionUI($this->isUsingNewUI());
+        $info = new LiveVotingBarCollectionUI();
         $value = $vote_count > 0 ? round($vote_sum / $vote_count, 2) : 0;
         $mean = new LiveVotingBarInfoGUI(ilLiveVotingPlugin::getInstance()->txt("qtype_6_mean"), (string)$value);
         $mean->setBig(true);
@@ -286,7 +261,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
      */
     private function renderGroupedTextResult(): string
     {
-        $bars = new LiveVotingBarGroupingCollectionUI($this->isUsingNewUI());
+        $bars = new LiveVotingBarGroupingCollectionUI();
         //$bars->sorted(true);
         $votes = LiveVotingVote::getVotesOfQuestion($this->player->getActiveVoting(), $this->player->getRoundId());
         usort($votes, function (LiveVotingVote $v1, LiveVotingVote $v2) {
@@ -296,7 +271,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
             $bar = new LiveVotingBarFreeTextUI($value);
             $bar->setBig(true);
             $bar->setCenter(true);
-            $bar->setAlwaysShowCount($this->isUsingNewUI());
+            $bar->setAlwaysShowCount(true);
             $bars->addBar($bar);
         }
 

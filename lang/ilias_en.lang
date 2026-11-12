@@ -327,11 +327,6 @@ seconds_left#:#Seconds left
 single_choice#:#Single Choice
 multiple_choice#:#Multiple Choice
 next#:#Next
-styles#:#Styles
-voting_style#:#Voting Style
-voting_style_info#:#Select the style of the voting
-voting_style_classic#:#Classic style
-voting_style_new#:#New style
 empty_input_error#:#There cannot be empty options
 manage_disclaimer_basic_mode#:#This LiveVoting was created in "Standard" mode
 manage_disclaimer_challenge_mode#:#This LiveVoting was created in "Challenge" mode. In this mode, only "Single/Multiple Choice" questions are possible.
@@ -388,6 +383,5 @@ qtype_7_share#:#%s % of all answers
 qtype_7_remove_word#:#Remove word
 qtype_7_overflow_one#:#%s answer does not fit on screen
 qtype_7_overflow_many#:#%s answers do not fit on screen
-voting_style_word_cloud_blocked#:#This object has WordCloud questions, which only exist in the new style. Delete them to switch to the classic style.
 qtype_7_one_word_per_answer#:#one word per answer
 qtype_7_results_caption#:#The more often an answer is given, the larger it appears

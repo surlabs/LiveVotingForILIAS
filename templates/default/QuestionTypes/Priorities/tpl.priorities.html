@@ -1,5 +1,8 @@
-<form id="{FORM_ID}" action="{ACTION}" method="post">
+<form id="{FORM_ID}" class="xlvo-answer-form{FORM_CLASS}" action="{ACTION}" method="post" data-xlvo-submit-text="{SUBMIT_TEXT}">
+	<p class="xlvo-voter-type-hint">{VOTER_HINT}</p>
 	{CONTENT}
-	<input type="submit" class="btn btn-default" name="cmd[clear]" value="{BTN_RESET}" {BTN_RESET_DISABLED}/>
-	<input type="submit" class="btn btn-default" name="cmd[submit]" value="{BTN_SAVE}"/>
+	<div class="xlvo-answer-buttons">
+		<button type="submit" name="cmd[submit]" value="submit" class="xlvo-submit-btn" {SUBMIT_DISABLED}>{SUBMIT_LABEL}</button>
+		<button type="button" class="xlvo-change-answer-btn" {CHANGE_DISABLED}>{CHANGE_TEXT}</button>
+	</div>
 </form>

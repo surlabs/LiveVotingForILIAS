@@ -1,24 +1,16 @@
-<br>
-<div id="bars" class="bars">
+<div class="xlvo-bar-stats">
+	<!-- BEGIN total_votes -->
+	<span class="xlvo-bar-stat-badge">{TOTAL_VOTES}</span>
+	<!-- END total_votes -->
+	<!-- BEGIN total_voters -->
+	<span class="xlvo-bar-stat-badge xlvo-bar-stat-badge-alt">{TOTAL_VOTERS}</span>
+	<!-- END total_voters -->
+</div>
+<div class="xlvo-bars">
 	<!-- BEGIN bar -->
-	<div class="col-md-12">
-		{BAR}
-	</div>
+	{BAR}
 	<!-- END bar -->
 </div>
-<!-- BEGIN total_votes -->
-<div style="clear: both"></div>
-<div class="panel-body">
-	<p>{TOTAL_VOTES}</p>
-</div>
-<!-- END total_votes -->
-<!-- BEGIN total_voters -->
-<div class="panel-body">
-	<p>{TOTAL_VOTERS}</p>
-</div>
-<!-- END total_voters -->
 <!-- BEGIN solution -->
-<div class="panel-body">
-	{SOLUTION}
-</div>
+<div class="xlvo-bar-solution">{SOLUTION}</div>
 <!-- END solution -->

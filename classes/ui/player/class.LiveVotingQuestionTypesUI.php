@@ -20,7 +20,6 @@ declare(strict_types=1);
  */
 
 use LiveVoting\platform\LiveVotingException;
-use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
 
 /**
@@ -171,24 +170,13 @@ abstract class LiveVotingQuestionTypesUI
     {
         global $DIC;
 
-        if ($this->isNewUIAsyncRequest()) {
+        if (filter_input(INPUT_POST, 'xlvo_new_ui_async', FILTER_VALIDATE_BOOLEAN) === true) {
             header('Content-Type: application/json');
             echo json_encode(['ok' => true]);
             exit();
         }
 
         $DIC->ctrl()->redirect(new LiveVotingPlayerGUI, 'startVoterPlayer');
-    }
-
-    private function isNewUIAsyncRequest(): bool
-    {
-        if (filter_input(INPUT_POST, 'xlvo_new_ui_async', FILTER_VALIDATE_BOOLEAN) !== true) {
-            return false;
-        }
-
-        $live_voting = new LiveVoting($this->player->getObjId(), false);
-
-        return $live_voting->usesNewUI();
     }
 
 

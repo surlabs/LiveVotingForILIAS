@@ -95,27 +95,17 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
     }
 
     /**
-     * @return string
-     * @throws ilCtrlException|ilTemplateException
-     * @throws LiveVotingException
-     * @throws ilSystemStyleException
-     */
-    /**
-     * Hook for subclasses that need extra variables in their form template.
+     * Hook for subclasses that need other texts in their form template.
      */
     protected function decorateFormTemplate(ilTemplate $tpl, bool $has_answered): void
     {
-        if (!$this->isUsingNewUI()) {
-            return;
-        }
-
-        $this->setNewUIFormVariables($tpl, $has_answered, 'voter_hint_correct_order', 'voter_submit_order');
+        $this->setFormVariables($tpl, $has_answered, 'voter_hint_correct_order', 'voter_submit_order');
     }
 
     /**
-     * New UI: the order is locked after submitting until the voter presses "Change Answer".
+     * The order is locked after submitting until the voter presses "Change Answer".
      */
-    protected function setNewUIFormVariables(ilTemplate $tpl, bool $has_answered, string $hint_key, string $submit_key): void
+    protected function setFormVariables(ilTemplate $tpl, bool $has_answered, string $hint_key, string $submit_key): void
     {
         $plugin = ilLiveVotingPlugin::getInstance();
         $tpl->setVariable('FORM_CLASS', $has_answered ? ' is-locked' : '');
@@ -125,16 +115,6 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         $tpl->setVariable('SUBMIT_DISABLED', $has_answered ? 'disabled' : '');
         $tpl->setVariable('CHANGE_TEXT', $plugin->txt('voter_change_answer'));
         $tpl->setVariable('CHANGE_DISABLED', $has_answered ? '' : 'disabled');
-    }
-
-    /**
-     * @throws LiveVotingException
-     */
-    protected function isUsingNewUI(): bool
-    {
-        $live_voting = new LiveVoting($this->player->getObjId(), false);
-
-        return $live_voting->usesNewUI();
     }
 
     protected function getFormContent(): string
@@ -190,7 +170,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
     {
         return ilLiveVotingPlugin::getInstance()->getDirectory()
             . '/templates/default/QuestionTypes/FreeOrder/'
-            . ($this->isUsingNewUI() ? 'tpl.correct_order_new.html' : 'tpl.free_order.html');
+            . 'tpl.correct_order.html';
     }
 
 

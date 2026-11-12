@@ -843,3 +843,13 @@ if ($db->tableExists("rep_robj_xlvo_player_n")) {
     $db->manipulate("UPDATE rep_robj_xlvo_player_n SET button_states = '[]' WHERE button_states IS NULL");
 }
 ?>
+<#49>
+<?php
+global $DIC;
+$db = $DIC->database();
+
+// The classic UI is gone: every object uses the same UI, so the per object choice is not stored anymore.
+if ($db->tableColumnExists("rep_robj_xlvo_config_n", "voting_style")) {
+    $db->dropTableColumn("rep_robj_xlvo_config_n", "voting_style");
+}
+?>

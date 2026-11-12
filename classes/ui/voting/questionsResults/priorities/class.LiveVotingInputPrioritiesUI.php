@@ -40,12 +40,10 @@ class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
      */
     public function getHTML(): string
     {
-        $bars = new LiveVotingBarCollectionUI($this->isUsingNewUI());
+        $bars = new LiveVotingBarCollectionUI();
         $total_voters = LiveVotingVote::countVoters($this->player->getActiveVoting(), $this->player->getRoundId());
         $bars->setTotalVoters($total_voters);
-        $bars->setShowTotalVoters($this->isUsingNewUI());
-        $bars->setTotalVotes($total_voters);
-        $bars->setShowTotalVotes(!$this->isUsingNewUI());
+        $bars->setShowTotalVoters(true);
 
         $option_amount = count($this->player->getActiveVotingObject()->getOptions());
         $option_weight = array();
@@ -64,15 +62,13 @@ class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
             }
         }
 
-        // The new UI scales every bar against the current leader, so the ranking reads at a glance.
-        $possible_max = $this->isUsingNewUI() ? (int) max(1, max($option_weight ?: [0])) : $option_amount;
+        // Every bar is scaled against the current leader, so the ranking reads at a glance.
+        $possible_max = (int) max(1, max($option_weight ?: [0]));
         $color_slots = array();
         foreach ($this->player->getActiveVotingObject()->getOptions() as $option) {
             $color_slots[$option->getId()] = count($color_slots) + 1;
         }
-        // Sort button if selected
-        if (($this->isUsingNewUI() || $this->isShowCorrectOrder())
-            && LiveVotingVote::hasVotes($this->player->getActiveVoting(), $this->player->getRoundId())) {
+        if (LiveVotingVote::hasVotes($this->player->getActiveVoting(), $this->player->getRoundId())) {
             $unsorted_options = $this->player->getActiveVotingObject()->getOptions();
             $options = array();
             arsort($option_weight);
@@ -91,31 +87,20 @@ class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
         // Add bars
         foreach ($options as $xlvoOption) {
             $xlvoBarPercentageGUI = new LiveVotingBarPercentageUI();
-            $xlvoBarPercentageGUI->setUseNewUI($this->isUsingNewUI());
-            if ($this->isUsingNewUI()) {
-                // Keep each option's colour while the bars re-sort.
-                $xlvoBarPercentageGUI->setColorIndex($color_slots[$xlvoOption->getId()] ?? 0);
-                $xlvoBarPercentageGUI->setUnit(ilLiveVotingPlugin::getInstance()->txt('qtype_5_points_short'));
-            }
+            // Keep each option's colour while the bars re-sort.
+            $xlvoBarPercentageGUI->setColorIndex($color_slots[$xlvoOption->getId()] ?? 0);
+            $xlvoBarPercentageGUI->setUnit(ilLiveVotingPlugin::getInstance()->txt('qtype_5_points_short'));
             $xlvoBarPercentageGUI->setRound(2);
             $xlvoBarPercentageGUI->setShowInPercent(false);
             $xlvoBarPercentageGUI->setMaxVotes($possible_max);
             $xlvoBarPercentageGUI->setTitle($xlvoOption->getTextForPresentation());
-            if ($total_voters == 0) {
-                $xlvoBarPercentageGUI->setVotes($total_voters);
-            } elseif ($this->isUsingNewUI()) {
-                $xlvoBarPercentageGUI->setVotes($option_weight[$xlvoOption->getId()]);
-            } else {
-                $xlvoBarPercentageGUI->setVotes(($option_weight[$xlvoOption->getId()] / $total_voters));
-            }
+            $xlvoBarPercentageGUI->setVotes($total_voters == 0 ? 0 : $option_weight[$xlvoOption->getId()]);
             $xlvoBarPercentageGUI->setOptionLetter($xlvoOption->getCipher());
 
             $bars->addBar($xlvoBarPercentageGUI);
         }
 
-        $html = $bars->getHTML();
-
-        return $this->isUsingNewUI() ? '<div class="xlvo-priorities-results">' . $html . '</div>' : $html;
+        return '<div class="xlvo-priorities-results">' . $bars->getHTML() . '</div>';
     }
 
 }

@@ -79,7 +79,6 @@ class LiveVoting
     private bool $nicknames = false;
     private bool $scoreboard = false;
     private LiveVotingPlayer $player;
-    private string $voting_style = "new";
 
     /**
      * LiveVoting constructor.
@@ -326,33 +325,6 @@ class LiveVoting
         $this->player = $player;
     }
 
-    public function getVotingStyle(): string
-    {
-        return $this->voting_style;
-    }
-
-    /**
-     * The classic UI is not available anymore: every object, including the ones created with the classic UI, uses the new one.
-     */
-    public function setVotingStyle(string $voting_style): void
-    {
-        $this->voting_style = 'new';
-    }
-
-    public function usesNewUI(): bool
-    {
-        return true;
-    }
-
-    /**
-     * Challenge: the classic UI only shows the scoreboard between questions when the "Scoreboard" setting is on.
-     * The new UI always shows it, so every voter gets the feedback and the ranking before the next question.
-     */
-    public function isScoreboardAfterEachQuestion(): bool
-    {
-        return $this->usesNewUI() || $this->isScoreboard();
-    }
-
     /**
      * @throws LiveVotingException
      */
@@ -376,8 +348,7 @@ class LiveVoting
             "puk" => $this->puk,
             "mode" => $this->mode->getMode(),
             "nicknames" => (int)$this->nicknames,
-            "scoreboard" => (int)$this->scoreboard,
-            "voting_style" => $this->voting_style
+            "scoreboard" => (int)$this->scoreboard
         ));
 
         return $this->id;
@@ -404,7 +375,6 @@ class LiveVoting
             $this->setMode(LiveVotingMode::new((int) $result[0]["mode"]));
             $this->setNicknames((bool)$result[0]["nicknames"]);
             $this->setScoreboard((bool)$result[0]["scoreboard"]);
-            $this->setVotingStyle($result[0]['voting_style'] ?? 'new');
         } else {
             $this->loadDefaultValues();
         }
