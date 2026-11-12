@@ -119,7 +119,8 @@ class LiveVotingDisplayPlayerUI
             $this->render();
         }
 
-        $open = '<div id="xlvo-display-player" class="display-player panel panel-primary">';
+        // MathJax only processes LaTeX inside this class, the rest of the ILIAS page is ignored.
+        $open = '<div id="xlvo-display-player" class="display-player panel panel-primary c-legacy__content--latex">';
         $close = '</div>';
 
         if ($inner) {

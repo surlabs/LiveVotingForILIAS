@@ -204,9 +204,9 @@ class LiveVotingPlayerGUI
         }
         $delay *= 1000;
 
-        $mathJaxSetting = new ilSetting("MathJax");
         $settings = array(
-            'use_mathjax' => (bool)$mathJaxSetting->get("enable"),
+            // MathJax is always loaded, there is no setting to switch it off anymore.
+            'use_mathjax' => true,
             'debug' => false,
             'delay' => $delay,
         );

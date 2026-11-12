@@ -30,7 +30,6 @@ use iljQueryUtil;
 use ilLinkButton;
 use ilLiveVotingPlugin;
 use ilObjLiveVotingGUI;
-use ilSetting;
 use ilSplitButtonGUI;
 use ilSystemStyleException;
 use ilTemplate;
@@ -190,11 +189,11 @@ class LiveVotingUI
     public function initJsAndCss(ilObjLiveVotingGUI $parent): void
     {
         global $DIC;
-        $mathJaxSetting = new ilSetting("MathJax");
         $settings = array(
             'status_running' => 1,
             'identifier' => 'xvi',
-            'use_mathjax' => (bool)$mathJaxSetting->get("enable"),
+            // MathJax is always loaded, there is no setting to switch it off anymore.
+            'use_mathjax' => true,
             'debug' => false,
             "isChallenge" => $this->liveVoting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE
         );
