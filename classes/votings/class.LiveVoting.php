@@ -336,6 +336,20 @@ class LiveVoting
         $this->voting_style = $voting_style;
     }
 
+    public function usesNewUI(): bool
+    {
+        return $this->voting_style === 'new';
+    }
+
+    /**
+     * Challenge: the classic UI only shows the scoreboard between questions when the "Scoreboard" setting is on.
+     * The new UI always shows it, so every voter gets the feedback and the ranking before the next question.
+     */
+    public function isScoreboardAfterEachQuestion(): bool
+    {
+        return $this->usesNewUI() || $this->isScoreboard();
+    }
+
     /**
      * @throws LiveVotingException
      */
@@ -387,7 +401,7 @@ class LiveVoting
             $this->setMode(LiveVotingMode::new((int) $result[0]["mode"]));
             $this->setNicknames((bool)$result[0]["nicknames"]);
             $this->setScoreboard((bool)$result[0]["scoreboard"]);
-            $this->setVotingStyle($result[0]["voting_style"]);
+            $this->setVotingStyle($result[0]['voting_style'] ?? 'classic');
         } else {
             $this->loadDefaultValues();
         }

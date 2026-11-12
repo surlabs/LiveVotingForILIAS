@@ -51,6 +51,9 @@ crs_create_xlvo#:#Create LiveVoting
 fikd_create_xlvo#:#Create LiveVoting
 grp_create_xlvo#:#Create LiveVoting
 fold_create_xlvo#:#Create LiveVoting
+image_picker_invalid_type#:#Please select a PNG, JPEG or GIF image.
+image_picker_read_error#:#The image could not be read. Please select a valid image file.
+image_picker_too_large#:#The image is too large. The maximum file size is 2 MiB.
 incorrect_order#:#Incorrect Order
 msg_success_voting_created#:#Voting has been created
 msg_success_voting_updated#:#Voting has been updated
@@ -275,6 +278,8 @@ voting_short_link#:#Short URL
 voting_permanent_link#:#Permanent-Link
 rbac_create_xlvo#:#Create LiveVoting
 player_pin#:#PIN: %s
+player_session_controls#:#Session controls
+qr_modal_title#:#Join LiveVoting
 qtype_6_option_range_step#:#Step
 qtype_6_option_range_step_info#:#The step of the number range.
 config_use_serif_font_for_pins#:#Use serif font for PIN's
@@ -330,3 +335,59 @@ voting_style_new#:#New style
 empty_input_error#:#There cannot be empty options
 manage_disclaimer_basic_mode#:#This LiveVoting was created in "Standard" mode
 manage_disclaimer_challenge_mode#:#This LiveVoting was created in "Challenge" mode. In this mode, only "Single/Multiple Choice" questions are possible.
+player_option_count#:#%s options
+qtype_5_points_short#:#pts
+qtype_2_total_answers#:#Answers
+results_waiting_answers#:#Waiting for the first answers…
+qtype_6_answers_per_value#:#Answers per value
+qtype_6_answers_per_interval#:#Answers per interval
+voter_submit_vote#:#Submit Vote
+voter_submitted#:#Submitted
+voter_change_answer#:#Change Answer
+voter_select_option_first#:#Please select an option first.
+voter_select_options_first#:#Please select at least one option.
+voter_submit_answer#:#Submit Answer
+voter_hint_number_range#:#Drag the slider or use the buttons to set a value (%s – %s).
+voter_hint_priorities#:#Drag the items to reorder them (1 is the highest priority).
+voter_submit_ranking#:#Submit Ranking
+voter_free_text_placeholder#:#Your answer
+voter_remove_answer#:#Remove this answer
+voter_add_answer#:#Add another answer
+voter_hint_free_text#:#Type your answer below.
+voter_hint_free_text_multi#:#Type your answer(s) below. Press Enter to add more.
+voter_hint_free_text_multi_area#:#Type your answer(s) below. Use the button to add more.
+voter_enter_answer_first#:#Please enter at least one answer to submit.
+voter_submit_answers#:#Submit Answers
+voter_hint_correct_order#:#Drag the items into the correct order.
+voter_submit_order#:#Submit Order
+results_participants#:#Participants
+voter_submitting#:#Submitting…
+voter_nickname_input#:#Nickname
+scoreboard_points_unit#:#PTS.
+results_hidden#:#Results are hidden
+results_answers_received#:#%s answers received
+player_end_voting#:#End voting
+challenge_feedback_correct#:#Correct! +%s
+challenge_feedback_wrong#:#Wrong answer
+challenge_option_correct#:#Correct
+challenge_option_wrong#:#Wrong
+challenge_option_solution#:#Correct answer
+challenge_your_place#:#Your place: %1$s of %2$s
+challenge_final_results#:#Final results
+challenge_final_info#:#The challenge is over.
+challenge_no_ranking#:#Nobody answered in this challenge.
+voting_type_7#:#WordCloud
+voting_type_7_info#:#Users hand in single words, shown as a word cloud
+voter_word_cloud_placeholder#:#One word
+voter_word_cloud_space_hint#:#One word per answer: a space starts the next one.
+voter_hint_word_cloud#:#One word per answer. Press Enter to add more.
+qtype_7_unique_words#:#Unique
+qtype_7_vote#:#%s vote
+qtype_7_votes#:#%s votes
+qtype_7_share#:#%s % of all answers
+qtype_7_remove_word#:#Remove word
+qtype_7_overflow_one#:#%s answer does not fit on screen
+qtype_7_overflow_many#:#%s answers do not fit on screen
+voting_style_word_cloud_blocked#:#This object has WordCloud questions, which only exist in the new style. Delete them to switch to the classic style.
+qtype_7_one_word_per_answer#:#one word per answer
+qtype_7_results_caption#:#The more often an answer is given, the larger it appears

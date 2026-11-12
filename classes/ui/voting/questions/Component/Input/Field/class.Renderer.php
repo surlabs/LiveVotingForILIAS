@@ -270,10 +270,12 @@ class Renderer extends RendererILIAS
 
         $rte->addPlugin("emoticons");
         $rte->addPlugin("image");
+        $rte->addPlugin("xlvo_image_picker");
         $rte->addPlugin("latex");
         $rte->addButton("latex");
         $rte->addButton("pastelatex");
         LiveVotingJs::getInstance()->initLatexButton();
+        LiveVotingJs::getInstance()->initImagePicker();
 
         $rteSupport = $component->getRTESupport();
 

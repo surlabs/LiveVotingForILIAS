@@ -33,6 +33,7 @@ use ILIAS\UI\URLBuilder;
 use ilLiveVotingPlugin;
 use ilObjLiveVotingGUI;
 use ilUIService;
+use LiveVoting\objects\modes\LiveVotingMode;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
@@ -175,7 +176,12 @@ class LiveVotingTableGUI  implements OrderingRetrieval
             -1 => $this->plugin->txt('common_all'),
         ];
 
-        foreach (LiveVotingQuestion::QUESTION_TYPES_IDS as $qtype) {
+        // the challenge mode only allows choice questions
+        $question_types = $this->parent_obj->getObject()->getLiveVoting()->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE
+            ? [LiveVotingQuestion::QUESTION_TYPES_IDS["Choices"]]
+            : LiveVotingQuestion::QUESTION_TYPES_IDS;
+
+        foreach ($question_types as $qtype) {
             $type_options[$qtype] = $this->plugin->txt('voting_type_' . $qtype);
         }
 

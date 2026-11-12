@@ -127,7 +127,6 @@ class ilLiveVotingConfigGUI extends ilPluginConfigGUI
             }
         ));
 
-
         return array(
             $use_shortlink_vote,
             $request_frequency,

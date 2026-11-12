@@ -63,6 +63,22 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
         $this->player = $liveVoting->getPlayer();
 
+        if ($liveVoting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE && $this->isAnswerTimeOver()) {
+            if (isset($_GET['isRequest']) && (bool) $_GET['isRequest']) {
+                header('Content-type: application/json');
+                echo json_encode(["ok" => false]);
+                exit();
+            }
+
+            return;
+        }
+
+        if (isset($_POST['xlvo_selection'])) {
+            $this->submitSelection();
+
+            return;
+        }
+
         $option_id = (int)$_GET['option_id'];
 
         $vote_id = null;
@@ -105,7 +121,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         $states = $this->getButtonsStates();
         $t = ilLinkButton::getInstance();
         $t->setId(self::BUTTON_TOGGLE_PERCENTAGE);
-        if (in_array(self::BUTTON_TOGGLE_PERCENTAGE, $states)) {
+        if (array_key_exists(self::BUTTON_TOGGLE_PERCENTAGE, $states) && $states[self::BUTTON_TOGGLE_PERCENTAGE]) {
             $t->setCaption(' %', false);
         } else {
             $t->setCaption('<span class="glyphicon glyphicon-user" aria-hidden="true"></span>', false);
@@ -135,9 +151,202 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
      * @throws ilCtrlException
      * @throws ilSystemStyleException
      */
+    /**
+     * New UI: the voter selects and then submits the whole selection at once. Votes for options that are no longer
+     * selected are withdrawn, so "Change Answer" followed by a new submit replaces the previous answer.
+     *
+     * @throws LiveVotingException
+     */
+    /**
+     * In a challenge the countdown is part of the game: an answer sent after it ran out does not count.
+     * Two seconds of grace cover the request travelling while the timer hits zero. Once the presenter has moved on
+     * to the scoreboard the countdown is reset, so the status is checked too.
+     */
+    private function isAnswerTimeOver(): bool
+    {
+        if ($this->player->getStatus() !== LiveVotingPlayer::STAT_RUNNING) {
+            return true;
+        }
+
+        return $this->player->getCountdownStart() > 0 && $this->player->remainingCountDown() < -2;
+    }
+
+    protected function submitSelection(): void
+    {
+        $question = $this->player->getActiveVotingObject();
+        $selected = array_map('intval', (array) ($_POST['option_ids'] ?? []));
+        $selected = array_values(array_unique(array_filter($selected, static fn(int $option_id): bool => $question->isValidOption($option_id))));
+        if (!$question->isMultiSelection()) {
+            $selected = array_slice($selected, 0, 1);
+        }
+        if ($selected === []) {
+            return;
+        }
+
+        $participant = LiveVotingParticipant::getInstance();
+        foreach ($this->player->getVotesOfUser() as $vote) {
+            if (!in_array((int) $vote->getOptionId(), $selected, true)) {
+                LiveVotingVote::unvote($participant, $this->player->getActiveVoting(), (int) $vote->getOptionId());
+            }
+        }
+        foreach ($selected as $option_id) {
+            if (!$this->player->hasUserVotedForOption($option_id)) {
+                LiveVotingVote::vote($participant, $this->player->getActiveVoting(), $this->player->getRoundId(), $option_id);
+            }
+        }
+
+        if (LiveVoting::getModeFromObjId($this->player->getObjId()) == LiveVotingMode::CHALLENGE_MODE) {
+            $this->calculateReachedPoints();
+        }
+
+        $this->player->createHistoryObject();
+    }
+
+    /**
+     * @throws LiveVotingException
+     * @throws ilTemplateException
+     */
+    protected function getNewUIHTML(): string
+    {
+        global $DIC;
+
+        $plugin = ilLiveVotingPlugin::getInstance();
+        $question = $this->getPlayer()->getActiveVotingObject();
+        $is_multi = $question->isMultiSelection();
+        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/SingleVote/tpl.single_vote_new.html', true, true);
+
+        $has_answered = false;
+        foreach ($question->getOptions() as $option) {
+            if ($this->player->hasUserVotedForOption($option->getId())) {
+                $has_answered = true;
+                break;
+            }
+        }
+
+        foreach ($question->getOptions() as $option) {
+            $voted = $this->player->hasUserVotedForOption($option->getId());
+            $tpl->setCurrentBlock('option');
+            $tpl->setVariable('TYPE', $is_multi ? 'checkbox' : 'radio');
+            $tpl->setVariable('OPTION_ID', (string) $option->getId());
+            $tpl->setVariable('OPTION_LETTER', $option->getCipher());
+            $tpl->setVariable('TITLE', $option->getTextForPresentation());
+            $tpl->setVariable('CHECKED', $voted ? 'checked' : '');
+            $tpl->setVariable('DISABLED', $has_answered ? 'disabled' : '');
+            $tpl->setVariable('SUBMITTED_CLASS', $voted && $has_answered ? ' is-submitted' : '');
+            $tpl->parseCurrentBlock();
+        }
+
+        $DIC->ctrl()->clearParameters($this);
+        $tpl->setVariable('ACTION', $DIC->ctrl()->getFormAction($this));
+        $tpl->setVariable('LOCKED_CLASS', $has_answered ? ' is-locked' : '');
+        $tpl->setVariable('VOTER_HINT', $question->getQuestionTypeLabel());
+        $tpl->setVariable('SUBMIT_TEXT', $plugin->txt('voter_submit_vote'));
+        $tpl->setVariable('SUBMIT_LABEL', $plugin->txt($has_answered ? 'voter_submitted' : 'voter_submit_vote'));
+        $tpl->setVariable('SUBMIT_DISABLED', $has_answered ? 'disabled' : '');
+        $tpl->setVariable('CHANGE_TEXT', $plugin->txt('voter_change_answer'));
+        $tpl->setVariable('CHANGE_DISABLED', $has_answered ? '' : 'disabled');
+        $tpl->setVariable('FEEDBACK', $plugin->txt($is_multi ? 'voter_select_options_first' : 'voter_select_option_first'));
+
+        return $tpl->get();
+    }
+
+    /**
+     * New UI challenge, once the question is closed: the voter's own answer with the inputs kept, the chosen options
+     * in green (correct) or red (wrong) and the correct ones marked. A voter who did not answer in time gets the
+     * options without any feedback.
+     *
+     * @throws LiveVotingException
+     * @throws ilTemplateException
+     */
+    public function getChallengeFeedbackHTML(): string
+    {
+        $plugin = ilLiveVotingPlugin::getInstance();
+        $question = $this->getPlayer()->getActiveVotingObject();
+        $is_multi = $question->isMultiSelection();
+        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/SingleVote/tpl.single_vote_new.html', true, true);
+
+        $options = $question->getOptions();
+        $chosen = [];
+        foreach ($options as $option) {
+            if ($this->player->hasUserVotedForOption($option->getId())) {
+                $chosen[] = $option->getId();
+            }
+        }
+        $has_answered = $chosen !== [];
+
+        if ($has_answered) {
+            $is_correct = true;
+            foreach ($options as $option) {
+                if ($option->isCorrect() !== in_array($option->getId(), $chosen, true)) {
+                    $is_correct = false;
+                    break;
+                }
+            }
+
+            $points = LiveVotingPlayer::getPlayerPoints(
+                LiveVotingParticipant::getInstance()->getIdentifier(),
+                $this->player->getObjId(),
+                $this->player->getActiveVoting(),
+                $this->player->getRoundId()
+            );
+
+            $tpl->setCurrentBlock('challenge_result');
+            $tpl->setVariable('RESULT_STATE', $is_correct ? 'correct' : 'wrong');
+            $tpl->setVariable('RESULT_TEXT', sprintf(
+                $plugin->txt($is_correct ? 'challenge_feedback_correct' : 'challenge_feedback_wrong'),
+                $points . ' ' . $plugin->txt('scoreboard_points_unit')
+            ));
+            $tpl->parseCurrentBlock();
+        }
+
+        foreach ($options as $option) {
+            $voted = in_array($option->getId(), $chosen, true);
+            $result_class = '';
+            $result_label = '';
+            if ($has_answered && $voted) {
+                $result_class = $option->isCorrect() ? ' is-correct' : ' is-wrong';
+                $result_label = $plugin->txt($option->isCorrect() ? 'challenge_option_correct' : 'challenge_option_wrong');
+            } elseif ($has_answered && $option->isCorrect()) {
+                $result_class = ' is-solution';
+                $result_label = $plugin->txt('challenge_option_solution');
+            }
+
+            if ($result_label !== '') {
+                $tpl->setCurrentBlock('option_result');
+                $tpl->setVariable('RESULT_LABEL', $result_label);
+                $tpl->parseCurrentBlock();
+            }
+
+            $tpl->setCurrentBlock('option');
+            $tpl->setVariable('TYPE', $is_multi ? 'checkbox' : 'radio');
+            $tpl->setVariable('OPTION_ID', (string) $option->getId());
+            $tpl->setVariable('OPTION_LETTER', $option->getCipher());
+            $tpl->setVariable('TITLE', $option->getTextForPresentation());
+            $tpl->setVariable('CHECKED', $voted ? 'checked' : '');
+            $tpl->setVariable('DISABLED', 'disabled');
+            $tpl->setVariable('RESULT_CLASS', $result_class);
+            $tpl->parseCurrentBlock();
+        }
+
+        // Nothing can be sent any more: the buttons are hidden by the closed-question style.
+        $tpl->setVariable('ACTION', '#');
+        $tpl->setVariable('LOCKED_CLASS', ' is-locked xlvo-challenge-closed');
+        $tpl->setVariable('VOTER_HINT', $question->getQuestionTypeLabel());
+        $tpl->setVariable('SUBMIT_LABEL', $plugin->txt('voter_submitted'));
+        $tpl->setVariable('SUBMIT_DISABLED', 'disabled');
+        $tpl->setVariable('CHANGE_DISABLED', 'disabled');
+
+        return $tpl->get();
+    }
+
     public function getMobileHTML(): string
     {
         global $DIC;
+
+        $live_voting = new LiveVoting($this->player->getObjId(), false);
+        if ($live_voting->usesNewUI()) {
+            return $this->getNewUIHTML();
+        }
         $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/SingleVote/tpl.single_vote.html', false, true);
         $answer_count = 64;
         foreach ($this->getPlayer()->getActiveVotingObject()->getOptions() as $xlvoOption) {

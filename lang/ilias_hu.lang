@@ -51,6 +51,9 @@ crs_create_xlvo#:#Élőszavazás létrehozása
 fikd_create_xlvo#:#Élőszavazás létrehozása
 grp_create_xlvo#:#Élőszavazás létrehozása
 fold_create_xlvo#:#Élőszavazás létrehozása
+image_picker_invalid_type#:#Válasszon PNG, JPEG vagy GIF formátumú képet.
+image_picker_read_error#:#A kép nem olvasható. Válasszon érvényes képfájlt.
+image_picker_too_large#:#A kép túl nagy. A maximális fájlméret 2 MiB.
 incorrect_order#:#Hibás sorrend
 msg_success_voting_created#:#Szavazást sikeresen létrehozta
 msg_success_voting_updated#:#Szavazást sikeresen módosította
@@ -275,6 +278,8 @@ voting_short_link#:#Rövid URL
 voting_permanent_link#:#MISSING voting_permanent_link
 rbac_create_xlvo#:#MISSING rbac_create_xlvo
 player_pin#:#MISSING player_pin
+player_session_controls#:#MISSING player_session_controls
+qr_modal_title#:#Csatlakozás a LiveVotinghoz
 qtype_6_option_range_step#:#MISSING qtype_6_option_range_step
 qtype_6_option_range_step_info#:#MISSING qtype_6_option_range_step_info
 config_use_serif_font_for_pins#:#MISSING config_use_serif_font_for_pins
@@ -330,3 +335,59 @@ voting_style_new#:#New style
 empty_input_error#:#A kérdés nem lehet üres.
 manage_disclaimer_basic_mode#:#Ez az élőszavazás "Standard" módban lett létrehozva
 manage_disclaimer_challenge_mode#:#Ez az élőszavazás "Challenge" módban lett létrehozva. Ebben a módban csak "Single/Multiple Choice" kérdések lehetnek.
+player_option_count#:#%s lehetőség
+qtype_5_points_short#:#pont
+qtype_2_total_answers#:#Válaszok
+results_waiting_answers#:#Várakozás az első válaszokra…
+qtype_6_answers_per_value#:#Válaszok értékenként
+qtype_6_answers_per_interval#:#Válaszok intervallumonként
+voter_submit_vote#:#Szavazat elküldése
+voter_submitted#:#Elküldve
+voter_change_answer#:#Válasz módosítása
+voter_select_option_first#:#Kérjük, először válasszon egy lehetőséget.
+voter_select_options_first#:#Kérjük, válasszon legalább egy lehetőséget.
+voter_submit_answer#:#Válasz elküldése
+voter_hint_number_range#:#Húzza el a csúszkát, vagy használja a gombokat az érték beállításához (%s – %s).
+voter_hint_priorities#:#Húzza az elemeket az átrendezéshez (az 1 a legmagasabb prioritás).
+voter_submit_ranking#:#Rangsor elküldése
+voter_free_text_placeholder#:#Az Ön válasza
+voter_remove_answer#:#Válasz eltávolítása
+voter_add_answer#:#Újabb válasz hozzáadása
+voter_hint_free_text#:#Írja be a válaszát alább.
+voter_hint_free_text_multi#:#Írja be a válasz(ok)at alább. Továbbiakat az Enter billentyűvel adhat hozzá.
+voter_hint_free_text_multi_area#:#Írja be a válasz(ok)at alább. Továbbiakat a gombbal adhat hozzá.
+voter_enter_answer_first#:#Kérjük, adjon meg legalább egy választ.
+voter_submit_answers#:#Válaszok elküldése
+voter_hint_correct_order#:#Húzza az elemeket a helyes sorrendbe.
+voter_submit_order#:#Sorrend elküldése
+results_participants#:#Résztvevők
+voter_submitting#:#Küldés…
+voter_nickname_input#:#Becenév
+scoreboard_points_unit#:#PONT
+results_hidden#:#Az eredmények rejtve vannak
+results_answers_received#:#%s válasz érkezett
+player_end_voting#:#Szavazás lezárása
+challenge_feedback_correct#:#Helyes! +%s
+challenge_feedback_wrong#:#Helytelen válasz
+challenge_option_correct#:#Helyes
+challenge_option_wrong#:#Helytelen
+challenge_option_solution#:#Helyes válasz
+challenge_your_place#:#Az Ön helyezése: %1$s / %2$s
+challenge_final_results#:#Végeredmény
+challenge_final_info#:#A kihívás véget ért.
+challenge_no_ranking#:#Ebben a kihívásban senki sem válaszolt.
+voting_type_7#:#Szófelhő
+voting_type_7_info#:#Egyes szavak adhatók meg, szófelhőként jelennek meg.
+voter_word_cloud_placeholder#:#Egy szó
+voter_word_cloud_space_hint#:#Válaszonként egy szó: a szóköz újat kezd.
+voter_hint_word_cloud#:#Válaszonként egy szó. Továbbiakat az Enter billentyűvel adhat hozzá.
+qtype_7_unique_words#:#Különböző
+qtype_7_vote#:#%s szavazat
+qtype_7_votes#:#%s szavazat
+qtype_7_share#:#az összes válasz %s %-a
+qtype_7_remove_word#:#Szó törlése
+qtype_7_overflow_one#:#%s válasz nem fér el a képernyőn
+qtype_7_overflow_many#:#%s válasz nem fér el a képernyőn
+voting_style_word_cloud_blocked#:#Ez az objektum szófelhő kérdéseket tartalmaz, amelyek csak az új stílusban léteznek. Törölje őket a klasszikus stílusra váltáshoz.
+qtype_7_one_word_per_answer#:#válaszonként egy szó
+qtype_7_results_caption#:#Minél gyakrabban adják meg a választ, annál nagyobb

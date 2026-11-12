@@ -86,6 +86,8 @@ class LiveVotingResultsTableGUI implements DataRetrieval
         $records = $this->getRecords($filter_data, $order);
 
         foreach (array_slice($records, $range->getStart(), $range->getLength()) as $record) {
+            // Nicknames are typed by anonymous voters, so they must not reach the page as markup.
+            $record['participant'] = htmlspecialchars((string) $record['participant'], ENT_QUOTES);
             yield $row_builder->buildDataRow((string) $record['id'], $record);
         }
     }
@@ -226,9 +228,10 @@ class LiveVotingResultsTableGUI implements DataRetrieval
                     "participant" => $vote->getParticipantName($this->player_id),
                     "user_id" => $vote->getUserId(),
                     "user_identifier" => $vote->getUserIdentifier(),
-                    "question_type" => $question->getQuestionTypeId(),
+                    "question_type" => $question->getQuestionTypeLabel(),
                     "title" => $question->getTitle(),
-                    "question" => $question->getQuestion(),
+                    // Presentation form resolves the editor's media object placeholders into real image URLs.
+                    "question" => $question->getQuestionForPresentation(),
                     "answer" => $question->getVotesRepresentation($answers),
                     "answer_ids" => $this->concatAnswersIds($answers),
                     "voting_id" => $question->getId(),

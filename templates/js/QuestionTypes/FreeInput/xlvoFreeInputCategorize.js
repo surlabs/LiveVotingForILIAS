@@ -46,10 +46,14 @@ var xlvoFreeInputCategorize = {
 	 *
 	 */
 	initDragula: function () {
-		// the new HTML is added first, then the old one is removed - therefore there are two 'div.bars' atm
-		this.drake = dragula($.find('div.bars'), {
-			moves: function (el) {
-				return $(el).is("div");
+		// The player re-renders on every change and runs init again: drop the previous instance first.
+		if (this.drake) {
+			this.drake.destroy();
+		}
+		// Classic answers live in 'div.bars' (one wrapper per answer), the new UI ones directly in 'div.xlvo-bars'.
+		this.drake = dragula($.find('div.bars, .xlvo-free-text-results div.xlvo-bars'), {
+			moves: function (el, source, handle) {
+				return $(el).is("div") && !$(handle).closest('button.close').length;
 			},
 			accepts: function (el, target, source) {
 				return target !== source;
@@ -61,7 +65,9 @@ var xlvoFreeInputCategorize = {
 				xlvoFreeInputCategorize.recalculatePlayerHeight();
 			}).on('drop', function (el, target, source) {
 				xlvoFreeInputCategorize.stopAutoScroll();
-				xlvoFreeInputCategorize.changeCategory($(el).find('div.xlvo-vote-free-input')[0].getAttribute('data-vote-id'), $(target).parent().attr('data-category-id'));
+				var vote = $(el).is('div.xlvo-vote-free-input') ? el : $(el).find('div.xlvo-vote-free-input')[0];
+				var category_id = $(target).closest('[data-category-id]').attr('data-category-id');
+				xlvoFreeInputCategorize.changeCategory(vote.getAttribute('data-vote-id'), category_id === undefined ? 'undefined' : category_id);
 				xlvoFreeInputCategorize.recalculatePlayerHeight();
 			}).on('dragend', function () {
 				xlvoFreeInputCategorize.stopAutoScroll();
@@ -176,18 +182,21 @@ var xlvoFreeInputCategorize = {
 			call: 'add_category',
 			title: $('#category_input').val()
 		}).done(function (data) {
-			// append category
+			var title = xlvoFreeInputCategorize.escape($('#category_input').val());
+			// append category, with the same structure the server renders
 			$('div#categories').append(
 				'<div id="category_id_' + data.category_id + '" class="col-md-4" data-category-id="' + data.category_id + '">' +
 					'<button type="button" class="close" aria-label="Close" onClick="xlvoFreeInputCategorize.removeCategory($(this).parent());">' +
 						'<span aria-hidden="true">&times;</span>' +
 					'</button>' +
 					'<fieldset class="well xlvo-category category_dropzone" data-category-id="' + data.category_id + '">' +
-						'<legend>' + $('#category_input').val() + '</legend>' +
-						'<br>' +
-						'<div id="bars_' + data.category_id + '" class="bars">' +
-							'<div class="col-md-4"></div>' +
-						'</div>' +
+						'<legend>' + title + '</legend>' +
+						(xlvoFreeInputCategorize.isNewUI()
+							? '<div id="bars_' + data.category_id + '" class="xlvo-bars"></div>'
+							: '<br>' +
+							'<div id="bars_' + data.category_id + '" class="bars">' +
+								'<div class="col-md-4"></div>' +
+							'</div>') +
 					'</fieldset>' +
 				'</div>'
 			);
@@ -250,19 +259,21 @@ var xlvoFreeInputCategorize = {
 			call: 'add_vote',
 			input: $('#answer_input').val()
 		}).done(function (data) {
-			// append answer
-			$('div#bars').append(
-				'<div class="col-md-4">' +
-					'<div id="vote_id_' + data.vote_id + '" class="xlvo-vote-free-input" data-vote-id="' + data.vote_id + '">' +
-						'<button type="button" class="close" aria-label="Close" onClick="xlvoFreeInputCategorize.removeAnswer($(this).parent().parent())">' +
-							'<span aria-hidden="true">&times;</span>' +
-						'</button>' +
-						'<div class="well well-sm">' +
-							'<span>' + $('#answer_input').val() + '</span>' +
-						'</div>' +
+			var answer = '<div id="vote_id_' + data.vote_id + '" class="xlvo-vote-free-input" data-vote-id="' + data.vote_id + '">' +
+					'<button type="button" class="close" aria-label="Close" onClick="xlvoFreeInputCategorize.removeAnswer(this)">' +
+						'<span aria-hidden="true">&times;</span>' +
+					'</button>' +
+					'<div class="well well-sm">' +
+						'<span>' + xlvoFreeInputCategorize.escape($('#answer_input').val()) + '</span>' +
+						'<span class="label label-primary pull-right"></span>' +
 					'</div>' +
-				'</div>'
-			);
+				'</div>';
+			// append answer to the uncategorised list
+			if (xlvoFreeInputCategorize.isNewUI()) {
+				$('#answers div.xlvo-bars').first().append(answer);
+			} else {
+				$('#answers div#bars').first().append('<div class="col-md-12">' + answer + '</div>');
+			}
 
 			// flush input
 			$('#answer_input').val('');
@@ -276,22 +287,37 @@ var xlvoFreeInputCategorize = {
 	},
 
 	/**
-	 * @param answer
+	 * @param element the clicked remove button, or an element wrapping the answer
 	 */
-	removeAnswer: function(answer) {
+	removeAnswer: function(element) {
 		if (xlvoFreeInputCategorize.isRequestPending()) {
 			this.log('Request Pending');
 			return;
 		}
 
+		var vote = $(element).closest('div.xlvo-vote-free-input');
+		if (!vote.length) {
+			vote = $(element).find('div.xlvo-vote-free-input').first();
+		}
+		if (!vote.length) {
+			return;
+		}
+		// Classic answers sit in a column wrapper of their own; new UI answers are direct children of the list.
+		var item = vote.parent().is('[class*="col-md-"]') ? vote.parent() : vote;
+
 		xlvoFreeInputCategorize.startRequest();
 
-		vote_id = $(answer).find('div.xlvo-vote-free-input')[0].getAttribute('data-vote-id');
 		$.post(xlvoPlayer.config.base_url + '&cmd=apiCall', {
 			call: 'remove_vote',
-			vote_id: vote_id
+			vote_id: vote.attr('data-vote-id')
 		}).done(function (data) {
-			$(answer).remove();
+			if (xlvoFreeInputCategorize.isNewUI()) {
+				item.fadeOut(150, function () {
+					item.remove();
+				});
+				return;
+			}
+			item.remove();
 
 			// recalculate height of player
 			xlvoFreeInputCategorize.recalculatePlayerHeight();
@@ -327,16 +353,34 @@ var xlvoFreeInputCategorize = {
 	 * called in addCategory and addAnswer
 	 */
 	recalculatePlayerHeight: function () {
+		// The new UI lays out without floats, so the player sizes itself; a fixed height would go stale on the next change.
+		if (xlvoFreeInputCategorize.isNewUI()) {
+			$('#xlvo-display-player').css('height', '');
+			return;
+		}
 		var player_children = $('#xlvo-display-player').children();
 		$('#xlvo-display-player').css('height', player_children.css('height'));
 	},
 
+	isNewUI: function () {
+		return $('.xlvo-new-free-text-results').length > 0;
+	},
+
+	escape: function (text) {
+		return $('<div>').text(text).html();
+	},
+
+	// The new UI updates the list in place, so a full-screen spinner for these short requests only makes it flicker.
 	startRequest: function () {
-		il.waiter.show();
+		if (!xlvoFreeInputCategorize.isNewUI()) {
+			il.waiter.show();
+		}
 		xlvoFreeInputCategorize.request_pending = true;
 	},
 	endRequest: function () {
-		il.waiter.hide();
+		if (!xlvoFreeInputCategorize.isNewUI()) {
+			il.waiter.hide();
+		}
 		xlvoFreeInputCategorize.request_pending = false;
 	},
 	isRequestPending: function () {

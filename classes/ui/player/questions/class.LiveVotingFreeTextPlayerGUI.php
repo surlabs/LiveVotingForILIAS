@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\questions\QuestionTypes\LiveVotingWordCloudQuestion;
 use LiveVoting\UI\Player\CustomUI\HiddenInputGUI\HiddenInputGUI;
 use LiveVoting\UI\Player\CustomUI\MultiLineNewInputGUI;
 use LiveVoting\UI\Player\CustomUI\TextAreaInputGUI\TextAreaInputGUI;
@@ -73,6 +74,7 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         $input_gui = $this->getTextInputGUI("", 'free_input');
 
         $this->getPlayer()->unvoteAll();
+        $is_word_cloud = $this->player->getActiveVotingObject() instanceof LiveVotingWordCloudQuestion;
         if ($this->player->getActiveVotingObject()->isMultiFreeInput()) {
             $array = array();
 
@@ -80,6 +82,18 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
 
             if (!empty($inputs)) {
                 foreach ($inputs as $item) {
+                    // The voting screen already splits on spaces; the server does it too, so a word cloud answer is
+                    // always a single word.
+                    if ($is_word_cloud) {
+                        foreach (LiveVotingWordCloudQuestion::splitWords(LiveVotingUtils::secureString((string) ($item['free_input'] ?? ''))) as $word_index => $word) {
+                            $array[] = array(
+                                "input" => $word,
+                                "vote_id" => $word_index === 0 ? $item['vote_id'] : '',
+                            );
+                        }
+                        continue;
+                    }
+
                     $input = LiveVotingUtils::secureString($item['free_input']);
                     if (!empty($input) && strlen($input) <= $input_gui->getMaxLength()) {
                         $array[] = array(
@@ -110,11 +124,122 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function getMobileHTML(): string
     {
+        if ($this->isUsingNewUI()) {
+            return $this->getNewUIHTML();
+        }
 
         $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input.html', true, true);
         $this->render();
 
+        if ($this->isUsingNewUI()) {
+            $is_multi_input = $this->player->getActiveVotingObject()->isMultiFreeInput();
+            if ($is_multi_input) {
+                $this->tpl->setVariable(
+                    'VOTER_HINT',
+                    ilLiveVotingPlugin::getInstance()->txt('qtype_2_multi_free_input_info')
+                );
+            }
+        }
+
         return $this->tpl->get() . LiveVotingJs::getInstance()->name('FreeInput')->category('QuestionTypes')->getRunCode();
+    }
+
+    /**
+     * New UI: one field per answer. Enter opens the next field (multi input), and the form posts the same fields as
+     * the classic widget, so submit() is shared. After submitting, the answers stay visible but locked.
+     *
+     * @throws LiveVotingException
+     * @throws ilTemplateException
+     */
+    protected function getNewUIHTML(): string
+    {
+        global $DIC;
+
+        $plugin = ilLiveVotingPlugin::getInstance();
+        $question = $this->player->getActiveVotingObject();
+        $is_word_cloud = $question instanceof LiveVotingWordCloudQuestion;
+        $is_multi = $question->isMultiFreeInput();
+        $is_textarea = !$is_word_cloud && (int) $question->getAnswerField() === 2;
+        $max_length = $is_word_cloud ? LiveVotingWordCloudQuestion::MAX_WORD_LENGTH : ($is_textarea ? 1000 : 200);
+
+        $answers = [];
+        foreach ($this->player->getVotesOfUser() as $vote) {
+            $text = (string) $vote->getFreeInput();
+            if ($vote->isActive() && $text !== '') {
+                $answers[] = ['text' => $text, 'vote_id' => (string) $vote->getId()];
+            }
+        }
+        if (!$is_multi) {
+            $answers = array_slice($answers, 0, 1);
+        }
+        $has_answered = $answers !== [];
+        if (!$has_answered) {
+            $answers[] = ['text' => '', 'vote_id' => ''];
+        }
+
+        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input_new.html', true, true);
+        foreach ($answers as $index => $answer) {
+            $field_id = 'xlvo_free_text_' . $index;
+            $name = $is_multi ? 'vote_multi_line_input[' . $index . '][free_input]' : 'free_input';
+            $attributes = 'id="' . $field_id . '" class="xlvo-free-text-field" name="' . $name . '" maxlength="' . $max_length . '"'
+                . ' placeholder="' . htmlspecialchars($plugin->txt($is_word_cloud ? 'voter_word_cloud_placeholder' : 'voter_free_text_placeholder'), ENT_QUOTES) . '"'
+                . ' autocomplete="off"' . ($has_answered ? ' disabled' : '');
+            $value = htmlspecialchars($answer['text'], ENT_QUOTES, 'UTF-8', false);
+            $field = $is_textarea
+                ? '<textarea ' . $attributes . ' rows="3">' . $value . '</textarea>'
+                : '<input type="text" ' . $attributes . ' value="' . $value . '">';
+
+            $tpl->setCurrentBlock('row');
+            $tpl->setVariable('FIELD_ID', $field_id);
+            $tpl->setVariable('ROW_CLASS', $answer['text'] !== '' ? ' has-value' : '');
+            $tpl->setVariable('FIELD_LABEL', $plugin->txt('qtype_2_input') . ' ' . ($index + 1));
+            $tpl->setVariable('FIELD', $field);
+            $tpl->setVariable('VOTE_ID_NAME', $is_multi ? 'vote_multi_line_input[' . $index . '][vote_id]' : 'vote_id');
+            $tpl->setVariable('VOTE_ID', $answer['vote_id']);
+            if ($is_multi) {
+                $tpl->setVariable('REMOVE_LABEL', $plugin->txt('voter_remove_answer'));
+            }
+            if ($is_word_cloud) {
+                $tpl->setVariable('COUNTER', mb_strlen($answer['text']) . '/' . $max_length);
+                $tpl->setVariable('WORD_HINT', $plugin->txt('voter_word_cloud_space_hint'));
+            }
+            $tpl->parseCurrentBlock();
+        }
+
+        if ($is_multi) {
+            $tpl->setCurrentBlock('add');
+            $tpl->setVariable('ADD_TEXT', $plugin->txt('voter_add_answer'));
+            $tpl->parseCurrentBlock();
+        }
+
+        $tpl->setVariable('ACTION', $DIC->ctrl()->getFormAction($this));
+        $tpl->setVariable('FORM_CLASS', $has_answered ? ' is-locked' : '');
+        $tpl->setVariable('MULTI', $is_multi ? '1' : '0');
+        $tpl->setVariable('WORD_CLOUD', $is_word_cloud ? '1' : '0');
+        $tpl->setVariable('MAX_LENGTH', (string) $max_length);
+        $tpl->setVariable('NEXT_INDEX', (string) count($answers));
+        $tpl->setVariable(
+            'VOTER_HINT',
+            $plugin->txt($is_word_cloud ? 'voter_hint_word_cloud' : ($is_multi ? ($is_textarea ? 'voter_hint_free_text_multi_area' : 'voter_hint_free_text_multi') : 'voter_hint_free_text'))
+        );
+        $tpl->setVariable('FEEDBACK', $plugin->txt('voter_enter_answer_first'));
+        $tpl->setVariable('SUBMIT_TEXT', $plugin->txt($is_multi ? 'voter_submit_answers' : 'voter_submit_answer'));
+        $tpl->setVariable(
+            'SUBMIT_LABEL',
+            $plugin->txt($has_answered ? 'voter_submitted' : ($is_multi ? 'voter_submit_answers' : 'voter_submit_answer'))
+        );
+        $tpl->setVariable('SUBMIT_DISABLED', $has_answered ? 'disabled' : '');
+        $tpl->setVariable('CHANGE_TEXT', $plugin->txt('voter_change_answer'));
+        $tpl->setVariable('CHANGE_DISABLED', $has_answered ? '' : 'disabled');
+
+        return '<div class="col-md-12 xlvo-free-input xlvo-free-input-new">' . $tpl->get() . '</div>';
+    }
+
+    private function isUsingNewUI(): bool
+    {
+        $live_voting = new LiveVoting($this->player->getObjId(), false);
+
+        return $live_voting->usesNewUI();
     }
 
 
@@ -180,6 +305,11 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         if ($vote instanceof LiveVotingVote) {
             if ($vote->isActive()) {
                 $an->setValue($vote->getFreeInput());
+
+                // Same confirmation the multi-input variant shows, so the voter knows the answer was stored.
+                $saved = new ilNonEditableValueGUI();
+                $saved->setValue(ilLiveVotingPlugin::getInstance()->txt('qtype_2_your_input'));
+                $form->addItem($saved);
             }
             $hi2->setValue((string)$vote->getId());
             //$form->addCommandButton(self::CMD_CLEAR, $this->txt(self::CMD_CLEAR));
@@ -214,6 +344,7 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         }
 
         $mli = new MultiLineNewInputGUI(ilLiveVotingPlugin::getInstance()->txt('qtype_2_answers'), 'vote_multi_line_input');
+        $mli->setShowInputLabel(MultiLineNewInputGUI::SHOW_INPUT_LABEL_NONE);
         $te = $this->getTextInputGUI(ilLiveVotingPlugin::getInstance()->txt('qtype_2_text'), 'free_input');
 
         $hi2 = new HiddenInputGUI('vote_id');
@@ -230,6 +361,14 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
             );
         }
 
+        if (empty($array)) {
+            // Without a seeded line the widget only renders a bare "+" glyph and the voter has no field to type in.
+            $array[] = array(
+                'free_input' => '',
+                'vote_id' => '',
+            );
+        }
+
         $form->setValuesByArray(array('vote_multi_line_input' => $array));
         $form->addCommandButton('submit', ilLiveVotingPlugin::getInstance()->txt('qtype_2_send'));
 
@@ -242,7 +381,8 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function getButtonInstances(): array
     {
-        if (!$this->player->isShowResults()) {
+        // Word clouds are moderated in the cloud itself, there is nothing to categorize.
+        if (!$this->player->isShowResults() || $this->player->getActiveVotingObject() instanceof LiveVotingWordCloudQuestion) {
             return array();
         }
 

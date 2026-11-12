@@ -232,14 +232,13 @@ class LiveVotingInitialisationUI
         if (!$param_manager->getPuk()) {
             $tpl->touchBlock("navbar");
         }
+        $tpl->setVariable('NAVBAR_CLASS', '');
+        $tpl->setVariable('PIN_LABEL', 'PIN');
 
         $tpl->addCss('assets/css/delos.css');
         $tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/old_delos.css');
         $tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/default.css');
 
-        if (self::getLiveVotingStyle() == "new") {
-            $tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_style.css');
-        }
 
         $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", "public/Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting");
 

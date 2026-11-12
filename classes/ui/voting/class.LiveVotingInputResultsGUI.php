@@ -23,6 +23,7 @@ namespace LiveVoting\UI\QuestionsResults;
 
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
 
 /**
@@ -58,6 +59,16 @@ abstract class LiveVotingInputResultsGUI
     /**
      * @throws LiveVotingException
      */
+    protected function isUsingNewUI(): bool
+    {
+        $live_voting = new LiveVoting($this->player->getObjId(), false);
+
+        return $live_voting->usesNewUI();
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
     public function reset(): void
     {
         $database = new LiveVotingDatabase();
@@ -78,6 +89,8 @@ abstract class LiveVotingInputResultsGUI
                 return new LiveVotingSingleVoteResultsUI($player);
             case "FreeText":
                 return new LiveVotingInputFreeTextUI($player);
+            case "WordCloud":
+                return new LiveVotingInputWordCloudUI($player);
             case "CorrectOrder":
                 return new LiveVotingInputCorrectOrderUI($player);
             case "Priorities":

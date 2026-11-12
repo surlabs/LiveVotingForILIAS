@@ -67,11 +67,15 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
         //dump($this->player->getButtonStates());exit;
 
         $this->edit_mode = (array_key_exists('btn_categorize', $button_states) && $button_states['btn_categorize'] == 'true');
+        if ($this->isUsingNewUI() && !$this->edit_mode) {
+            return $this->renderAnswerList();
+        }
         $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input_results.html', true, true);
+        $tpl->setVariable('RESULTS_CLASS', $this->isUsingNewUI() ? ' xlvo-new-free-text-results' : '');
 
-        $categories = new LiveVotingInputFreeTextCategoriesUI($this->player, $this->edit_mode);
+        $categories = new LiveVotingInputFreeTextCategoriesUI($this->player, $this->edit_mode, $this->isUsingNewUI());
 
-        $bars = new LiveVotingBarGroupingCollectionUI();
+        $bars = new LiveVotingBarGroupingCollectionUI($this->isUsingNewUI());
         $bars->setRemovable($this->edit_mode);
         $bars->setShowTotalVotes(true);
 
@@ -107,6 +111,45 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
 
         return $tpl->get();
 
+    }
+
+    /**
+     * New UI: every submission is its own entry, newest first. Repeated answers are not merged or counted.
+     *
+     * @throws ilTemplateException
+     * @throws LiveVotingException
+     */
+    protected function renderAnswerList(): string
+    {
+        $plugin = ilLiveVotingPlugin::getInstance();
+        $tpl = new ilTemplate($plugin->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input_list_new.html', true, true);
+
+        $votes = LiveVotingVote::getVotesOfOption($this->player->getActiveVotingObject()->getFirstOption()->getId(), $this->player->getRoundId());
+        usort($votes, static fn(LiveVotingVote $a, LiveVotingVote $b): int => $b->getId() <=> $a->getId());
+
+        $tpl->setVariable('TOTAL_ANSWERS', $plugin->txt('qtype_2_total_answers') . ': ' . count($votes));
+        $tpl->setVariable(
+            'TOTAL_PARTICIPANTS',
+            $plugin->txt('results_participants') . ': '
+            . LiveVotingVote::countVoters($this->player->getActiveVoting(), $this->player->getRoundId())
+        );
+
+        if ($votes === []) {
+            $tpl->setCurrentBlock('empty');
+            $tpl->setVariable('EMPTY_TEXT', $plugin->txt('results_waiting_answers'));
+            $tpl->parseCurrentBlock();
+        }
+
+        $total = count($votes);
+        foreach ($votes as $position => $vote) {
+            $tpl->setCurrentBlock('answer');
+            $tpl->setVariable('ANSWER', nl2br(htmlspecialchars($vote->getFreeInput(), ENT_QUOTES, 'UTF-8', false), false));
+            // Accent follows arrival order, so an answer keeps its colour when newer ones push it down.
+            $tpl->setVariable('ACCENT', (string) (($total - 1 - $position) % 4 + 1));
+            $tpl->parseCurrentBlock();
+        }
+
+        return $tpl->get();
     }
 
     public static function addJsAndCss(): void

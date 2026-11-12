@@ -52,9 +52,10 @@ class LiveVotingInputFreeTextCategoriesUI
      *
      * @param LiveVotingPlayer $player
      * @param bool $edit_mode
+     * @param bool $use_new_ui Categories render their answers like the main list, so drag and drop sees one structure
      * @throws LiveVotingException
      */
-    public function __construct(LiveVotingPlayer $player, bool $edit_mode = false)
+    public function __construct(LiveVotingPlayer $player, bool $edit_mode = false, bool $use_new_ui = false)
     {
         $this->setRemovable($edit_mode);
 
@@ -66,7 +67,7 @@ class LiveVotingInputFreeTextCategoriesUI
         ), array("id"));
 
         foreach ($categories as $category) {
-            $bar_collection = new LiveVotingBarGroupingCollectionUI();
+            $bar_collection = new LiveVotingBarGroupingCollectionUI($use_new_ui);
             $bar_collection->setRemovable($this->isRemovable());
 
             $category = new LiveVotingCategory((int)$category["id"]);

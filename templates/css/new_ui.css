@@ -1,0 +1,3091 @@
+.xlvo-new-ui {
+    --xlvo-new-ink: #111827;
+    --xlvo-new-muted: #6b7280;
+    --xlvo-new-accent: #4f46e5;
+    --xlvo-new-surface: #ffffff;
+    --xlvo-new-border: #e2e8f0;
+    --xlvo-new-wash: #eef2ff;
+    color: var(--xlvo-new-ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body.xlvo-new-ui-page,
+body.xlvo-new-ui-page #ilAll,
+body.xlvo-new-ui-page .lxvo-row {
+    background: #f3f4f6;
+    margin-top: 75px;
+    min-height: 100vh;
+}
+
+body.xlvo-new-ui-page .xlvo-voter-loading {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    min-height: calc(100vh - 75px);
+}
+
+body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
+    height: 42px;
+    width: 42px;
+}
+
+.xlvo-new-ui-navbar {
+    align-items: center;
+    background: #111827;
+    border: 0;
+    display: flex;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    height: 64px;
+    justify-content: space-between;
+    min-height: 64px;
+    padding: 0 22px;
+}
+
+.xlvo-new-ui-navbar .navbar-header {
+    float: none !important;
+}
+
+.xlvo-new-ui-navbar .navbar-header.pull-left {
+    display: none;
+}
+
+.xlvo-new-ui-navbar .navbar-header.pull-right {
+    align-items: center;
+    display: flex;
+    margin-left: auto;
+}
+
+.xlvo-new-ui-navbar .xlvo-nickname {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    color: #f9fafb;
+    display: flex;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 28px;
+    margin: 0 0 0 16px;
+    padding: 0;
+}
+
+.xlvo-new-ui-navbar .xlvo-pin {
+    background: #374151;
+    border: 0;
+    border-radius: 3px;
+    box-shadow: none;
+    color: #f9fafb;
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 28px;
+    margin: 0;
+    padding: 0 10px;
+    position: absolute;
+    left: 22px;
+    text-align: center;
+    top: 18px;
+    width: 124px;
+}
+
+.xlvo-new-ui-navbar .xlvo-pin:hover,
+.xlvo-new-ui-navbar .xlvo-pin:focus {
+    background: #4b5563;
+    color: #fff;
+}
+
+.xlvo-new-ui-navbar .xlvo-nickname:hover,
+.xlvo-new-ui-navbar .xlvo-nickname:focus {
+    background: transparent;
+    color: #fff;
+}
+
+#xlvo-display-player .xlvo-new-ui {
+    border: 0;
+    border-radius: 18px;
+    box-shadow: 0 16px 44px rgba(24, 33, 51, 0.12);
+    overflow: hidden;
+}
+
+#xlvo-display-player .xlvo-new-ui .panel-heading {
+    background: var(--xlvo-new-surface);
+    border-bottom: 1px solid var(--xlvo-new-border);
+    color: var(--xlvo-new-ink);
+    padding: 24px 28px;
+}
+
+/* Results header: question on the left, session meta on the right */
+
+#xlvo-display-player .xlvo-new-ui .xlvo-results-header {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    justify-content: space-between;
+}
+
+.xlvo-new-ui .xlvo-results-question-box {
+    flex: 1 1 420px;
+    min-width: 0;
+}
+
+#xlvo-display-player .xlvo-new-ui .xlvo-results-header .panel-title {
+    color: var(--xlvo-new-ink);
+    float: none;
+    font-size: 1.8em;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 8px;
+}
+
+.xlvo-new-ui .xlvo-results-header .xlvo-question {
+    background: transparent;
+    border: 0;
+    color: var(--xlvo-new-muted);
+    font-size: 1.05em;
+    margin: 0 0 6px;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-results-header .xlvo-question p:last-child {
+    margin-bottom: 0;
+}
+
+.xlvo-new-ui .xlvo-results-header .xlvo-question img {
+    height: auto;
+    max-width: 100%;
+}
+
+.xlvo-new-ui .xlvo-results-type {
+    color: var(--xlvo-new-muted);
+    font-weight: 500;
+    margin: 0;
+}
+
+.xlvo-new-ui .xlvo-results-type:empty {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-results-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.xlvo-new-ui .xlvo-results-meta-badge {
+    background: #f3f4f6;
+    border-radius: 20px;
+    color: var(--xlvo-new-ink);
+    font-size: 0.9em;
+    font-weight: 600;
+    padding: 6px 14px;
+    white-space: nowrap;
+}
+
+.xlvo-new-ui .xlvo-results-meta-badge.zoom-action {
+    background: #111827;
+    color: #fff;
+    cursor: pointer;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    letter-spacing: 0.05em;
+}
+
+.xlvo-new-ui .xlvo-results-meta-badge.label-cd-running {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.xlvo-new-ui .xlvo-results-meta-badge.label-cd-warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.xlvo-new-ui .xlvo-results-meta-badge.label-cd-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+#xlvo-display-player .xlvo-new-ui .panel-body {
+    background: #f8fafc;
+    padding: 28px;
+}
+
+.xlvo-new-ui#xlvo-voter-header {
+    background: #f3f4f6;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0 auto;
+    max-width: 640px;
+}
+
+.xlvo-new-ui#xlvo-voter-header .panel-heading,
+.xlvo-new-ui#xlvo-voter-header .panel-body,
+.xlvo-new-ui#xlvo-voter-header .well {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
+.xlvo-new-ui#xlvo-voter-header .panel-body::before,
+.xlvo-new-ui#xlvo-voter-header .panel-body::after {
+    content: none;
+    display: none;
+}
+
+.xlvo-new-ui#xlvo-voter-header .panel-heading {
+    padding: 24px 20px 32px;
+}
+
+.xlvo-new-ui#xlvo-voter-header .panel-body {
+    padding: 0 20px;
+}
+
+/* Keep the answer area flush with the question title above it */
+.xlvo-new-ui#xlvo-voter-header .panel-body > .col-md-12,
+.xlvo-new-ui#xlvo-voter-header .panel-body .xlvo-free-input {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.xlvo-new-ui#xlvo-voter-header .panel-title.pull-left {
+    color: #101828;
+    float: none !important;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.xlvo-new-ui#xlvo-voter-header .description {
+    color: var(--xlvo-new-muted);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.4;
+    margin: 10px 0 0;
+}
+
+.xlvo-new-ui#xlvo-voter-header .description p {
+    margin: 0 0 6px;
+}
+
+.xlvo-new-ui#xlvo-voter-header .description img {
+    height: auto;
+    max-width: 100%;
+}
+
+.xlvo-new-ui#xlvo-voter-header .xlvo-countdown-container {
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 0 12px;
+}
+
+.xlvo-new-ui#xlvo-voter-header .xlvo-countdown-container:has(#xlvo_countdown[style*='display: none']) {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-question {
+    background: var(--xlvo-new-surface);
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 14px;
+    box-shadow: none;
+    font-size: 1.2em;
+    line-height: 1.45;
+    margin-bottom: 24px;
+    padding: 22px;
+}
+
+.xlvo-new-ui .vote-option {
+    margin: 0 0 16px;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.xlvo-new-ui .vote-label {
+    background: var(--xlvo-new-surface);
+    border: 2px solid var(--xlvo-new-border);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    min-height: 60px;
+    padding: 16px 18px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+}
+
+.xlvo-new-ui .vote-label::before {
+    border: 2px solid #cbd5e1;
+    border-radius: 6px;
+    content: '';
+    flex: 0 0 24px;
+    height: 24px;
+    margin-right: 16px;
+    width: 24px;
+}
+
+.xlvo-new-ui .vote-checkbox[type='radio'] + .vote-label::before {
+    border-radius: 50%;
+}
+
+.xlvo-new-ui .vote-label:hover {
+    border-color: var(--xlvo-new-accent);
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.12);
+}
+
+.xlvo-new-ui .vote-checkbox:checked + .vote-label {
+    background: var(--xlvo-new-wash);
+    border-color: var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .vote-checkbox:checked + .vote-label::before {
+    background: var(--xlvo-new-accent);
+    border-color: var(--xlvo-new-accent);
+    box-shadow: inset 0 0 0 5px var(--xlvo-new-wash);
+}
+
+.xlvo-new-ui .vote-checkbox[type='radio']:checked + .vote-label::before {
+    background: radial-gradient(circle, var(--xlvo-new-accent) 0 6px, #fff 7px);
+    box-shadow: none;
+}
+
+.xlvo-new-ui .vote-question {
+    align-items: center;
+    display: flex;
+    font-size: 1.05rem;
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+.xlvo-new-ui .vote-question .label {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-option_letter {
+    background: var(--xlvo-new-accent);
+    border-radius: 50%;
+    color: #fff;
+    flex: none;
+    font-size: 0.9em;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0;
+    display: inline-flex;
+    height: 30px;
+    justify-content: center;
+    align-items: center;
+    min-width: 30px;
+}
+
+.xlvo-new-ui .vote-label .btn {
+    display: none;
+}
+
+/* Free text voting */
+.xlvo-new-ui .xlvo-voter-type-hint {
+    color: var(--xlvo-new-muted);
+    font-size: 15px;
+    line-height: 1.5;
+    margin: -12px 0 20px;
+    text-align: left;
+}
+
+.xlvo-new-ui .xlvo-voter-type-hint:empty {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-free-input {
+    float: none;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.xlvo-new-ui .xlvo-free-input > form {
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-free-input .row,
+.xlvo-new-ui .xlvo-free-input .form-horizontal {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-free-input .ilFormHeader,
+.xlvo-new-ui .xlvo-free-input .ilFormRequired {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-free-input .form-group {
+    margin: 0;
+}
+
+.xlvo-new-ui .xlvo-free-input .form-group > label {
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
+.xlvo-new-ui .xlvo-free-input .form-group > div {
+    padding-left: 0;
+    padding-right: 0;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-free-input .form-control {
+    background: var(--xlvo-new-surface);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    color: var(--xlvo-new-ink);
+    font-size: 16px;
+    font-weight: 500;
+    min-height: 52px;
+    padding: 14px 16px;
+}
+
+.xlvo-new-ui .xlvo-free-input .form-control:focus {
+    border-color: var(--xlvo-new-accent);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.xlvo-new-ui .xlvo-free-input input[type='submit'] {
+    background: var(--xlvo-new-accent);
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    min-height: 52px;
+    padding: 14px 18px;
+    width: 100%;
+}
+
+.xlvo-new-ui form[aria-busy='true'] input[type='submit'] {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.xlvo-new-ui .xlvo-free-input .ilFormFooter {
+    display: block;
+    margin: 24px 0 0;
+}
+
+.xlvo-new-ui .xlvo-free-input .ilFormFooter .ilFormCmds {
+    display: block;
+    float: none;
+    padding: 0;
+    width: 100%;
+}
+
+/* Free input — multiple answers per voter */
+
+.xlvo-new-ui .xlvo-free-input .multi_line_new_input_gui > div > div {
+    align-items: center;
+    border-top: 0;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.xlvo-new-ui .xlvo-free-input .multi_line_new_input_gui > div > div > .input_gui_input {
+    order: 1;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-free-input .multi_line_new_input_gui > div > div > [data-actions] {
+    order: 2;
+    padding: 0;
+    width: auto;
+}
+
+.xlvo-new-ui .xlvo-free-input .multi_line_new_input_gui [data-action] {
+    align-items: center;
+    background: var(--xlvo-new-wash);
+    border-radius: 10px;
+    color: var(--xlvo-new-accent);
+    cursor: pointer;
+    display: inline-flex;
+    height: 40px;
+    justify-content: center;
+    width: 40px;
+}
+
+.xlvo-new-ui .xlvo-free-input .multi_line_new_input_gui [data-action]:hover {
+    background: #dbe0fd;
+}
+
+.xlvo-new-ui .xlvo-free-input .multi_line_new_input_gui [data-action] .glyph,
+.xlvo-new-ui .xlvo-free-input .multi_line_new_input_gui [data-action] a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.xlvo-new-ui .xlvo-free-input .multi_line_new_input_gui .arrows {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.xlvo-new-ui .xlvo-free-input .multi_line_new_input_gui .arrows [data-action] {
+    background: transparent;
+    color: #9ca3af;
+    height: 20px;
+    width: 24px;
+}
+
+.xlvo-new-ui .xlvo-free-input .multi_line_new_input_gui .arrows [data-action]:hover {
+    background: transparent;
+    color: var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .xlvo-free-input .multi_line_new_input_gui > div > div > [data-actions]:has([data-action='addFirstLine']) {
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-free-input .multi_line_new_input_gui [data-action='addFirstLine'] {
+    background: transparent;
+    border: 2px dashed #c7d2fe;
+    width: 100%;
+}
+
+/* PIN entry screen (shown before any voting is known) */
+
+.xlvo-new-ui-page #xlvo-voter-pin {
+    display: flex;
+    justify-content: center;
+    padding: 40px 16px 24px;
+}
+
+.xlvo-new-ui-page:has(#xlvo-voter-pin) .xlvo-new-ui-navbar .xlvo-pin {
+    display: none;
+}
+
+.xlvo-pin-screen .xlvo-pin-card {
+    background: var(--xlvo-new-surface);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    max-width: 420px;
+    padding: 36px 28px 28px;
+    width: 100%;
+}
+
+.xlvo-pin-screen .xlvo-pin-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 26px;
+    text-align: center;
+}
+
+.xlvo-pin-screen .ilFormHeader,
+.xlvo-pin-screen .ilFormRequired,
+.xlvo-pin-screen .ilFormRequired--top {
+    display: none;
+}
+
+.xlvo-pin-screen form,
+.xlvo-pin-screen .form-horizontal {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+}
+
+.xlvo-pin-screen .form-group {
+    margin: 0;
+}
+
+.xlvo-pin-screen #il_prop_cont_pin_input > label {
+    color: var(--xlvo-new-muted);
+    display: block;
+    float: none;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin: 0 0 10px;
+    padding: 0;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.xlvo-pin-screen #il_prop_cont_pin_input > div {
+    padding: 0;
+    width: 100%;
+}
+
+.xlvo-pin-screen #il_prop_cont_pin_input input#pin_input {
+    background: var(--xlvo-new-surface);
+    border: 2px solid var(--xlvo-new-border);
+    border-radius: 14px;
+    box-shadow: none;
+    color: var(--xlvo-new-ink);
+    font-size: 40px;
+    font-weight: 700;
+    height: auto;
+    letter-spacing: 0.35em;
+    line-height: 1.2;
+    margin: 0;
+    padding: 18px 10px;
+    text-align: center;
+    text-indent: 0.35em;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.xlvo-pin-screen #il_prop_cont_pin_input input#pin_input:focus {
+    border-color: var(--xlvo-new-accent);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+}
+
+.xlvo-pin-screen .ilFormFooter {
+    background: transparent;
+    border: 0;
+    margin: 26px 0 0;
+    padding: 0;
+}
+
+.xlvo-pin-screen .ilFormCmds {
+    display: flex;
+    flex-direction: column;
+    float: none;
+    padding: 0;
+    width: 100%;
+}
+
+.xlvo-pin-screen .ilFormCmds input[type='submit'] {
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    padding: 15px 18px;
+    width: 100%;
+}
+
+.xlvo-pin-screen .ilFormCmds input[name='cmd[checkPin]'] {
+    background: var(--xlvo-new-accent);
+    border: 0;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25);
+    color: #fff;
+    order: 1;
+}
+
+.xlvo-pin-screen .ilFormCmds #pinBackButton {
+    background: transparent;
+    border: 2px solid var(--xlvo-new-accent);
+    box-shadow: none;
+    color: var(--xlvo-new-accent);
+    margin-top: 12px;
+    order: 2;
+}
+
+/* Number range voting */
+.xlvo-new-ui .xlvo-number-range {
+    margin: 0 0 30px;
+}
+
+.xlvo-new-ui .xlvo-number-range-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.xlvo-new-ui .xlvo-number-range-panel {
+    background: var(--xlvo-new-surface);
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    order: 0;
+    padding: 30px 24px 24px;
+}
+
+.xlvo-new-ui .xlvo-number-range .well {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    margin: 0 0 24px;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-number-range-value #number-display {
+    color: var(--xlvo-new-accent);
+    font-size: 56px;
+    font-weight: 800;
+    line-height: 1;
+    margin: 0;
+}
+
+.xlvo-new-ui .xlvo-number-range-steppers {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 28px;
+}
+
+.xlvo-new-ui .xlvo-number-range #btn-slider-left,
+.xlvo-new-ui .xlvo-number-range #btn-slider-right {
+    background: #fff;
+    border: 2px solid #e0e7ff;
+    border-radius: 50%;
+    color: var(--xlvo-new-accent);
+    font-size: 20px;
+    height: 48px;
+    padding: 0;
+    width: 48px;
+}
+
+.xlvo-new-ui .xlvo-number-range-slider {
+    padding: 0 16px;
+}
+
+.xlvo-new-ui .xlvo-number-range .slider.slider-horizontal {
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-number-range .slider-track {
+    background: #f3f4f6;
+    height: 8px;
+    margin-top: -4px;
+}
+
+.xlvo-new-ui .xlvo-number-range .slider-selection {
+    background: var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .xlvo-number-range .slider-handle {
+    background: #fff;
+    border: 4px solid var(--xlvo-new-accent);
+    height: 32px;
+    margin-left: -16px;
+    margin-top: -6px;
+    width: 32px;
+}
+
+.xlvo-new-ui .xlvo-number-range-bounds {
+    color: var(--xlvo-new-muted);
+    display: flex;
+    font-size: 14px;
+    font-weight: 600;
+    justify-content: space-between;
+    margin-top: 14px;
+}
+
+.xlvo-new-ui .xlvo-number-range-form input[type='submit'] {
+    background: var(--xlvo-new-accent);
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 16px 18px;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-number-range-form input[name='cmd[submit]'] {
+    margin-left: 0;
+    order: 1;
+}
+
+/* Priorities voting */
+.xlvo-new-ui .xlvo-priorities #lvo_bar_movable {
+    counter-reset: priority;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    list-style: none;
+    margin: 0;
+}
+
+.xlvo-new-ui .xlvo-priorities form {
+    display: flex;
+    flex-direction: column;
+}
+
+.xlvo-new-ui .xlvo-priorities #lvo_bar_movable .list-group-item {
+    align-items: center;
+    background: var(--xlvo-new-surface);
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    cursor: grab;
+    display: flex;
+    font-size: 16px;
+    font-weight: 500;
+    min-height: 64px;
+    padding: 16px;
+}
+
+.xlvo-new-ui .xlvo-priorities #lvo_bar_movable .list-group-item::before {
+    align-items: center;
+    background: #e0e7ff;
+    border-radius: 8px;
+    color: var(--xlvo-new-accent);
+    content: counter(priority);
+    counter-increment: priority;
+    display: inline-flex;
+    flex: 0 0 32px;
+    font-weight: 700;
+    height: 32px;
+    justify-content: center;
+    margin-right: 16px;
+}
+
+.xlvo-new-ui .xlvo-priorities .option-letter {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-priorities .option-list {
+    flex: 1;
+    order: 2;
+}
+
+.xlvo-new-ui .xlvo-priorities .move-helper {
+    color: #d1d5db;
+    margin-right: 16px;
+    order: 1;
+    width: 24px;
+}
+
+.xlvo-new-ui .xlvo-priorities .move-helper .glyphicon {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-priorities .move-helper::before {
+    content: '\2261';
+    font-size: 24px;
+}
+
+.xlvo-new-ui .xlvo-priorities input[type='submit'] {
+    background: var(--xlvo-new-accent);
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 12px;
+    padding: 16px 18px;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-priorities input[name='cmd[submit]'] {
+    margin-left: 0;
+    order: 1;
+}
+
+.xlvo-new-ui .xlvo-priorities input[name='cmd[clear]'] {
+    order: 2;
+}
+
+/* Correct order voting */
+
+.xlvo-new-ui .xlvo-correct-order form {
+    display: flex;
+    flex-direction: column;
+}
+
+.xlvo-new-ui .xlvo-correct-order #lvo_bar_movable {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-correct-order #lvo_bar_movable .list-group-item {
+    align-items: center;
+    background: var(--xlvo-new-surface);
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    cursor: grab;
+    display: flex;
+    font-size: 16px;
+    font-weight: 500;
+    min-height: 64px;
+    padding: 16px;
+}
+
+.xlvo-new-ui .xlvo-correct-order .option-list {
+    align-items: center;
+    display: flex;
+    flex: 1;
+    gap: 12px;
+    order: 2;
+    min-width: 0;
+}
+
+.xlvo-new-ui .xlvo-correct-order .option-letter {
+    align-items: center;
+    background: var(--xlvo-new-accent);
+    border-radius: 50%;
+    color: #fff;
+    display: inline-flex;
+    flex: 0 0 32px;
+    font-weight: 700;
+    height: 32px;
+    justify-content: center;
+}
+
+.xlvo-new-ui .xlvo-correct-order .move-helper {
+    color: #d1d5db;
+    margin-right: 16px;
+    order: 1;
+    width: 24px;
+}
+
+.xlvo-new-ui .xlvo-correct-order .move-helper .glyphicon {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-correct-order .move-helper::before {
+    content: '\2261';
+    font-size: 24px;
+}
+
+.xlvo-new-ui .xlvo-correct-order .xlvo-correct-order-solution:empty {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-correct-order .xlvo-correct-order-solution {
+    background: var(--xlvo-new-wash);
+    border-radius: 12px;
+    margin-top: 16px;
+    padding: 14px 16px;
+}
+
+.xlvo-new-ui .xlvo-correct-order .xlvo-correct-order-solution p {
+    margin: 0;
+}
+
+.xlvo-new-ui .xlvo-correct-order .xlvo-correct-order-solution .label {
+    background: var(--xlvo-new-accent);
+    border-radius: 6px;
+    font-size: 0.9em;
+    padding: 3px 8px;
+}
+
+.xlvo-new-ui .xlvo-correct-order input[type='submit'] {
+    background: var(--xlvo-new-accent);
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 12px;
+    padding: 16px 18px;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-correct-order input[name='cmd[submit]'] {
+    margin-left: 0;
+    order: 1;
+}
+
+.xlvo-new-ui .xlvo-correct-order input[name='cmd[clear]'] {
+    order: 2;
+}
+
+.xlvo-new-ui .xlvo-correct-order input[name='cmd[clear]'],
+.xlvo-new-ui .xlvo-priorities input[name='cmd[clear]'] {
+    background: transparent;
+    border: 2px solid var(--xlvo-new-accent);
+    box-shadow: none;
+    color: var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .xlvo-correct-order input[type='submit'][disabled],
+.xlvo-new-ui .xlvo-priorities input[type='submit'][disabled] {
+    background: transparent;
+    border-color: var(--xlvo-new-border);
+    box-shadow: none;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.xlvo-new-ui #xlvo-display-options {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(12, 1fr);
+    margin: 0;
+}
+
+/* The player honours the question's "columns" setting: OPTION_COL is 12 / columns. */
+.xlvo-new-ui #xlvo-display-options > div {
+    grid-column: span 12;
+    padding: 0;
+    width: 100%;
+}
+
+.xlvo-new-ui #xlvo-display-options > .col-md-6 {
+    grid-column: span 6;
+}
+
+.xlvo-new-ui #xlvo-display-options > .col-md-4 {
+    grid-column: span 4;
+}
+
+.xlvo-new-ui #xlvo-display-options > .col-md-3 {
+    grid-column: span 3;
+}
+
+@media (max-width: 991px) {
+    .xlvo-new-ui #xlvo-display-options > div {
+        grid-column: span 12;
+    }
+}
+
+.xlvo-new-ui .xlvo-option {
+    align-items: center;
+    background: var(--xlvo-new-surface);
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 12px;
+    display: flex;
+    font-size: 1.05em;
+    gap: 12px;
+    padding: 16px 18px;
+}
+
+.xlvo-new-ui #xlvo-display-results {
+    background: var(--xlvo-new-surface);
+    border-radius: 14px;
+    margin: 0;
+    padding: 18px;
+}
+
+.xlvo-new-ui #xlvo-display-results:empty {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .xlvo-new-ui .panel-title.pull-right {
+        font-size: 0.9em;
+    }
+}
+
+/* Results — Choices bars */
+
+.xlvo-new-ui .xlvo-bar-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.xlvo-new-ui .xlvo-bar-stats:empty {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-bar-stat-badge {
+    background: #f3f4f6;
+    border-radius: 20px;
+    color: var(--xlvo-new-ink);
+    font-size: 0.85em;
+    font-weight: 600;
+    padding: 6px 14px;
+}
+
+.xlvo-new-ui .xlvo-bar-stat-badge-alt {
+    background: var(--xlvo-new-wash);
+    color: var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .xlvo-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.xlvo-new-ui .xlvo-bar-label-row {
+    align-items: center;
+    display: flex;
+    font-size: 0.95em;
+    font-weight: 500;
+    gap: 12px;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.xlvo-new-ui .xlvo-option-name {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    min-width: 0;
+}
+
+.xlvo-new-ui .xlvo-option-name > span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.xlvo-new-ui .xlvo-option-letter {
+    background: var(--xlvo-new-accent);
+    border-radius: 50%;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85em;
+    height: 22px;
+    min-width: 22px;
+}
+
+.xlvo-new-ui .xlvo-color-dot {
+    border-radius: 50%;
+    display: inline-block;
+    flex: none;
+    height: 10px;
+    width: 10px;
+}
+
+.xlvo-new-ui .xlvo-vote-counts {
+    color: var(--xlvo-new-muted);
+    flex: none;
+    font-weight: 600;
+}
+
+.xlvo-new-ui .xlvo-bar-container {
+    background: var(--xlvo-new-wash);
+    border-radius: 12px;
+    height: 22px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-bar-fill {
+    border-radius: 12px;
+    height: 100%;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    width: 0;
+}
+
+/* Fullscreen projector: the ILIAS grid row's negative margins would add a horizontal scrollbar */
+.xlvo-fullscreen:has(.xlvo-new-ui) {
+    overflow-x: hidden;
+}
+
+.xlvo-new-ui .xlvo-bar-solution {
+    color: var(--xlvo-new-muted);
+    font-weight: 600;
+    margin-top: 20px;
+}
+
+.xlvo-new-ui .xlvo-bar-solution p:empty {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-bar-solution .xlvo-option {
+    align-items: center;
+    color: var(--xlvo-new-ink);
+    display: flex;
+    font-weight: 500;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.xlvo-new-ui .xlvo-bar-solution .xlvo-option_letter {
+    color: #fff;
+    flex: none;
+    font-size: 0.9em;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0;
+}
+
+/* Results — free text answers, grouped estimates and mean/median/mode tiles */
+
+.xlvo-new-ui .xlvo-vote-free-input {
+    margin-bottom: 12px;
+    position: relative;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input .well {
+    background: var(--xlvo-new-surface);
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    color: var(--xlvo-new-ink);
+    margin: 0;
+    padding: 16px 18px;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input .well.well-dark {
+    background: var(--xlvo-new-wash);
+    border-color: transparent;
+    color: var(--xlvo-new-accent);
+    font-weight: 600;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input .well.zoom {
+    font-size: 1.4em;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input .well {
+    position: relative;
+}
+
+/* Room for the count on both sides, so a centred value stays centred whether or not it has a count */
+.xlvo-new-ui .xlvo-vote-free-input .well.text-center {
+    padding-left: 64px;
+    padding-right: 64px;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input .well:not(.text-center):has(.label-primary:not(:empty)) {
+    padding-right: 64px;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input .label-primary {
+    align-items: center;
+    background: var(--xlvo-new-accent);
+    border-radius: 999px;
+    color: #fff;
+    display: inline-flex;
+    float: none !important;
+    font-size: 14px;
+    font-weight: 700;
+    height: 28px;
+    justify-content: center;
+    line-height: 1;
+    min-width: 28px;
+    padding: 0 8px;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.xlvo-new-ui .xlvo-vote-free-input .label-primary:empty {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input .well.well-dark .label-primary {
+    background: var(--xlvo-new-accent);
+    color: #fff;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input > .close {
+    background: transparent;
+    border: 0;
+    color: var(--xlvo-new-muted);
+    line-height: 1;
+    opacity: 0.6;
+    position: absolute;
+    right: 10px;
+    top: 8px;
+    z-index: 1;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input > .close:hover {
+    opacity: 1;
+}
+
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-1 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-1 .xlvo-bar-fill {
+    background: #3b82f6;
+}
+
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-2 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-2 .xlvo-bar-fill {
+    background: #10b981;
+}
+
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-3 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-3 .xlvo-bar-fill {
+    background: #f59e0b;
+}
+
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-4 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-4 .xlvo-bar-fill {
+    background: #ef4444;
+}
+
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-5 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-5 .xlvo-bar-fill {
+    background: #8b5cf6;
+}
+
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-6 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-6 .xlvo-bar-fill {
+    background: #ec4899;
+}
+
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-7 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-7 .xlvo-bar-fill {
+    background: #06b6d4;
+}
+
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-8 .xlvo-color-dot,
+.xlvo-new-ui .xlvo-bar-row-wrap.xlvo-bar-color-8 .xlvo-bar-fill {
+    background: #84cc16;
+}
+
+/* QR join modal */
+
+.xlvo-qr-join {
+    align-items: center;
+    display: grid;
+    gap: 48px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 12px 0;
+}
+
+.xlvo-qr-access-details {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    justify-content: center;
+    min-width: 0;
+}
+
+.xlvo-qr-pin {
+    align-items: baseline;
+    display: flex;
+    gap: 10px;
+}
+
+.xlvo-qr-pin strong {
+    color: #111827;
+    font-family: monospace;
+    font-size: 2.5rem;
+    letter-spacing: 0.12em;
+}
+
+.xlvo-qr-code {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+    padding: 16px;
+}
+
+.xlvo-qr-code img {
+    display: block;
+    height: auto;
+    max-height: min(70vh, 700px);
+    max-width: 100%;
+    width: 600px;
+}
+
+.xlvo-qr-link {
+    background: #eef2ff;
+    border-radius: 8px;
+    color: #4338ca;
+    font-family: monospace;
+    font-size: 0.9rem;
+    line-break: anywhere;
+    margin-top: 32px;
+    max-width: 100%;
+    padding: 10px 14px;
+    text-align: left;
+    width: 100%;
+}
+
+.xlvo-qr-link:hover,
+.xlvo-qr-link:focus {
+    background: #e0e7ff;
+    color: #3730a3;
+    text-decoration: none;
+}
+
+.c-modal:has(.xlvo-qr-join) .modal-header,
+.c-modal:has(.xlvo-qr-join) .modal-footer {
+    border-color: #e2e8f0;
+}
+
+.c-modal:has(.xlvo-qr-join) .modal-title {
+    color: #111827;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+@media (max-width: 767px) {
+    .xlvo-qr-join {
+        gap: 20px;
+        grid-template-columns: 1fr;
+    }
+
+    .xlvo-qr-link {
+        text-align: center;
+    }
+}
+
+/* Free text and grouped number-range results */
+
+.xlvo-new-ui .xlvo-free-text-results #categories {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0 0 20px;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-free-text-results #answers {
+    margin: 0;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .input-group {
+    display: flex;
+    flex: 1 1 260px;
+    margin: 0;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .form-control {
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 10px 0 0 10px;
+    box-shadow: none;
+    min-height: 44px;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .input-group-append {
+    display: flex;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .input-group-append .btn {
+    background: var(--xlvo-new-wash);
+    border: 1px solid var(--xlvo-new-border);
+    border-left: 0;
+    border-radius: 0 10px 10px 0;
+    color: var(--xlvo-new-accent);
+    font-weight: 600;
+}
+
+.xlvo-new-ui .xlvo-bars + .xlvo-bars {
+    margin-top: 20px;
+}
+
+@media (max-width: 767px) {
+    .xlvo-new-ui .xlvo-free-text-results #categories {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Results — a bar that just received votes flashes once */
+
+@keyframes xlvo-bar-flash {
+    0% {
+        filter: brightness(1);
+    }
+    40% {
+        filter: brightness(1.35);
+    }
+    100% {
+        filter: brightness(1);
+    }
+}
+
+.xlvo-new-ui .xlvo-bar-fill.xlvo-bar-flash {
+    animation: xlvo-bar-flash 0.6s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .xlvo-new-ui .xlvo-bar-fill {
+        transition: none;
+    }
+
+    .xlvo-new-ui .xlvo-bar-fill.xlvo-bar-flash {
+        animation: none;
+    }
+}
+
+/* Results — free text answer list (one entry per submission, newest first) */
+
+.xlvo-new-ui .xlvo-free-text-list-area {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.xlvo-new-ui .xlvo-free-text-answers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-free-text-answer {
+    background: #f9fafb;
+    border: 1px solid var(--xlvo-new-border);
+    border-left: 4px solid #3b82f6;
+    border-radius: 10px;
+    font-size: 1.05em;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+    padding: 12px 16px;
+}
+
+.xlvo-new-ui .xlvo-free-text-accent-2 {
+    border-left-color: #10b981;
+}
+
+.xlvo-new-ui .xlvo-free-text-accent-3 {
+    border-left-color: #f59e0b;
+}
+
+.xlvo-new-ui .xlvo-free-text-accent-4 {
+    border-left-color: #ef4444;
+}
+
+.xlvo-new-ui .xlvo-free-text-empty {
+    align-items: center;
+    color: var(--xlvo-new-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 40px 0;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-free-text-answer.is-new {
+    animation: xlvo-answer-in 0.35s ease-out;
+}
+
+@keyframes xlvo-answer-in {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .xlvo-new-ui .xlvo-free-text-answer {
+        animation: none;
+    }
+}
+
+/* Results — number range histogram */
+
+.xlvo-new-ui .xlvo-histogram {
+    align-items: stretch;
+    display: flex;
+    gap: 8px;
+    height: 320px;
+    padding-top: 26px;
+}
+
+.xlvo-new-ui .xlvo-hist-col {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.xlvo-new-ui .xlvo-hist-plot {
+    align-items: flex-end;
+    border-bottom: 2px solid var(--xlvo-new-border);
+    display: flex;
+    flex: 1;
+}
+
+.xlvo-new-ui .xlvo-hist-bar {
+    background: var(--xlvo-new-accent);
+    border-radius: 8px 8px 0 0;
+    min-height: 2px;
+    position: relative;
+    transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-hist-bar.is-empty {
+    background: transparent;
+}
+
+.xlvo-new-ui .xlvo-hist-count {
+    bottom: 100%;
+    color: var(--xlvo-new-ink);
+    font-size: 0.85em;
+    font-weight: 700;
+    left: 0;
+    margin-bottom: 4px;
+    position: absolute;
+    right: 0;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-hist-bar.is-empty .xlvo-hist-count {
+    color: #d1d5db;
+}
+
+.xlvo-new-ui .xlvo-hist-label {
+    color: var(--xlvo-new-muted);
+    font-size: 0.75em;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-top: 8px;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-hist-caption {
+    color: var(--xlvo-new-muted);
+    font-size: 0.85em;
+    margin-top: 12px;
+    text-align: center;
+}
+
+@media (max-width: 767px) {
+    .xlvo-new-ui .xlvo-histogram {
+        gap: 4px;
+        height: 240px;
+    }
+
+    .xlvo-new-ui .xlvo-hist-label {
+        font-size: 0.65em;
+    }
+}
+
+/* Voting — answer forms: option cards, Submit / Change Answer and the locked state after submitting */
+
+.xlvo-new-ui .xlvo-option-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.xlvo-new-ui .xlvo-option-card {
+    align-items: center;
+    background: var(--xlvo-new-surface);
+    border: 2px solid var(--xlvo-new-border);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    font-weight: 500;
+    gap: 12px;
+    margin: 0;
+    padding: 16px;
+    transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.xlvo-new-ui .xlvo-option-card:hover {
+    border-color: #c7d2fe;
+}
+
+.xlvo-new-ui .xlvo-option-card input {
+    height: 1px;
+    opacity: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.xlvo-new-ui .xlvo-option-indicator {
+    border: 2px solid #cbd5e1;
+    flex: none;
+    height: 22px;
+    position: relative;
+    width: 22px;
+}
+
+.xlvo-new-ui .xlvo-option-indicator-radio {
+    border-radius: 50%;
+}
+
+.xlvo-new-ui .xlvo-option-indicator-checkbox {
+    border-radius: 6px;
+}
+
+.xlvo-new-ui .xlvo-option-card input:checked ~ .xlvo-option-indicator {
+    background: var(--xlvo-new-accent);
+    border-color: var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .xlvo-option-card input:checked ~ .xlvo-option-indicator-radio::after {
+    background: #fff;
+    border-radius: 50%;
+    content: '';
+    height: 8px;
+    left: 5px;
+    position: absolute;
+    top: 5px;
+    width: 8px;
+}
+
+.xlvo-new-ui .xlvo-option-card input:checked ~ .xlvo-option-indicator-checkbox::after {
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    content: '';
+    height: 11px;
+    left: 6px;
+    position: absolute;
+    top: 2px;
+    transform: rotate(45deg);
+    width: 6px;
+}
+
+.xlvo-new-ui .xlvo-option-card:has(input:checked) {
+    background: var(--xlvo-new-wash);
+    border-color: var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .xlvo-option-card:has(input:focus-visible) {
+    outline: 3px solid #a5b4fc;
+    outline-offset: 2px;
+}
+
+.xlvo-new-ui .xlvo-option-card-letter {
+    color: var(--xlvo-new-muted);
+    flex: none;
+    font-weight: 700;
+}
+
+.xlvo-new-ui .xlvo-option-card-text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.xlvo-new-ui .xlvo-option-card-text p {
+    margin: 0;
+}
+
+.xlvo-new-ui .xlvo-option-card-text img {
+    height: auto;
+    max-width: 100%;
+}
+
+/* Locked after submitting: the chosen answer stays visible, everything else fades */
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card {
+    cursor: default;
+    opacity: 0.55;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-submitted {
+    background: var(--xlvo-new-wash);
+    border-color: var(--xlvo-new-accent);
+    opacity: 1;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-submitted .xlvo-option-indicator {
+    background: var(--xlvo-new-accent);
+    border-color: var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .xlvo-answer-feedback {
+    color: #b91c1c;
+    font-weight: 600;
+    margin: 12px 0 0;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-answer-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.xlvo-new-ui .xlvo-submit-btn,
+.xlvo-new-ui .xlvo-change-answer-btn {
+    border: 0;
+    border-radius: 12px;
+    font-size: 1.05em;
+    font-weight: 600;
+    padding: 14px 18px;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-submit-btn {
+    background: var(--xlvo-new-accent);
+    color: #fff;
+}
+
+.xlvo-new-ui .xlvo-submit-btn:hover:not(:disabled) {
+    background: #4338ca;
+}
+
+.xlvo-new-ui .xlvo-submit-btn:disabled {
+    background: #e5e7eb;
+    color: #6b7280;
+    cursor: default;
+}
+
+.xlvo-new-ui .xlvo-change-answer-btn {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+}
+
+.xlvo-new-ui .xlvo-change-answer-btn:hover:not(:disabled) {
+    background: #fecaca;
+}
+
+.xlvo-new-ui .xlvo-change-answer-btn:disabled {
+    background: #e5e7eb;
+    border-color: #e5e7eb;
+    color: #9ca3af;
+    cursor: default;
+}
+
+.xlvo-new-ui form[aria-busy='true'] .xlvo-submit-btn {
+    background: var(--xlvo-new-accent);
+    color: #fff;
+    opacity: 0.85;
+}
+
+/* Locked ranking / number range after submitting */
+
+.xlvo-new-ui .xlvo-answer-form.is-locked #lvo_bar_movable {
+    pointer-events: none;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked #lvo_bar_movable .list-group-item {
+    background: #e5e7eb;
+    box-shadow: none;
+    color: #9ca3af;
+    cursor: default;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked #lvo_bar_movable .move-helper {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-priorities .xlvo-answer-form.is-locked #lvo_bar_movable .list-group-item::before,
+.xlvo-new-ui .xlvo-correct-order .xlvo-answer-form.is-locked .option-letter {
+    background: #d1d5db;
+    color: #9ca3af;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-number-range-panel {
+    pointer-events: none;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-number-range-value #number-display {
+    color: var(--xlvo-new-ink);
+}
+
+.xlvo-new-ui .xlvo-number-range .xlvo-answer-form.is-locked #btn-slider-left,
+.xlvo-new-ui .xlvo-number-range .xlvo-answer-form.is-locked #btn-slider-right {
+    border-color: #e5e7eb;
+    color: #9ca3af;
+}
+
+.xlvo-new-ui .xlvo-number-range .xlvo-answer-form.is-locked .slider-selection {
+    background: #9ca3af;
+}
+
+.xlvo-new-ui .xlvo-number-range .xlvo-answer-form.is-locked .slider-handle {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+/* Voting — free text: one field per answer */
+
+.xlvo-new-ui .xlvo-free-text-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.xlvo-new-ui .xlvo-free-text-row {
+    align-items: flex-start;
+    display: flex;
+    gap: 8px;
+}
+
+.xlvo-new-ui .xlvo-free-text-field {
+    background: var(--xlvo-new-surface);
+    border: 2px solid var(--xlvo-new-border);
+    border-radius: 12px;
+    flex: 1;
+    font-size: 1.05em;
+    min-width: 0;
+    padding: 14px 16px;
+    resize: vertical;
+}
+
+.xlvo-new-ui .xlvo-free-text-field:focus {
+    border-color: var(--xlvo-new-accent);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    outline: none;
+}
+
+.xlvo-new-ui .xlvo-free-text-remove {
+    background: transparent;
+    border: 0;
+    border-radius: 10px;
+    color: var(--xlvo-new-muted);
+    flex: none;
+    font-size: 1.5em;
+    height: 52px;
+    line-height: 1;
+    width: 44px;
+}
+
+.xlvo-new-ui .xlvo-free-text-remove:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.xlvo-new-ui .xlvo-free-text-row:only-child .xlvo-free-text-remove {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-free-text-add {
+    background: transparent;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    color: var(--xlvo-new-muted);
+    font-weight: 600;
+    margin-top: 12px;
+    padding: 12px;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-free-text-add:hover {
+    background: var(--xlvo-new-wash);
+    border-color: var(--xlvo-new-accent);
+    color: var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .xlvo-free-text-form.is-locked .xlvo-free-text-field {
+    background: #f3f4f6;
+    border-color: #e5e7eb;
+    color: #9ca3af;
+}
+
+.xlvo-new-ui .xlvo-free-text-form.is-locked .xlvo-free-text-remove,
+.xlvo-new-ui .xlvo-free-text-form.is-locked .xlvo-free-text-add {
+    display: none;
+}
+
+/* Voter header: avatar bubble next to the participant name, as in the mockups */
+
+.xlvo-new-ui-navbar .xlvo-nickname:not(:empty)::before {
+    align-items: center;
+    background: var(--xlvo-new-accent, #4f46e5);
+    border-radius: 50%;
+    color: #fff;
+    content: 'ID';
+    display: inline-flex;
+    font-size: 11px;
+    font-weight: 700;
+    height: 28px;
+    justify-content: center;
+    margin-right: 8px;
+    width: 28px;
+}
+
+/* Free text: once submitted, a green check marks every answer field that has content */
+
+.xlvo-new-ui .xlvo-free-text-field-wrap {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+}
+
+.xlvo-new-ui .xlvo-free-text-field-wrap .xlvo-free-text-field {
+    padding-right: 48px;
+    width: 100%;
+}
+
+/* Text areas grow with the answer (xlvoVoter.fitTextareas), so they never need their own scrollbar */
+.xlvo-new-ui textarea.xlvo-free-text-field {
+    overflow-y: hidden;
+    resize: none;
+}
+
+.xlvo-new-ui .xlvo-free-text-check {
+    display: none;
+    height: 22px;
+    position: absolute;
+    right: 14px;
+    top: 15px;
+    width: 22px;
+}
+
+.xlvo-new-ui .xlvo-free-text-check::after {
+    border: solid #10b981;
+    border-width: 0 3px 3px 0;
+    content: '';
+    height: 14px;
+    left: 7px;
+    position: absolute;
+    top: 2px;
+    transform: rotate(45deg);
+    width: 7px;
+}
+
+.xlvo-new-ui .xlvo-free-text-form.is-locked .xlvo-free-text-row.has-value .xlvo-free-text-check {
+    display: block;
+}
+
+/* Empty submit: shake the answer area */
+
+@keyframes xlvo-shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+.xlvo-new-ui .xlvo-shake {
+    animation: xlvo-shake 0.4s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .xlvo-new-ui .xlvo-shake {
+        animation: none;
+    }
+}
+
+/* Submitting: spinner inside the submit button */
+
+.xlvo-new-ui form[aria-busy='true'] .xlvo-submit-btn::before {
+    animation: xlvo-spin 0.8s linear infinite;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    border-top-color: #fff;
+    content: '';
+    display: inline-block;
+    height: 16px;
+    margin-right: 8px;
+    vertical-align: -3px;
+    width: 16px;
+}
+
+@keyframes xlvo-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Ordering questions: the legacy "Your Submission:" caption is replaced by the locked state */
+
+.xlvo-new-ui .xlvo-answer-form > p:not([class]) {
+    display: none;
+}
+
+/* Result totals lifted into the header, next to the session badges */
+
+.xlvo-new-ui .xlvo-results-meta .xlvo-results-stats {
+    display: contents;
+}
+
+.xlvo-new-ui .xlvo-results-meta .xlvo-bar-stat-badge {
+    font-size: 0.95em;
+    padding: 6px 14px;
+    white-space: nowrap;
+}
+
+/* Challenge mode */
+
+/* In a challenge the first answer counts, so there is no way back */
+.xlvo-new-ui.xlvo-challenge .xlvo-change-answer-btn {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-challenge-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.xlvo-new-ui .xlvo-challenge-info-item {
+    background: var(--xlvo-new-surface);
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 999px;
+    color: var(--xlvo-new-muted);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 14px;
+}
+
+.xlvo-new-ui .xlvo-challenge-info-item:empty,
+.xlvo-new-ui .xlvo-challenge-info:not(:has(.xlvo-challenge-info-item:not(:empty))) {
+    display: none;
+}
+
+/* Scoreboard, shared by the projector and the voter */
+
+.xlvo-new-ui.xlvo-scoreboard-panel {
+    background: var(--xlvo-new-surface);
+}
+
+.xlvo-new-ui .xlvo-scoreboard-header .panel-title {
+    color: var(--xlvo-new-ink);
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-header:has(.panel-title:empty) {
+    display: none;
+}
+
+.xlvo-new-ui#xlvo-voter-header .xlvo-scoreboard-panel,
+.xlvo-new-ui#xlvo-voter-header .xlvo-scoreboard-panel .panel-body {
+    background: transparent;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-scoreboard {
+    counter-reset: xlvo-rank;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style: none;
+    margin: 0 0 24px;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-row {
+    align-items: center;
+    background: var(--xlvo-new-surface);
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 14px;
+    counter-increment: xlvo-rank;
+    display: flex;
+    gap: 14px;
+    padding: 14px 18px;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-row::before {
+    align-items: center;
+    background: var(--xlvo-new-wash);
+    border-radius: 50%;
+    color: var(--xlvo-new-accent);
+    content: counter(xlvo-rank);
+    display: inline-flex;
+    flex: none;
+    font-weight: 700;
+    height: 32px;
+    justify-content: center;
+    width: 32px;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-row:nth-child(1)::before {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-row:nth-child(2)::before {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-row:nth-child(3)::before {
+    background: #fde8d7;
+    color: #9a3412;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-name {
+    flex: 1 1 auto;
+    font-size: 18px;
+    font-weight: 600;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-points {
+    color: #16a34a;
+    flex: none;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Start screen (PIN, link, QR) of both modes */
+
+.xlvo-new-ui.xlvo-start-screen {
+    background: #f8fafc;
+    border: 0;
+    border-radius: 18px;
+    box-shadow: 0 16px 44px rgba(24, 33, 51, 0.12);
+    overflow: hidden;
+}
+
+.xlvo-new-ui.xlvo-start-screen .well {
+    background: var(--xlvo-new-surface);
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 14px;
+    box-shadow: none;
+}
+
+.xlvo-new-ui.xlvo-start-screen .well h3 {
+    color: var(--xlvo-new-ink);
+    font-weight: 600;
+    margin: 0;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo_list_nickname {
+    background: var(--xlvo-new-wash);
+    border: 1px solid #c7d2fe;
+    border-radius: 999px;
+    box-shadow: none;
+    color: var(--xlvo-new-accent);
+    font-weight: 600;
+    padding: 10px 16px;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo_shortlink {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    overflow-wrap: anywhere;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-pin h3 {
+    color: var(--xlvo-new-accent);
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+/* PIN, link and attendees stacked on the left, a large QR on the right, both columns the same height */
+.xlvo-new-ui.xlvo-start-screen > .panel-body.row:first-child {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.xlvo-new-ui.xlvo-start-screen > .panel-body.row::before,
+.xlvo-new-ui.xlvo-start-screen > .panel-body.row::after {
+    content: none;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-info,
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-qr-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-info .xlvo_shortlink {
+    flex: 1 1 auto;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-qr-col .xlvo_cm_qr {
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 14px;
+    height: auto;
+    margin-bottom: 10px;
+    padding: 24px;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-qr {
+    background: none;
+    border: 0;
+    border-radius: 8px;
+    cursor: zoom-in;
+    line-height: 0;
+    padding: 0;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-qr img {
+    height: auto;
+    max-width: 100%;
+    width: 280px;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-qr:focus-visible,
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-zoom:focus-visible {
+    outline: 3px solid #a5b4fc;
+    outline-offset: 3px;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-zoom {
+    background: var(--xlvo-new-wash);
+    border: 0;
+    border-radius: 999px;
+    color: var(--xlvo-new-accent);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 18px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-zoom:hover {
+    background: var(--xlvo-new-accent);
+    color: #fff;
+}
+
+@media (max-width: 991px) {
+    .xlvo-new-ui.xlvo-start-screen .xlvo-start-info,
+    .xlvo-new-ui.xlvo-start-screen .xlvo-start-qr-col {
+        width: 100%;
+    }
+}
+
+/* Challenge nickname screen: same card as the PIN screen, with a plain text field */
+
+.xlvo-nickname-screen #il_prop_cont_nickname_input > label {
+    color: var(--xlvo-new-muted);
+    display: block;
+    float: none;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin: 0 0 10px;
+    padding: 0;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.xlvo-nickname-screen #il_prop_cont_nickname_input > div {
+    padding: 0;
+    width: 100%;
+}
+
+.xlvo-nickname-screen #il_prop_cont_nickname_input input#nickname_input {
+    background: var(--xlvo-new-surface);
+    border: 2px solid var(--xlvo-new-border);
+    border-radius: 14px;
+    box-shadow: none;
+    color: var(--xlvo-new-ink);
+    font-size: 22px;
+    font-weight: 600;
+    height: auto;
+    margin: 0;
+    padding: 14px 12px;
+    text-align: center;
+    width: 100%;
+}
+
+.xlvo-nickname-screen #il_prop_cont_nickname_input input#nickname_input:focus {
+    border-color: var(--xlvo-new-accent);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+}
+
+.xlvo-nickname-screen .ilFormCmds input[name='cmd[requestNickname]'] {
+    background: var(--xlvo-new-accent);
+    border: 0;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25);
+    color: #fff;
+}
+
+/* Scoreboard with results shown: the question the bars belong to */
+.xlvo-new-ui .xlvo-scoreboard-results-title {
+    color: var(--xlvo-new-ink);
+    font-size: 18px;
+    font-weight: 700;
+    margin: 8px 0 12px;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-results-title:empty {
+    display: none;
+}
+
+/* Free text — categorise mode */
+
+/* Remove button centred on the right of the card; the count moves left of it */
+.xlvo-new-ui .xlvo-vote-free-input > .close {
+    align-items: center;
+    border-radius: 50%;
+    display: inline-flex;
+    font-size: 20px;
+    height: 28px;
+    justify-content: center;
+    padding: 0;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input > .close:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input:has(> .close) .well {
+    cursor: grab;
+    padding-right: 52px;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input:has(> .close) .well:has(.label-primary:not(:empty)) {
+    padding-right: 92px;
+}
+
+.xlvo-new-ui .xlvo-vote-free-input:has(> .close) .label-primary {
+    right: 50px;
+}
+
+/* Categories: white cards with their title, each one a drop zone */
+.xlvo-new-ui .xlvo-free-text-results #categories > div {
+    float: none;
+    padding: 0;
+    position: relative;
+    width: auto;
+}
+
+.xlvo-new-ui .xlvo-free-text-results #categories:empty {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-free-text-results fieldset.xlvo-category {
+    background: var(--xlvo-new-surface);
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    margin: 0;
+    min-height: 140px;
+    padding: 16px;
+}
+
+.xlvo-new-ui .xlvo-free-text-results fieldset.xlvo-category legend {
+    border: 0;
+    color: var(--xlvo-new-ink);
+    float: left;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    padding: 0 32px 0 0;
+    position: static;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-free-text-results fieldset.xlvo-category .xlvo-bars {
+    border: 2px dashed var(--xlvo-new-border);
+    border-radius: 10px;
+    clear: both;
+    min-height: 72px;
+    padding: 8px;
+}
+
+.xlvo-new-ui .xlvo-free-text-results fieldset.xlvo-category .xlvo-bar-stats:empty,
+.xlvo-new-ui .xlvo-free-text-results fieldset.xlvo-category .xlvo-bar-stats:not(:has(*)) {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-free-text-results fieldset.xlvo-category .xlvo-vote-free-input:last-child {
+    margin-bottom: 0;
+}
+
+.xlvo-new-ui .xlvo-free-text-results fieldset.xlvo-category .well.zoom {
+    font-size: 1em;
+}
+
+.xlvo-new-ui .xlvo-free-text-results #categories > div > .close {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
+    color: var(--xlvo-new-muted);
+    display: inline-flex;
+    font-size: 20px;
+    height: 28px;
+    justify-content: center;
+    opacity: 0.7;
+    padding: 0;
+    position: absolute;
+    right: 12px;
+    top: 14px;
+    width: 28px;
+    z-index: 1;
+}
+
+.xlvo-new-ui .xlvo-free-text-results #categories > div > .close:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+    opacity: 1;
+}
+
+/* The uncategorised list is a drop zone too, so answers can be dragged back */
+.xlvo-new-ui .xlvo-free-text-results #answers .xlvo-bars {
+    min-height: 60px;
+}
+
+/* Dragging */
+.xlvo-new-ui .xlvo-free-text-results .gu-transit {
+    opacity: 0.4;
+}
+
+.gu-mirror.xlvo-vote-free-input .well {
+    background: #fff;
+    border: 1px solid #4f46e5;
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(24, 33, 51, 0.18);
+    padding: 16px 18px;
+}
+
+/* Add category / add answer: field and button joined, same height */
+.xlvo-new-ui .xlvo-free-text-results .inputs .input-group {
+    align-items: stretch;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .inputs .form-control {
+    flex: 1 1 auto;
+    font-size: 15px;
+    height: auto;
+    padding: 10px 14px;
+    width: auto;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .inputs .form-control:focus {
+    border-color: var(--xlvo-new-accent);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    position: relative;
+    z-index: 1;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .inputs .input-group-append {
+    display: flex;
+    width: auto;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .inputs .input-group-append .btn {
+    align-items: center;
+    background: var(--xlvo-new-accent);
+    border: 1px solid var(--xlvo-new-accent);
+    color: #fff;
+    display: inline-flex;
+    padding: 0 18px;
+    white-space: nowrap;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .inputs .input-group-append .btn:hover {
+    background: #4338ca;
+    border-color: #4338ca;
+}
+
+/* free_input.css pins the remove button of categorised answers to the corner with an id selector */
+.xlvo-new-ui #categories .xlvo-vote-free-input > .close {
+    right: 12px;
+    top: 50%;
+}
+
+/* Free text with results hidden: say so instead of showing an empty panel */
+.xlvo-new-ui .xlvo-results-hidden {
+    align-items: center;
+    color: var(--xlvo-new-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+    min-height: 220px;
+    padding: 32px 16px;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-results-hidden .glyphicon {
+    color: #c7d2fe;
+    font-size: 44px;
+    margin-bottom: 6px;
+}
+
+.xlvo-new-ui .xlvo-results-hidden strong {
+    color: var(--xlvo-new-ink);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.xlvo-new-ui .xlvo-results-hidden span:last-child {
+    font-size: 15px;
+}
+
+/* Challenge, question closed: feedback on the voter's own answer. The inputs stay visible but nothing can be sent. */
+
+.xlvo-new-ui .xlvo-challenge-closed .xlvo-answer-buttons,
+.xlvo-new-ui .xlvo-challenge-closed .xlvo-answer-feedback {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-correct,
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-wrong,
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-solution {
+    opacity: 1;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-correct {
+    background: #dcfce7;
+    border-color: #16a34a;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-wrong {
+    background: #fee2e2;
+    border-color: #dc2626;
+}
+
+.xlvo-new-ui .xlvo-answer-form.is-locked .xlvo-option-card.is-solution {
+    background: #f0fdf4;
+    border-color: #16a34a;
+    border-style: dashed;
+}
+
+.xlvo-new-ui .xlvo-option-card.is-correct input:checked ~ .xlvo-option-indicator {
+    background: #16a34a;
+    border-color: #16a34a;
+}
+
+.xlvo-new-ui .xlvo-option-card.is-wrong input:checked ~ .xlvo-option-indicator {
+    background: #dc2626;
+    border-color: #dc2626;
+}
+
+.xlvo-new-ui .xlvo-option-card.is-solution .xlvo-option-indicator {
+    border-color: #16a34a;
+}
+
+.xlvo-new-ui .xlvo-option-result {
+    border-radius: 999px;
+    flex: none;
+    font-size: 13px;
+    font-weight: 700;
+    margin-left: auto;
+    padding: 3px 10px;
+}
+
+.xlvo-new-ui .is-correct .xlvo-option-result,
+.xlvo-new-ui .is-solution .xlvo-option-result {
+    background: #16a34a;
+    color: #fff;
+}
+
+.xlvo-new-ui .is-wrong .xlvo-option-result {
+    background: #dc2626;
+    color: #fff;
+}
+
+.xlvo-new-ui .xlvo-challenge-result {
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-challenge-result.is-correct {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.xlvo-new-ui .xlvo-challenge-result.is-wrong {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* The voter's place, as the blue pill of the mockup */
+.xlvo-new-ui .xlvo-own-place {
+    background: #2563eb;
+    border-radius: 999px;
+    color: #fff;
+    display: table;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 20px auto;
+    padding: 8px 22px;
+}
+
+/* The voter's own row in the scoreboard */
+.xlvo-new-ui .xlvo-scoreboard-row.is-own {
+    background: #dcfce7;
+    border-color: #16a34a;
+    box-shadow: 0 0 0 1px #16a34a;
+}
+
+.xlvo-new-ui .xlvo-scoreboard-row.is-own .xlvo-scoreboard-name {
+    font-weight: 800;
+}
+
+/* Projector: a long scoreboard scrolls inside the panel and starts at the top */
+#xlvo-display-player .xlvo-new-ui .xlvo-scoreboard,
+#xlvo-display-player .xlvo-new-ui.xlvo-final-results .xlvo-scoreboard {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* Challenge final results, projector and voter */
+
+.xlvo-new-ui.xlvo-final-results {
+    background: var(--xlvo-new-surface);
+}
+
+/* Keeps the podium off the bottom edge: its margin would otherwise collapse out of the panel */
+.xlvo-new-ui.xlvo-final-results > .panel-body {
+    display: flow-root;
+    padding-bottom: 16px;
+}
+
+.xlvo-new-ui .xlvo-final-results-header {
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-final-results-header:has(.panel-title:empty) {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-final-results-header .glyphicon {
+    color: var(--xlvo-new-accent);
+    font-size: 30px;
+}
+
+.xlvo-new-ui .xlvo-final-results-header .panel-title {
+    color: var(--xlvo-new-ink);
+    float: none;
+    font-size: 30px;
+    font-weight: 800;
+    margin: 8px 0 4px;
+}
+
+.xlvo-new-ui .xlvo-final-results-info {
+    color: var(--xlvo-new-muted);
+    margin: 0;
+}
+
+.xlvo-new-ui .xlvo-podium {
+    align-items: flex-end;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    list-style: none;
+    margin: 10px 0 24px;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-podium-place {
+    align-items: center;
+    display: flex;
+    flex: 0 1 200px;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-podium-place-1 {
+    order: 2;
+}
+
+.xlvo-new-ui .xlvo-podium-place-2 {
+    order: 1;
+}
+
+.xlvo-new-ui .xlvo-podium-place-3 {
+    order: 3;
+}
+
+.xlvo-new-ui .xlvo-podium-name {
+    font-size: 18px;
+    font-weight: 700;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.xlvo-new-ui .xlvo-podium-points {
+    color: #16a34a;
+    font-weight: 700;
+}
+
+.xlvo-new-ui .xlvo-podium-step {
+    align-items: center;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    font-size: 30px;
+    font-weight: 800;
+    justify-content: center;
+    margin-top: 6px;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-podium-place-1 .xlvo-podium-step {
+    background: #fef3c7;
+    color: #b45309;
+    height: 130px;
+}
+
+.xlvo-new-ui .xlvo-podium-place-2 .xlvo-podium-step {
+    background: #e5e7eb;
+    color: #4b5563;
+    height: 95px;
+}
+
+.xlvo-new-ui .xlvo-podium-place-3 .xlvo-podium-step {
+    background: #fde8d7;
+    color: #9a3412;
+    height: 70px;
+}
+
+.xlvo-new-ui .xlvo-podium-place.is-own .xlvo-podium-name {
+    background: #dcfce7;
+    border-radius: 999px;
+    color: #166534;
+    padding: 2px 12px;
+}
+
+/* Below the podium the ranking goes on from place 4, without the medal colours */
+.xlvo-final-results .xlvo-scoreboard-row:nth-child(n)::before {
+    background: var(--xlvo-new-wash);
+    color: var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .xlvo-final-results-empty {
+    color: var(--xlvo-new-muted);
+    text-align: center;
+}
+
+/* Word cloud voting: one word per field, character counter and a hint when a space starts the next word */
+
+.xlvo-new-ui .xlvo-free-text-form[data-xlvo-word-cloud='1'] .xlvo-free-text-row {
+    flex-wrap: wrap;
+}
+
+.xlvo-new-ui .xlvo-free-text-form[data-xlvo-word-cloud='1'] .xlvo-free-text-field-wrap .xlvo-free-text-field {
+    padding-right: 96px;
+}
+
+.xlvo-new-ui .xlvo-word-counter {
+    color: #9ca3af;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    pointer-events: none;
+    position: absolute;
+    right: 44px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: color 0.2s;
+}
+
+.xlvo-new-ui .xlvo-word-counter.is-near {
+    color: #d97706;
+}
+
+.xlvo-new-ui .xlvo-word-counter.is-full {
+    color: #dc2626;
+}
+
+.xlvo-new-ui .xlvo-free-text-form.is-locked .xlvo-word-counter {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-word-hint {
+    color: #d97706;
+    flex-basis: 100%;
+    font-size: 0.8rem;
+    font-weight: 500;
+    height: 0;
+    margin: 0 0 0 4px;
+    opacity: 0;
+    overflow: hidden;
+    transition: opacity 0.2s;
+}
+
+.xlvo-new-ui .xlvo-word-hint.is-visible {
+    height: auto;
+    opacity: 1;
+}
+
+/* Word cloud results: the words are placed by xlvoWordCloud.js */
+
+.xlvo-new-ui .xlvo-word-cloud-caption {
+    color: var(--xlvo-new-muted);
+    font-size: 0.9rem;
+    margin: 0 0 8px;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-canvas {
+    height: 400px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-word {
+    background: transparent;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    line-height: 1.1;
+    padding: 2px 4px;
+    position: absolute;
+    transform-origin: center center;
+    transition: opacity 0.4s ease, transform 0.2s ease;
+    white-space: nowrap;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-word:hover,
+.xlvo-new-ui .xlvo-word-cloud-word:focus-visible,
+.xlvo-new-ui .xlvo-word-cloud-word.is-pinned {
+    background: #f3f4f6;
+    transform: scale(1.06);
+    z-index: 100;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-word.is-pinned {
+    outline: 2px solid var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui .xlvo-word-cloud-word.is-new {
+    animation: xlvo-word-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes xlvo-word-pop {
+    from {
+        opacity: 0;
+        transform: scale(0.4);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .xlvo-new-ui .xlvo-word-cloud-word.is-new {
+        animation: none;
+    }
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip {
+    background: #1f2937;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    opacity: 0;
+    padding: 8px 12px;
+    pointer-events: none;
+    position: absolute;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+    z-index: 200;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip.is-visible {
+    opacity: 1;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip.is-pinned {
+    pointer-events: auto;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip::after {
+    border: 6px solid transparent;
+    border-top-color: #1f2937;
+    content: '';
+    left: 50%;
+    position: absolute;
+    top: 100%;
+    transform: translateX(-50%);
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip.is-below::after {
+    border-bottom-color: #1f2937;
+    border-top-color: transparent;
+    bottom: 100%;
+    top: auto;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip-word {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 2px;
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip-stats {
+    color: #d1d5db;
+    font-weight: 500;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-remove {
+    background: #dc2626;
+    border: 0;
+    border-radius: 6px;
+    color: #fff;
+    display: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 8px;
+    padding: 6px 10px;
+    width: 100%;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-remove:hover,
+.xlvo-new-ui .xlvo-word-cloud-remove:focus-visible {
+    background: #b91c1c;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-tooltip.is-pinned .xlvo-word-cloud-remove {
+    display: block;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-empty {
+    align-items: center;
+    color: var(--xlvo-new-muted);
+    display: flex;
+    flex-direction: column;
+    font-size: 0.95rem;
+    gap: 12px;
+    inset: 0;
+    justify-content: center;
+    position: absolute;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-empty[hidden] {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-empty svg {
+    color: #d1d5db;
+}
+
+/* Words that do not fit even at the minimum size are counted, not dropped silently */
+.xlvo-new-ui .xlvo-word-cloud-overflow {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    border-radius: 20px;
+    color: #92400e;
+    display: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin: 12px auto 0;
+    padding: 8px 14px;
+    text-align: center;
+    width: fit-content;
+}
+
+.xlvo-new-ui .xlvo-word-cloud-overflow.is-visible {
+    display: block;
+}
+
+@media (max-width: 640px) {
+    .xlvo-new-ui .xlvo-word-cloud-canvas {
+        height: 320px;
+    }
+}

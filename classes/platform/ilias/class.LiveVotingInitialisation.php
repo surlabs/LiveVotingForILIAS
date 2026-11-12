@@ -186,13 +186,12 @@ class LiveVotingInitialisation extends ilInitialisation
         $tpl = new ilGlobalTemplate("tpl.main.html", true, true, "public/Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting", "DEFAULT", true);
 
         $tpl->touchBlock("navbar");
+        $tpl->setVariable('NAVBAR_CLASS', '');
+        $tpl->setVariable('PIN_LABEL', 'PIN');
         $tpl->addCss('assets/css/delos.css');
         $tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/old_delos.css');
         $tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/default.css');
 
-        if (self::getLiveVotingStyle() == "new") {
-            $tpl->addCss('public/Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_style.css');
-        }
 
         $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", "public/Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting");
 

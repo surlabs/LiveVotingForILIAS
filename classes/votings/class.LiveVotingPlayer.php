@@ -513,6 +513,8 @@ class LiveVotingPlayer
      */
     public function attend(LiveVotingMode $mode): void
     {
+        $was_running = $this->getStatus() == self::STAT_RUNNING;
+
         $this->setStatus(self::STAT_RUNNING);
 
         $this->setTimestampRefresh(LiveVotingUtils::getTime());
@@ -521,7 +523,7 @@ class LiveVotingPlayer
             if ($mode->getMode() == LiveVotingMode::CHALLENGE_MODE) {
                 $liveVoting = new LiveVoting($this->obj_id, false);
 
-                if ($liveVoting->isScoreboard()) {
+                if ($liveVoting->isScoreboardAfterEachQuestion()) {
                     $this->showScoreboard();
                 } else {
                     $this->nextQuestionCM();
@@ -529,7 +531,39 @@ class LiveVotingPlayer
             } else {
                 $this->freeze();
             }
+        } elseif ($was_running && $mode->getMode() == LiveVotingMode::CHALLENGE_MODE) {
+            // New UI: the question also closes as soon as everybody connected has answered.
+            $liveVoting = new LiveVoting($this->obj_id, false);
+
+            if ($liveVoting->usesNewUI() && $this->haveAllVotersAnswered()) {
+                $this->showScoreboard();
+            }
         }
+    }
+
+    /**
+     * Voters still polling the challenge (seen in the last few seconds) who have all sent an answer to the active
+     * question. A sent answer always leaves a points row, even with 0 points.
+     *
+     * @throws LiveVotingException
+     */
+    public function haveAllVotersAnswered(): bool
+    {
+        $online = LiveVotingVoter::getRecentVoterIdentifiers($this->getId(), 10);
+
+        if ($online === []) {
+            return false;
+        }
+
+        $database = new LiveVotingDatabase();
+
+        $answered = array_column($database->select("xlvo_points", [
+            "obj_id" => $this->getObjId(),
+            "voting_id" => $this->getActiveVoting(),
+            "round_id" => $this->getRoundId()
+        ], ["identifier"]), "identifier");
+
+        return array_diff($online, array_map('strval', $answered)) === [];
     }
 
     /**
@@ -833,7 +867,7 @@ class LiveVotingPlayer
     {
         $database = new LiveVotingDatabase();
 
-        $result = $database->select("xlvo_points", ["obj_id" => $player->getObjId(), "round_id" => $player->getRoundId()], ["identifier", "SUM(points) AS points"], "GROUP BY identifier, obj_id, round_id ORDER BY points DESC");
+        $result = $database->select("xlvo_points", ["obj_id" => $player->getObjId(), "round_id" => $player->getRoundId()], ["identifier", "SUM(points) AS points"], "GROUP BY identifier, obj_id, round_id ORDER BY points DESC, identifier ASC");
 
         foreach ($result as $key => $item) {
             $result[$key]["nickname"] = LiveVotingParticipant::getNicknameOrName($item["identifier"], $player->getId());

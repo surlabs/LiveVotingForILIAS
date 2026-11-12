@@ -71,6 +71,7 @@ class LiveVotingDisplayPlayerUI
      * @var int
      */
     protected int $answer_count = 64;
+    protected bool $stats_in_header = false;
     /**
      * @var ParamManager
      */
@@ -93,7 +94,8 @@ class LiveVotingDisplayPlayerUI
             if ($this->liveVoting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
                 $this->buildTpl();
             } else {
-                $this->tpl = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.player.html", true, true);
+                $template = $this->liveVoting->usesNewUI() ? 'player_new' : 'player';
+                $this->tpl = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.$template.html", true, true);
             }
 
             $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/default.css');
@@ -143,7 +145,11 @@ class LiveVotingDisplayPlayerUI
 
         if ($player->isShowResults()) {
             //add result view to player
-            $this->tpl->setVariable('OPTION_CONTENT', $xlvoInputResultGUI->getHTML());
+            $results_html = $xlvoInputResultGUI->getHTML();
+            if ($this->liveVoting->usesNewUI()) {
+                $results_html = $this->moveStatsToHeader($results_html);
+            }
+            $this->tpl->setVariable('OPTION_CONTENT', $results_html);
         } else {
             //add options to player
             $xlvoOptions = LiveVotingQuestionOption::loadAllOptionsByVotingId($question->getId());
@@ -151,10 +157,26 @@ class LiveVotingDisplayPlayerUI
             foreach ($xlvoOptions as $item) {
                 $this->addOption($item);
             }
+
+            // Free text has no options to list, so the hidden state would be an empty panel.
+            if ($this->liveVoting->usesNewUI() && in_array($question->getQuestionTypeId(), [LiveVotingQuestion::QUESTION_TYPES_IDS['FreeText'], LiveVotingQuestion::QUESTION_TYPES_IDS['WordCloud']], true)) {
+                $answers = count(LiveVotingVote::getVotesOfOption($question->getFirstOption()->getId(), $player->getRoundId()));
+                $this->tpl->setVariable(
+                    'OPTION_CONTENT',
+                    '<div class="xlvo-results-hidden">'
+                    . '<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>'
+                    . '<strong>' . $this->pl->txt('results_hidden') . '</strong>'
+                    . '<span>' . sprintf($this->pl->txt('results_answers_received'), $answers) . '</span>'
+                    . '</div>'
+                );
+            }
         }
 
         $this->tpl->setVariable('TITLE', $question->getTitle());
         $this->tpl->setVariable('QUESTION', $question->getQuestionForPresentation());
+        if ($this->liveVoting->usesNewUI()) {
+            $this->tpl->setVariable('QUESTION_TYPE', $this->getQuestionTypeLine($question));
+        }
         $this->tpl->setVariable('VOTING_ID', $this->liveVoting->getId());
         $this->tpl->setVariable('OBJ_ID', $this->liveVoting->getId());
         $this->tpl->setVariable('FROZEN', $player->isFrozen());
@@ -172,7 +194,15 @@ class LiveVotingDisplayPlayerUI
             $this->tpl->parseCurrentBlock();
         }
 
-        $this->tpl->setVariable('VOTERS_TEXT', vsprintf(ilLiveVotingPlugin::getInstance()->txt("player_voters_description"), [LiveVotingVote::countVoters($player->getActiveVoting(), $player->getRoundId())]));
+        if (!$this->stats_in_header && $this->liveVoting->usesNewUI()) {
+            $voters = LiveVotingVote::countVoters($player->getActiveVoting(), $player->getRoundId());
+            $this->tpl->setVariable('STATS', '<span class="xlvo-bar-stat-badge xlvo-bar-stat-badge-alt">'
+                . $this->pl->txt('results_participants') . ': ' . $voters . '</span>');
+        } elseif (!$this->stats_in_header) {
+            $this->tpl->setCurrentBlock('voters');
+            $this->tpl->setVariable('VOTERS_TEXT', vsprintf(ilLiveVotingPlugin::getInstance()->txt("player_voters_description"), [LiveVotingVote::countVoters($player->getActiveVoting(), $player->getRoundId())]));
+            $this->tpl->parseCurrentBlock();
+        }
 
         $this->tpl->setVariable('COUNT', $this->liveVoting->countQuestions());
         $this->tpl->setVariable('POSITION', $this->liveVoting->getQuestionPosition() + 1);
@@ -182,9 +212,57 @@ class LiveVotingDisplayPlayerUI
      * @throws ilTemplateException
      * @throws LiveVotingException
      */
+    /**
+     * Subtitle under the question in the new UI, e.g. "Multiple Choice • 4 options".
+     */
+    /**
+     * The mockups show the totals (votes, participants, mean...) in the header next to the question, not above the
+     * chart. The result renderers keep emitting them first, and the new player lifts them into the header.
+     */
+    protected function moveStatsToHeader(string $results_html): string
+    {
+        // Free text categories carry their own, empty, stats block before the main list: take the first one with content.
+        if (!preg_match_all('#<div class="xlvo-bar-stats">.*?</div>#s', $results_html, $matches, PREG_OFFSET_CAPTURE)) {
+            return $results_html;
+        }
+        foreach ($matches[0] as [$stats, $offset]) {
+            if (trim(strip_tags($stats)) === '') {
+                continue;
+            }
+
+            $this->stats_in_header = true;
+            $this->tpl->setVariable('STATS', str_replace('xlvo-bar-stats', 'xlvo-bar-stats xlvo-results-stats', $stats));
+
+            return substr_replace($results_html, '', $offset, strlen($stats));
+        }
+
+        return $results_html;
+    }
+
+    protected function getQuestionTypeLine(LiveVotingQuestion $question): string
+    {
+        $line = $question->getQuestionTypeLabel();
+        $types_with_options = [
+            LiveVotingQuestion::QUESTION_TYPES_IDS['Choices'],
+            LiveVotingQuestion::QUESTION_TYPES_IDS['CorrectOrder'],
+            LiveVotingQuestion::QUESTION_TYPES_IDS['Priorities'],
+        ];
+        if (in_array($question->getQuestionTypeId(), $types_with_options, true)) {
+            $option_count = count($question->getOptions());
+            $line .= ' • ' . sprintf($this->pl->txt('player_option_count'), $option_count);
+        } elseif ($question->getQuestionTypeId() === LiveVotingQuestion::QUESTION_TYPES_IDS['WordCloud']) {
+            $line .= ' • ' . $this->pl->txt('qtype_7_one_word_per_answer');
+        } elseif ($question->getQuestionTypeId() === LiveVotingQuestion::QUESTION_TYPES_IDS['NumberRange']) {
+            $percentage = (int) $question->isPercentage() === 1 ? ' %' : '';
+            $line .= ' • ' . $question->getStartRange() . $percentage . ' – ' . $question->getEndRange() . $percentage;
+        }
+
+        return $line;
+    }
+
     protected function addOption(LiveVotingQuestionOption $option)
     {
-        if ($option->getType() == LiveVotingQuestion::QUESTION_TYPES_IDS["FreeText"]) {
+        if (in_array((int) $option->getType(), [LiveVotingQuestion::QUESTION_TYPES_IDS["FreeText"], LiveVotingQuestion::QUESTION_TYPES_IDS["WordCloud"]], true)) {
             return;
         }
 
@@ -225,10 +303,115 @@ class LiveVotingDisplayPlayerUI
      */
     private function buildTpl(): void
     {
-        $this->tpl = match ($this->liveVoting->getPlayer()->getStatus()) {
-            LiveVotingPlayer::STAT_END_VOTING, LiveVotingPlayer::STAT_SCOREBOARD => new ilTemplate($this->pl->getDirectory() . "/templates/default/Voter/tpl.scoreboard.html", true, false),
-            default => new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.player.html", true, true),
+        $suffix = $this->liveVoting->usesNewUI() ? '_new' : '';
+        $status = $this->liveVoting->getPlayer()->getStatus();
+        if ($status == LiveVotingPlayer::STAT_END_VOTING && $this->liveVoting->usesNewUI()) {
+            $this->tpl = new ilTemplate($this->pl->getDirectory() . '/templates/default/Player/tpl.final_results_new.html', true, true);
+            return;
+        }
+        $this->tpl = match ($status) {
+            LiveVotingPlayer::STAT_END_VOTING, LiveVotingPlayer::STAT_SCOREBOARD => new ilTemplate($this->pl->getDirectory() . "/templates/default/Voter/tpl.scoreboard$suffix.html", true, false),
+            default => new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.player$suffix.html", true, true),
         };
+    }
+
+    /**
+     * New UI scoreboard rows, shared by the projector and the voter. With $own_identifier the voter's own row is
+     * highlighted.
+     *
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     */
+    public static function renderNewUIScoreboardRows(array $players, ?string $own_identifier = null): string
+    {
+        $pl = ilLiveVotingPlugin::getInstance();
+        $html = '';
+
+        foreach ($players as $player) {
+            $tpl = new ilTemplate($pl->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score_new.html', true, false);
+            $tpl->setVariable('PLAYER', htmlspecialchars((string) $player['nickname'], ENT_QUOTES));
+            $tpl->setVariable('POINTS', (string) (int) $player['points']);
+            $tpl->setVariable('POINTS_UNIT', $pl->txt('scoreboard_points_unit'));
+            if ($own_identifier !== null && (string) $player['identifier'] === $own_identifier) {
+                $tpl->setVariable('ROW_CLASS', ' is-own');
+            }
+            $html .= $tpl->get();
+        }
+
+        return $html;
+    }
+
+    /**
+     * Place of a participant in the scoreboard (as numbered on screen), 0 if they have no points row.
+     */
+    public static function getScoreboardPlace(array $players, string $identifier): int
+    {
+        foreach (array_values($players) as $index => $player) {
+            if ((string) $player['identifier'] === $identifier) {
+                return $index + 1;
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * Final results of a challenge in the new UI: podium for the first three and the rest of the ranking. The voter
+     * also gets their own place and row highlighted; the projector passes no identifier.
+     *
+     * @throws LiveVotingException
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     */
+    public static function fillFinalResults(ilTemplate $tpl, LiveVoting $live_voting, bool $with_header, ?string $own_identifier = null): void
+    {
+        $pl = ilLiveVotingPlugin::getInstance();
+        $players = array_values(LiveVotingPlayer::getPlayersForScoreboard($live_voting->getPlayer()));
+
+        if ($with_header) {
+            $tpl->setVariable('TITLE', $pl->txt('challenge_final_results'));
+            $tpl->setVariable('INFO', $pl->txt('challenge_final_info'));
+        }
+
+        if ($own_identifier !== null) {
+            $place = self::getScoreboardPlace($players, $own_identifier);
+            if ($place > 0) {
+                $tpl->setCurrentBlock('own_place');
+                $tpl->setVariable('OWN_PLACE', sprintf($pl->txt('challenge_your_place'), $place, count($players)));
+                $tpl->parseCurrentBlock();
+            }
+        }
+
+        if ($players === []) {
+            $tpl->setCurrentBlock('empty');
+            $tpl->setVariable('EMPTY', $pl->txt('challenge_no_ranking'));
+            $tpl->parseCurrentBlock();
+
+            return;
+        }
+
+        foreach (array_slice($players, 0, 3) as $index => $player) {
+            $tpl->setCurrentBlock('podium_place');
+            $tpl->setVariable('PLACE', (string) ($index + 1));
+            $tpl->setVariable('PLAYER', htmlspecialchars((string) $player['nickname'], ENT_QUOTES));
+            $tpl->setVariable('POINTS', (string) (int) $player['points']);
+            $tpl->setVariable('POINTS_UNIT', $pl->txt('scoreboard_points_unit'));
+            if ($own_identifier !== null && (string) $player['identifier'] === $own_identifier) {
+                $tpl->setVariable('ROW_CLASS', ' is-own');
+            }
+            $tpl->parseCurrentBlock();
+        }
+        $tpl->setCurrentBlock('podium');
+        $tpl->parseCurrentBlock();
+
+        $rest = array_slice($players, 3);
+        if ($rest !== []) {
+            $tpl->setCurrentBlock('ranking');
+            $tpl->setVariable('START', '4');
+            $tpl->setVariable('OFFSET', '3');
+            $tpl->setVariable('ROWS', self::renderNewUIScoreboardRows($rest, $own_identifier));
+            $tpl->parseCurrentBlock();
+        }
     }
 
     /**
@@ -238,8 +421,14 @@ class LiveVotingDisplayPlayerUI
     private function renderTpl(): void
     {
         switch ($this->liveVoting->getPlayer()->getStatus()) {
-            case LiveVotingPlayer::STAT_SCOREBOARD:
             case LiveVotingPlayer::STAT_END_VOTING:
+                if ($this->liveVoting->usesNewUI()) {
+                    self::fillFinalResults($this->tpl, $this->liveVoting, true);
+                } else {
+                    $this->renderScoreboard();
+                }
+                break;
+            case LiveVotingPlayer::STAT_SCOREBOARD:
                 $this->renderScoreboard();
                 break;
             default:
@@ -261,9 +450,10 @@ class LiveVotingDisplayPlayerUI
         $html = '';
 
         foreach ($players as $player) {
-            $tpl_scoreboard_points = new ilTemplate($this->pl->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score.html', true    , false);
-            $tpl_scoreboard_points->setVariable('PLAYER', $player['nickname']);
+            $tpl_scoreboard_points = new ilTemplate($this->pl->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score' . ($this->liveVoting->usesNewUI() ? '_new' : '') . '.html', true, false);
+            $tpl_scoreboard_points->setVariable('PLAYER', htmlspecialchars((string) $player['nickname'], ENT_QUOTES));
             $tpl_scoreboard_points->setVariable('POINTS', $player['points']);
+            $tpl_scoreboard_points->setVariable('POINTS_UNIT', $this->pl->txt('scoreboard_points_unit'));
 
             $html .= $tpl_scoreboard_points->get();
         }
@@ -271,8 +461,16 @@ class LiveVotingDisplayPlayerUI
         if ($this->liveVoting->getPlayer()->isShowResults() && $this->liveVoting->getPlayer()->getStatus() == LiveVotingPlayer::STAT_SCOREBOARD) {
             $xlvoInputResultGUI = LiveVotingInputResultsGUI::getInstance($this->liveVoting->getPlayer());
             $this->tpl->setVariable('OPTION_CONTENT', $xlvoInputResultGUI->getHTML());
+            if ($this->liveVoting->usesNewUI()) {
+                // Without it the bars under the ranking do not say which question they belong to.
+                $question = $this->liveVoting->getPlayer()->getActiveVotingObject();
+                $this->tpl->setVariable('RESULTS_TITLE', $question->getTitle());
+            }
         }
 
         $this->tpl->setVariable('POINTS', $html);
+        if ($this->liveVoting->usesNewUI()) {
+            $this->tpl->setVariable('SCOREBOARD_TITLE', $this->pl->txt('voter_header_scoreboard'));
+        }
     }
 }

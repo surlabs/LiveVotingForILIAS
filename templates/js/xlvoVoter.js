@@ -4,13 +4,14 @@
  */
 var xlvoVoter = {
 	notificationCounter: 0,
+	notified_voting_id: null,
 	init: function (json) {
 		var config = json;
 		var replacer = new RegExp('amp;', 'g');
 		config.base_url = config.base_url.replace(replacer, '');
 		this.config = config;
 		this.ready = true;
-		if (xlvoVoter.config.use_mathjax && !!MathJax && MathJax.version && (MathJax.version.charAt(0) !== '3')) {
+		if (xlvoVoter.config.use_mathjax && typeof MathJax !== 'undefined' && MathJax.version && (MathJax.version.charAt(0) !== '3')) {
 			MathJax.Hub.Config({
 				"HTML-CSS": {scale: 80}
 			});
@@ -46,12 +47,276 @@ var xlvoVoter = {
 	run: function () {
 		this.loadVotingData();
 		this.initElements();
+		this.initDynamicForms();
 	},
 	initElements: function () {
 		this.countdown_element = $('#xlvo_countdown');
 		this.player_element = $('#xlvo_voter_player');
 
 		$('.xlvo-nickname').attr('href', xlvoVoter.config.base_url + '&cmd=requestNickname');
+	},
+	/**
+	 * Choice forms need at least one selected option. The message stays visible until the voter picks one.
+	 */
+	validateNewUIForm: function (form) {
+		var feedback = form.querySelector('.xlvo-answer-feedback');
+		var has_selection = true;
+		if (form.getAttribute('data-xlvo-require-selection') === '1') {
+			has_selection = form.querySelector('input[name="option_ids[]"]:checked') !== null;
+		} else if (form.getAttribute('data-xlvo-require-text') === '1') {
+			has_selection = $('.xlvo-free-text-field', form).filter(function () {
+				return this.value.trim() !== '';
+			}).length > 0;
+		} else {
+			return true;
+		}
+		if (feedback) {
+			feedback.hidden = has_selection;
+		}
+		return has_selection;
+	},
+
+	/**
+	 * Short horizontal shake of the answer area when the voter submits nothing, as in the mockups.
+	 */
+	shakeNewUIForm: function (form) {
+		var target = form.querySelector('.xlvo-free-text-inputs, .xlvo-option-cards') || form;
+		target.classList.remove('xlvo-shake');
+		void target.offsetWidth;
+		target.classList.add('xlvo-shake');
+	},
+
+	/**
+	 * "Change Answer" only reopens the form in the browser; the stored answer is replaced on the next submit.
+	 */
+	unlockNewUIForm: function (form) {
+		form.classList.remove('is-locked');
+		$('input, textarea, select, button', form).not('[type="hidden"]').prop('disabled', false);
+		$('.is-submitted', form).removeClass('is-submitted');
+		var submit_button = form.querySelector('.xlvo-submit-btn');
+		if (submit_button && form.getAttribute('data-xlvo-submit-text')) {
+			submit_button.textContent = form.getAttribute('data-xlvo-submit-text');
+		}
+		var change_button = form.querySelector('.xlvo-change-answer-btn');
+		if (change_button) {
+			change_button.disabled = true;
+		}
+		$(form).trigger('xlvo:unlocked');
+		var first_input = form.querySelector('input:not([type="hidden"]), textarea');
+		if (first_input) {
+			first_input.focus();
+		}
+	},
+
+	/**
+	 * Free text (multi input): adds an empty answer field after the given row, or at the end.
+	 */
+	addFreeTextRow: function (form, after_row) {
+		var rows = $('.xlvo-free-text-row', form);
+		var row = rows.first().clone().removeClass('has-value');
+		var index = parseInt(form.getAttribute('data-xlvo-next-index'), 10) || rows.length;
+		form.setAttribute('data-xlvo-next-index', String(index + 1));
+		row.find('.xlvo-free-text-field').val('').prop('disabled', false)
+			.attr('id', 'xlvo_free_text_' + index)
+			.attr('name', 'vote_multi_line_input[' + index + '][free_input]');
+		row.find('label').attr('for', 'xlvo_free_text_' + index);
+		row.find('input[type="hidden"]').val('').attr('name', 'vote_multi_line_input[' + index + '][vote_id]');
+		row.find('.xlvo-word-hint').removeClass('is-visible');
+		if (after_row && after_row.length) {
+			row.insertAfter(after_row);
+		} else {
+			row.appendTo($('.xlvo-free-text-inputs', form));
+		}
+		xlvoVoter.refreshWordCounter(row.find('.xlvo-free-text-field')[0]);
+		row.find('.xlvo-free-text-field').trigger('focus');
+		return row;
+	},
+
+	/**
+	 * Word cloud: "12/30" next to the field, amber near the limit and red at it.
+	 */
+	refreshWordCounter: function (field) {
+		var counter = field ? $(field).siblings('.xlvo-word-counter') : $();
+		if (!counter.length) {
+			return;
+		}
+		var max = parseInt($(field).closest('form').attr('data-xlvo-max-length'), 10) || 30;
+		var length = field.value.length;
+		counter.text(length + '/' + max)
+			.toggleClass('is-near', length >= max - 6 && length < max)
+			.toggleClass('is-full', length >= max);
+	},
+
+	/**
+	 * Word cloud: an answer is a single word. A space works like Enter and opens the next field, and a pasted phrase is
+	 * spread over one field per word, instead of silently gluing the words together.
+	 */
+	handleWordCloudInput: function (field) {
+		var form = $(field).closest('form')[0];
+		var row = $(field).closest('.xlvo-free-text-row');
+		var max = parseInt(form.getAttribute('data-xlvo-max-length'), 10) || 30;
+		var raw = field.value;
+
+		if (/\s/.test(raw)) {
+			var words = raw.split(/\s+/).filter(Boolean);
+			field.value = (words[0] || '').slice(0, max);
+			var rest = words.slice(1);
+			var last_row = row;
+			if (rest.length) {
+				rest.forEach(function (word) {
+					last_row = xlvoVoter.addFreeTextRow(form, last_row);
+					var next_field = last_row.find('.xlvo-free-text-field')[0];
+					next_field.value = word.slice(0, max);
+					last_row.toggleClass('has-value', next_field.value !== '');
+					xlvoVoter.refreshWordCounter(next_field);
+				});
+				xlvoVoter.flashWordHint(row);
+			} else if (/\s$/.test(raw) && field.value) {
+				xlvoVoter.addFreeTextRow(form, row);
+			} else {
+				xlvoVoter.flashWordHint(row);
+			}
+		} else if (raw.length > max) {
+			// maxlength only guards typing; paste and autofill need the cut too.
+			field.value = raw.slice(0, max);
+		}
+
+		xlvoVoter.refreshWordCounter(field);
+	},
+
+	flashWordHint: function (row) {
+		var hint = row.find('.xlvo-word-hint');
+		hint.addClass('is-visible');
+		clearTimeout(hint.data('xlvo-timer'));
+		hint.data('xlvo-timer', setTimeout(function () {
+			hint.removeClass('is-visible');
+		}, 2500));
+	},
+
+	/**
+	 * Free text areas grow with their content, so a long answer is never cut behind a scrollbar.
+	 */
+	fitTextareas: function (scope) {
+		$('.xlvo-new-ui textarea.xlvo-free-text-field', scope || document).each(function () {
+			this.style.height = 'auto';
+			this.style.height = (this.scrollHeight + 2) + 'px';
+		});
+	},
+
+	initDynamicForms: function () {
+		var free_text = '#xlvo_voter_player .xlvo-new-ui .xlvo-free-text-form';
+		$(document).off('keydown.xlvoNewUI', free_text + ' input.xlvo-free-text-field')
+			.on('keydown.xlvoNewUI', free_text + ' input.xlvo-free-text-field', function (event) {
+				var form = $(this).closest('form')[0];
+				if (event.key !== 'Enter' || form.getAttribute('data-xlvo-multi') !== '1') {
+					return;
+				}
+				event.preventDefault();
+				if (!form.classList.contains('is-locked')) {
+					xlvoVoter.addFreeTextRow(form, $(this).closest('.xlvo-free-text-row'));
+				}
+			});
+		$(document).off('click.xlvoNewUI', free_text + ' .xlvo-free-text-add')
+			.on('click.xlvoNewUI', free_text + ' .xlvo-free-text-add', function () {
+				var form = $(this).closest('form')[0];
+				if (!form.classList.contains('is-locked')) {
+					xlvoVoter.addFreeTextRow(form, null);
+				}
+			});
+		$(document).off('click.xlvoNewUI', free_text + ' .xlvo-free-text-remove')
+			.on('click.xlvoNewUI', free_text + ' .xlvo-free-text-remove', function () {
+				var form = $(this).closest('form')[0];
+				if (form.classList.contains('is-locked')) {
+					return;
+				}
+				var row = $(this).closest('.xlvo-free-text-row');
+				if ($('.xlvo-free-text-row', form).length > 1) {
+					row.remove();
+				} else {
+					row.find('.xlvo-free-text-field').val('').trigger('focus');
+				}
+			});
+		$(document).off('input.xlvoNewUI', free_text + ' .xlvo-free-text-field')
+			.on('input.xlvoNewUI', free_text + ' .xlvo-free-text-field', function () {
+				if ($(this).closest('form').attr('data-xlvo-word-cloud') === '1') {
+					xlvoVoter.handleWordCloudInput(this);
+				}
+				if (this.tagName === 'TEXTAREA') {
+					xlvoVoter.fitTextareas($(this).parent());
+				}
+				$(this).closest('.xlvo-free-text-row').toggleClass('has-value', this.value.trim() !== '');
+				var form = $(this).closest('form')[0];
+				var feedback = form.querySelector('.xlvo-answer-feedback');
+				if (feedback && !feedback.hidden) {
+					xlvoVoter.validateNewUIForm(form);
+				}
+			});
+		$(document).off('click.xlvoNewUI', '#xlvo_voter_player .xlvo-new-ui .xlvo-change-answer-btn')
+			.on('click.xlvoNewUI', '#xlvo_voter_player .xlvo-new-ui .xlvo-change-answer-btn', function () {
+				xlvoVoter.unlockNewUIForm($(this).closest('form')[0]);
+			});
+		$(document).off('change.xlvoNewUI', '#xlvo_voter_player .xlvo-new-ui .xlvo-answer-form input[name="option_ids[]"]')
+			.on('change.xlvoNewUI', '#xlvo_voter_player .xlvo-new-ui .xlvo-answer-form input[name="option_ids[]"]', function () {
+				var form = $(this).closest('form')[0];
+				var feedback = form.querySelector('.xlvo-answer-feedback');
+				if (feedback && !feedback.hidden) {
+					xlvoVoter.validateNewUIForm(form);
+				}
+			});
+
+		var selector = '#xlvo_voter_player .xlvo-new-ui .xlvo-free-input form, '
+			+ '#xlvo_voter_player .xlvo-new-ui .xlvo-answer-form, '
+			+ '#xlvo_voter_player .xlvo-new-ui .xlvo-number-range-form, '
+			+ '#xlvo_voter_player .xlvo-new-ui .xlvo-priorities form, '
+			+ '#xlvo_voter_player .xlvo-new-ui .xlvo-correct-order form';
+
+		$(document).off('submit.xlvoNewUI', selector).on('submit.xlvoNewUI', selector, function (event) {
+			event.preventDefault();
+
+			var form = this;
+			if (form.classList.contains('is-locked')) {
+				return;
+			}
+			if (!xlvoVoter.validateNewUIForm(form)) {
+				xlvoVoter.shakeNewUIForm(form);
+				return;
+			}
+			var submitter = event.originalEvent && event.originalEvent.submitter;
+			var formData = new FormData(form);
+			var buttons = $('input[type="submit"], button[type="submit"]', form);
+
+			if (submitter && submitter.name) {
+				formData.append(submitter.name, submitter.value);
+			} else {
+				formData.append('cmd[submit]', 'submit');
+			}
+			formData.append('xlvo_new_ui_async', '1');
+
+			buttons.prop('disabled', true);
+			form.setAttribute('aria-busy', 'true');
+			var submit_button = form.querySelector('.xlvo-submit-btn');
+			var submit_label = submit_button ? submit_button.textContent : '';
+			if (submit_button && xlvoVoter.config.lng && xlvoVoter.config.lng.voter_submitting) {
+				submit_button.textContent = xlvoVoter.config.lng.voter_submitting;
+			}
+			var restore = function () {
+				buttons.prop('disabled', false);
+				form.removeAttribute('aria-busy');
+				if (submit_button) {
+					submit_button.textContent = submit_label;
+				}
+			};
+
+			$.ajax({
+				url: form.action,
+				method: 'POST',
+				data: formData,
+				contentType: false,
+				processData: false
+			}).done(function () {
+				xlvoVoter.replaceHTML().fail(restore);
+			}).fail(restore);
+		});
 	},
 	loadVotingData: function () {
 		$.get(xlvoVoter.config.base_url, {cmd: 'getVotingData'})
@@ -70,7 +335,7 @@ var xlvoVoter = {
 				}
 
 				if (data.nickname) {
-					$('.xlvo-nickname').html(data.nickname);
+					$('.xlvo-nickname').text(data.nickname);
 				}
 
 				if (data.online_voters) {
@@ -86,8 +351,13 @@ var xlvoVoter = {
 					show_correct_order_changed = (xlvoVoter.player.show_correct_order !== data.show_correct_order); // Show Correct Order has changed
 
 
-				if (xlvoVoter.player.active_voting_id !== data.active_voting_id && xlvoVoter.player.active_voting_id !== 0) {
-					xlvoVoter.showNotification(xlvoVoter.config.lng.new_voting, xlvoVoter.config.lng.new_voting_message);
+				// Only announce a voting once it is actually open: while it is frozen the voter
+				// is shown the "not yet active" screen, and both messages together contradict each other.
+				if (!data.frozen && xlvoVoter.notified_voting_id !== data.active_voting_id) {
+					if (xlvoVoter.notified_voting_id !== null) {
+						xlvoVoter.showNotification(xlvoVoter.config.lng.new_voting, xlvoVoter.config.lng.new_voting_message);
+					}
+					xlvoVoter.notified_voting_id = data.active_voting_id;
 				}
 
 				if (status_has_changed) {
@@ -126,7 +396,7 @@ var xlvoVoter = {
 		xlvoVoter.log('replace');
 		success = success ? success : function () {
 		};
-		$.get(xlvoVoter.config.base_url, {cmd: 'getHTML'}).done(function (data) {
+		return $.get(xlvoVoter.config.base_url, {cmd: 'getHTML'}).done(function (data) {
 			if (xlvoVoter.data !== data) { // Only change html if changed (Try prevent blinking images) (Not work because countdown text and/or token links)
 
 				xlvoVoter.log(data);
@@ -137,6 +407,7 @@ var xlvoVoter = {
 				}
 				xlvoVoter.counter = 0;
 				xlvoVoter.player_element = $('#xlvo_voter_player');
+				xlvoVoter.fitTextareas(xlvoVoter.player_element);
 				xlvoVoter.countdown_element = $('#xlvo_countdown');
 			}
 			success();

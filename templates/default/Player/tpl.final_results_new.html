@@ -1,0 +1,31 @@
+<div class="xlvo-new-ui xlvo-final-results">
+	<header class="panel-heading xlvo-final-results-header">
+		<span class="glyphicon glyphicon-flag" aria-hidden="true"></span>
+		<h1 class="panel-title">{TITLE}</h1>
+		<p class="xlvo-final-results-info">{INFO}</p>
+	</header>
+	<div class="panel-body">
+		<!-- BEGIN own_place -->
+		<p class="xlvo-own-place">{OWN_PLACE}</p>
+		<!-- END own_place -->
+		<!-- BEGIN podium -->
+		<ol class="xlvo-podium">
+			<!-- BEGIN podium_place -->
+			<li class="xlvo-podium-place xlvo-podium-place-{PLACE}{ROW_CLASS}">
+				<span class="xlvo-podium-name">{PLAYER}</span>
+				<span class="xlvo-podium-points">{POINTS} {POINTS_UNIT}</span>
+				<span class="xlvo-podium-step" aria-hidden="true">{PLACE}</span>
+			</li>
+			<!-- END podium_place -->
+		</ol>
+		<!-- END podium -->
+		<!-- BEGIN ranking -->
+		<ol class="xlvo-scoreboard" start="{START}" style="counter-reset: xlvo-rank {OFFSET}">
+			{ROWS}
+		</ol>
+		<!-- END ranking -->
+		<!-- BEGIN empty -->
+		<p class="xlvo-final-results-empty">{EMPTY}</p>
+		<!-- END empty -->
+	</div>
+</div>

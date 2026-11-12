@@ -51,6 +51,9 @@ crs_create_xlvo#:#LiveVoting erstellen
 fikd_create_xlvo#:#LiveVoting erstellen
 grp_create_xlvo#:#LiveVoting erstellen
 fold_create_xlvo#:#LiveVoting erstellen
+image_picker_invalid_type#:#Bitte wählen Sie ein Bild im Format PNG, JPEG oder GIF aus.
+image_picker_read_error#:#Das Bild konnte nicht gelesen werden. Bitte wählen Sie eine gültige Bilddatei aus.
+image_picker_too_large#:#Das Bild ist zu groß. Die maximale Dateigröße beträgt 2 MiB.
 incorrect_order#:#Falsche Reihenfolge
 msg_success_voting_created#:#Frage wurde erstellt
 msg_success_voting_updated#:#Frage wurde gespeichert
@@ -275,6 +278,8 @@ voting_short_link#:#Kurz-URL
 voting_permanent_link#:#Permanenter-Link
 rbac_create_xlvo#:#LiveVoting anlegen
 player_pin#:#PIN: %s
+player_session_controls#:#Sitzungssteuerung
+qr_modal_title#:#LiveVoting beitreten
 qtype_6_option_range_step#:#Schrittweite
 qtype_6_option_range_step_info#:#Schrittweite des Zahlenbereichs.
 config_use_serif_font_for_pins#:#Serifenschrift für PINs nutzen
@@ -330,3 +335,59 @@ voting_style_new#:#Neuer Stil
 empty_input_error#:#Es kann keine leeren Optionen geben
 manage_disclaimer_basic_mode#:#Dieses LiveVoting wurde im Modus „Standard“ erstellt.
 manage_disclaimer_challenge_mode#:#Dieses LiveVoting wurde im Modus „Challenge“ erstellt. In diesem Modus sind nur „Single/Multiple Choice“-Fragen möglich.
+player_option_count#:#%s Optionen
+qtype_5_points_short#:#Pkt.
+qtype_2_total_answers#:#Antworten
+results_waiting_answers#:#Warten auf die ersten Antworten…
+qtype_6_answers_per_value#:#Antworten pro Wert
+qtype_6_answers_per_interval#:#Antworten pro Intervall
+voter_submit_vote#:#Stimme abgeben
+voter_submitted#:#Abgeschickt
+voter_change_answer#:#Antwort ändern
+voter_select_option_first#:#Bitte wählen Sie zuerst eine Option aus.
+voter_select_options_first#:#Bitte wählen Sie mindestens eine Option aus.
+voter_submit_answer#:#Antwort abschicken
+voter_hint_number_range#:#Verschieben Sie den Regler oder nutzen Sie die Schaltflächen, um einen Wert festzulegen (%s – %s).
+voter_hint_priorities#:#Ziehen Sie die Einträge, um sie neu zu ordnen (1 ist die höchste Priorität).
+voter_submit_ranking#:#Rangfolge abschicken
+voter_free_text_placeholder#:#Ihre Antwort
+voter_remove_answer#:#Diese Antwort entfernen
+voter_add_answer#:#Weitere Antwort hinzufügen
+voter_hint_free_text#:#Geben Sie unten Ihre Antwort ein.
+voter_hint_free_text_multi#:#Geben Sie unten Ihre Antwort(en) ein. Mit Enter fügen Sie weitere hinzu.
+voter_hint_free_text_multi_area#:#Geben Sie unten Ihre Antwort(en) ein. Über die Schaltfläche fügen Sie weitere hinzu.
+voter_enter_answer_first#:#Bitte geben Sie mindestens eine Antwort ein.
+voter_submit_answers#:#Antworten abschicken
+voter_hint_correct_order#:#Ziehen Sie die Einträge in die richtige Reihenfolge.
+voter_submit_order#:#Reihenfolge abschicken
+results_participants#:#Teilnehmende
+voter_submitting#:#Wird gesendet…
+voter_nickname_input#:#Spitzname
+scoreboard_points_unit#:#PKT.
+results_hidden#:#Ergebnisse sind ausgeblendet
+results_answers_received#:#%s Antworten eingegangen
+player_end_voting#:#Abstimmung beenden
+challenge_feedback_correct#:#Richtig! +%s
+challenge_feedback_wrong#:#Leider falsch
+challenge_option_correct#:#Richtig
+challenge_option_wrong#:#Falsch
+challenge_option_solution#:#Richtige Antwort
+challenge_your_place#:#Ihr Platz: %1$s von %2$s
+challenge_final_results#:#Endergebnis
+challenge_final_info#:#Die Challenge ist beendet.
+challenge_no_ranking#:#In dieser Challenge hat niemand geantwortet.
+voting_type_7#:#WordCloud
+voting_type_7_info#:#Benutzer geben einzelne Wörter ein, die als Wortwolke angezeigt werden
+voter_word_cloud_placeholder#:#Ein Wort
+voter_word_cloud_space_hint#:#Ein Wort pro Antwort: Ein Leerzeichen beginnt die nächste.
+voter_hint_word_cloud#:#Ein Wort pro Antwort. Mit Enter fügen Sie weitere hinzu.
+qtype_7_unique_words#:#Verschiedene
+qtype_7_vote#:#%s Stimme
+qtype_7_votes#:#%s Stimmen
+qtype_7_share#:#%s % aller Antworten
+qtype_7_remove_word#:#Wort entfernen
+qtype_7_overflow_one#:#%s Antwort passt nicht auf den Bildschirm
+qtype_7_overflow_many#:#%s Antworten passen nicht auf den Bildschirm
+voting_style_word_cloud_blocked#:#Dieses Objekt enthält WordCloud-Fragen, die es nur im neuen Stil gibt. Löschen Sie sie, um zum klassischen Stil zu wechseln.
+qtype_7_one_word_per_answer#:#ein Wort pro Antwort
+qtype_7_results_caption#:#Je häufiger eine Antwort gegeben wird, desto größer erscheint sie

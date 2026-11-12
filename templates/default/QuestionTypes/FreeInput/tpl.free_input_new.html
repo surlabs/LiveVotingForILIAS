@@ -1,0 +1,32 @@
+<form class="xlvo-answer-form xlvo-free-text-form{FORM_CLASS}" action="{ACTION}" method="post" novalidate data-xlvo-submit-text="{SUBMIT_TEXT}" data-xlvo-require-text="1" data-xlvo-multi="{MULTI}" data-xlvo-word-cloud="{WORD_CLOUD}" data-xlvo-max-length="{MAX_LENGTH}" data-xlvo-next-index="{NEXT_INDEX}">
+	<p class="xlvo-voter-type-hint">{VOTER_HINT}</p>
+	<div class="xlvo-free-text-inputs">
+		<!-- BEGIN row -->
+		<div class="xlvo-free-text-row{ROW_CLASS}">
+			<label class="sr-only" for="{FIELD_ID}">{FIELD_LABEL}</label>
+			<div class="xlvo-free-text-field-wrap">
+				{FIELD}
+				<!-- BEGIN counter -->
+				<span class="xlvo-word-counter" aria-hidden="true">{COUNTER}</span>
+				<!-- END counter -->
+				<span class="xlvo-free-text-check" aria-hidden="true"></span>
+			</div>
+			<input type="hidden" name="{VOTE_ID_NAME}" value="{VOTE_ID}">
+			<!-- BEGIN remove -->
+			<button type="button" class="xlvo-free-text-remove" aria-label="{REMOVE_LABEL}" title="{REMOVE_LABEL}">&times;</button>
+			<!-- END remove -->
+			<!-- BEGIN word_hint -->
+			<p class="xlvo-word-hint" aria-live="polite">{WORD_HINT}</p>
+			<!-- END word_hint -->
+		</div>
+		<!-- END row -->
+	</div>
+	<!-- BEGIN add -->
+	<button type="button" class="xlvo-free-text-add"><span aria-hidden="true">+</span> {ADD_TEXT}</button>
+	<!-- END add -->
+	<p class="xlvo-answer-feedback" role="alert" hidden>{FEEDBACK}</p>
+	<div class="xlvo-answer-buttons">
+		<button type="submit" name="cmd[submit]" value="submit" class="xlvo-submit-btn" {SUBMIT_DISABLED}>{SUBMIT_LABEL}</button>
+		<button type="button" class="xlvo-change-answer-btn" {CHANGE_DISABLED}>{CHANGE_TEXT}</button>
+	</div>
+</form>

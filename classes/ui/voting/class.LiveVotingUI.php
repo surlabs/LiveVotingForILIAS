@@ -150,15 +150,23 @@ class LiveVotingUI
             $DIC->toolbar()->addButtonInstance($b);
         }
 
-        $template = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl." . $this->liveVoting->getMode()->getStartTemplate() . ".html", true, true);
+        $start_template = $this->liveVoting->getMode()->getStartTemplate();
+        if ($this->liveVoting->usesNewUI()) {
+            $start_template .= '_new';
+        }
+
+        $template = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl." . $start_template . ".html", true, true);
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/default.css');
+        if ($this->liveVoting->usesNewUI()) {
+            $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_ui.css');
+        }
 
 
         $template->setVariable('PIN', $this->liveVoting->getPin());
 
         $param_manager = ParamManager::getInstance();
 
-        if ($this->liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE) {
+        if ($this->liveVoting->getMode()->getMode() != LiveVotingMode::CHALLENGE_MODE && !$this->liveVoting->usesNewUI()) {
             $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId(), 180));
         } else {
             $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId(), 280));
@@ -226,8 +234,14 @@ class LiveVotingUI
 
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/player.css');
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/bar.css');
+        if ($this->liveVoting->usesNewUI()) {
+            $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_ui.css');
+        }
 
         LiveVotingInputFreeTextUI::addJsAndCss();
+        if ($this->liveVoting->usesNewUI()) {
+            $DIC->ui()->mainTemplate()->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/QuestionTypes/WordCloud/xlvoWordCloud.js');
+        }
         /*xlvoCorrectOrderResultsGUI::addJsAndCss();
         xlvoFreeOrderResultsGUI::addJsAndCss();
         xlvoNumberRangeResultsGUI::addJsAndCss();
@@ -356,7 +370,7 @@ class LiveVotingUI
 
         if ($this->liveVoting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
             $endTime = ilLinkButton::getInstance();
-            $endTime->setCaption($this->pl->txt("end_time"), false);
+            $endTime->setCaption($this->pl->txt($this->liveVoting->usesNewUI() ? "player_end_voting" : "end_time"), false);
             $endTime->setId('btn-end_time');
             $DIC->toolbar()->addButtonInstance($endTime);
 

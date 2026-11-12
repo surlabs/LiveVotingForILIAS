@@ -46,7 +46,8 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function getMobileHTML(): string
     {
-        return $this->getFormContent() . LiveVotingJs::getInstance()->name('CorrectOrder')->category('QuestionTypes/CorrectOrder')->getRunCode();
+        return '<div class="xlvo-correct-order">' . $this->getFormContent() . '</div>'
+            . LiveVotingJs::getInstance()->name('CorrectOrder')->category('QuestionTypes/CorrectOrder')->getRunCode();
     }
 
 
@@ -99,10 +100,47 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
      * @throws LiveVotingException
      * @throws ilSystemStyleException
      */
+    /**
+     * Hook for subclasses that need extra variables in their form template.
+     */
+    protected function decorateFormTemplate(ilTemplate $tpl, bool $has_answered): void
+    {
+        if (!$this->isUsingNewUI()) {
+            return;
+        }
+
+        $this->setNewUIFormVariables($tpl, $has_answered, 'voter_hint_correct_order', 'voter_submit_order');
+    }
+
+    /**
+     * New UI: the order is locked after submitting until the voter presses "Change Answer".
+     */
+    protected function setNewUIFormVariables(ilTemplate $tpl, bool $has_answered, string $hint_key, string $submit_key): void
+    {
+        $plugin = ilLiveVotingPlugin::getInstance();
+        $tpl->setVariable('FORM_CLASS', $has_answered ? ' is-locked' : '');
+        $tpl->setVariable('VOTER_HINT', $plugin->txt($hint_key));
+        $tpl->setVariable('SUBMIT_TEXT', $plugin->txt($submit_key));
+        $tpl->setVariable('SUBMIT_LABEL', $plugin->txt($has_answered ? 'voter_submitted' : $submit_key));
+        $tpl->setVariable('SUBMIT_DISABLED', $has_answered ? 'disabled' : '');
+        $tpl->setVariable('CHANGE_TEXT', $plugin->txt('voter_change_answer'));
+        $tpl->setVariable('CHANGE_DISABLED', $has_answered ? '' : 'disabled');
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    protected function isUsingNewUI(): bool
+    {
+        $live_voting = new LiveVoting($this->player->getObjId(), false);
+
+        return $live_voting->usesNewUI();
+    }
+
     protected function getFormContent(): string
     {
         global $DIC;
-        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeOrder/tpl.free_order.html', true, false);
+        $tpl = new ilTemplate($this->getFormTemplatePath(), true, false);
         $tpl->setVariable('ACTION', $DIC->ctrl()->getFormAction($this));
         $tpl->setVariable('ID', 'xlvo_sortable');
         $tpl->setVariable('BTN_RESET', ilLiveVotingPlugin::getInstance()->txt('qtype_4_clear'));
@@ -128,6 +166,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         $bars = new LiveVotingBarMovableUI($options, $order, $vote_id);
         $bars->setShowOptionLetter(true);
         $tpl->setVariable('CONTENT', $bars->getHTML());
+        $this->decorateFormTemplate($tpl, $vote_id !== null);
 
         if ($this->isShowCorrectOrder() && $this->getPlayer()->getActiveVotingObject()->isCorrectOrder()) {
             $correct_order = $this->getCorrectOrder();
@@ -141,6 +180,17 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         }
 
         return $tpl->get();
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getFormTemplatePath(): string
+    {
+        return ilLiveVotingPlugin::getInstance()->getDirectory()
+            . '/templates/default/QuestionTypes/FreeOrder/'
+            . ($this->isUsingNewUI() ? 'tpl.correct_order_new.html' : 'tpl.free_order.html');
     }
 
 

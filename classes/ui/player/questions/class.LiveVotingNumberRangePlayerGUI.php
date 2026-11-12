@@ -124,6 +124,8 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
         global $DIC;
 
         $template = new IlTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/NumberRange/tpl.number_range.html', true, true);
+        $live_voting = new LiveVoting($this->player->getObjId(), false);
+        $is_new_ui = $live_voting->usesNewUI();
         $template->setVariable('ACTION', $DIC->ctrl()->getFormAction($this));
         $template->setVariable('SHOW_PERCENTAGE', (int)$this->getPlayer()->getActiveVotingObject()->isPercentage());
 
@@ -144,11 +146,38 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
             $value = $this->getDefaultValue();
         }
         $template->setVariable('SLIDER_VALUE', $value);
-        $template->setVariable('BTN_SAVE', ilLiveVotingPlugin::getInstance()->txt(self::SAVE_BUTTON_VOTE));
-        $template->setVariable('BTN_CLEAR', ilLiveVotingPlugin::getInstance()->txt(self::CLEAR_BUTTON));
 
-        if (!$user_has_voted) {
-            $template->setVariable('BTN_RESET_DISABLED', 'disabled="disabled"');
+        if ($is_new_ui) {
+            $plugin = ilLiveVotingPlugin::getInstance();
+            $unit = (int) $this->getPlayer()->getActiveVotingObject()->isPercentage() === 1 ? ' %' : '';
+            $template->setVariable('FORM_CLASS', ' xlvo-answer-form' . ($user_has_voted ? ' is-locked' : ''));
+            $template->setVariable(
+                'VOTER_HINT',
+                sprintf($plugin->txt('voter_hint_number_range'), $this->getStart() . $unit, $this->getEnd() . $unit)
+            );
+            $template->setVariable('SUBMIT_TEXT', $plugin->txt('voter_submit_answer'));
+            $template->setCurrentBlock('new_buttons');
+            $template->setVariable(
+                'SUBMIT_LABEL',
+                $user_has_voted ? $plugin->txt('voter_submitted') . ': ' . $value . $unit : $plugin->txt('voter_submit_answer')
+            );
+            $template->setVariable('SUBMIT_DISABLED', $user_has_voted ? 'disabled' : '');
+            $template->setVariable('CHANGE_TEXT', $plugin->txt('voter_change_answer'));
+            $template->setVariable('CHANGE_DISABLED', $user_has_voted ? '' : 'disabled');
+            $template->parseCurrentBlock();
+        } else {
+            $template->setCurrentBlock('classic_submit');
+            $template->setVariable('BTN_SAVE', ilLiveVotingPlugin::getInstance()->txt(self::SAVE_BUTTON_VOTE));
+            $template->parseCurrentBlock();
+        }
+
+        if (!$is_new_ui) {
+            $template->setCurrentBlock('clear');
+            $template->setVariable('BTN_CLEAR', ilLiveVotingPlugin::getInstance()->txt(self::CLEAR_BUTTON));
+            if (!$user_has_voted) {
+                $template->setVariable('BTN_RESET_DISABLED', 'disabled="disabled"');
+            }
+            $template->parseCurrentBlock();
         }
 
         return $template->get() . LiveVotingJs::getInstance()->name('NumberRange')->category('QuestionTypes/NumberRange')->getRunCode();
