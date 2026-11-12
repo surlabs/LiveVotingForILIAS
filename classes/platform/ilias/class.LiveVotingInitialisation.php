@@ -98,7 +98,7 @@ class LiveVotingInitialisation extends ilInitialisation
             return;
         }
 
-        require_once dirname(__DIR__, 11) . '/components/ILIAS/Init/artifacts/bootstrap_default.php';
+        require_once dirname(__DIR__, 11) . '/artifacts/bootstrap_default.php';
         entry_point('ILIAS Legacy Initialisation Adapter');
     }
 
