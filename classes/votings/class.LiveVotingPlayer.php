@@ -806,8 +806,12 @@ class LiveVotingPlayer
 
         $liveVotingConfig = new LiveVoting($this->obj_id, false);
 
+        // Only votes of this participant for the active question and round can be overwritten.
+        $own_vote_ids = array_map(static fn (LiveVotingVote $vote): int => $vote->getId(), $this->getVotesOfUser(true));
+
         foreach ($array as $item) {
-            $vote = new LiveVotingVote((int)$item['vote_id']);
+            $vote_id = (int) ($item['vote_id'] ?? 0);
+            $vote = in_array($vote_id, $own_vote_ids, true) ? new LiveVotingVote($vote_id) : new LiveVotingVote();
             $user = LiveVotingParticipant::getInstance();
 
             if ($user->isILIASUser()) {
@@ -829,7 +833,7 @@ class LiveVotingPlayer
             $vote->setType(2);
             $vote->setStatus(1);
             $vote->setFreeInput($item['input']);
-            $vote->setRoundId(LiveVotingRound::getLatestRoundId($liveVotingConfig->getId()));
+            $vote->setRoundId($this->getRoundId());
             $vote->save();
             if ($this->getActiveVotingObject()->getQuestionType() == "FreeText" && !$this->getActiveVotingObject()->isMultiFreeInput()) {
                 $this->unvoteAll($vote->getId());
