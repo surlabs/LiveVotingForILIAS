@@ -1349,6 +1349,11 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $newRound->setRoundNumber($lastRound->getRoundNumber() + 1);
         $newRound->save();
 
+        // Voters and presenter switch to the new round right away, not when the next question starts.
+        $player = $this->object->getLiveVoting()->getPlayer();
+        $player->setRoundId(LiveVotingRound::getLatestRoundId($obj_id));
+        $player->save();
+
         $DIC->ctrl()->setParameter($this, 'round_id', LiveVotingRound::getLatestRound($obj_id)->getId());
 
         $DIC->ui()->mainTemplate()->setOnScreenMessage("success", $this->txt('common_new_round_created'), true);
