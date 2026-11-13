@@ -752,7 +752,7 @@ class LiveVotingPlayer
         $this->setButtonStates([]);
         $this->save();
 
-        foreach (LiveVotingVote::getVotesForRound($this->getRoundId()) as $vote) {
+        foreach (LiveVotingVote::getVotesOfQuestion($this->getActiveVoting(), $this->getRoundId()) as $vote) {
             $vote->delete();
         }
     }
