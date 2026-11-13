@@ -86,7 +86,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         $participant = LiveVotingParticipant::getInstance();
 
         if ($this->player->hasUserVotedForOption($option_id)) {
-            LiveVotingVote::unvote($participant, $this->player->getActiveVoting(), $option_id);
+            LiveVotingVote::unvote($participant, $this->player->getActiveVoting(), $this->player->getRoundId(), $option_id);
         } else {
             if ($this->player->getActiveVotingObject()->isValidOption($option_id)) {
                 $vote_id = LiveVotingVote::vote($participant, $this->player->getActiveVoting(), $this->player->getRoundId(), $option_id);
@@ -186,7 +186,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         $participant = LiveVotingParticipant::getInstance();
         foreach ($this->player->getVotesOfUser() as $vote) {
             if (!in_array((int) $vote->getOptionId(), $selected, true)) {
-                LiveVotingVote::unvote($participant, $this->player->getActiveVoting(), (int) $vote->getOptionId());
+                LiveVotingVote::unvote($participant, $this->player->getActiveVoting(), $this->player->getRoundId(), (int) $vote->getOptionId());
             }
         }
         foreach ($selected as $option_id) {

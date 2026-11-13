@@ -284,10 +284,9 @@ class LiveVotingVote
      */
     public static function vote(LiveVotingParticipant $participant, int $voting_id, int $round_id, int $option_id): int
     {
-        $obj = self::getUserInstance($participant, $voting_id, $option_id);
+        $obj = self::getUserInstance($participant, $voting_id, $round_id, $option_id);
 
         $obj->setStatus(1);
-        $obj->setRoundId($round_id);
 
         $obj->save();
 
@@ -297,13 +296,14 @@ class LiveVotingVote
     /**
      * @param LiveVotingParticipant $participant
      * @param int $voting_id
+     * @param int $round_id
      * @param int|null $option_id
      * @return int
      * @throws LiveVotingException
      */
-    public static function unvote(LiveVotingParticipant $participant, int $voting_id, ?int $option_id = null): int
+    public static function unvote(LiveVotingParticipant $participant, int $voting_id, int $round_id, ?int $option_id = null): int
     {
-        $obj = self::getUserInstance($participant, $voting_id, $option_id);
+        $obj = self::getUserInstance($participant, $voting_id, $round_id, $option_id);
 
         $obj->setStatus(0);
 
@@ -401,17 +401,20 @@ class LiveVotingVote
     /**
      * @param LiveVotingParticipant $participant
      * @param int $voting_id
+     * @param int $round_id
      * @param int|null $option_id
      * @return LiveVotingVote
      * @throws LiveVotingException
      * @throws Exception
      */
-    protected static function getUserInstance(LiveVotingParticipant $participant, int $voting_id, $option_id): LiveVotingVote
+    protected static function getUserInstance(LiveVotingParticipant $participant, int $voting_id, int $round_id, $option_id): LiveVotingVote
     {
         $database = new LiveVotingDatabase();
 
+        // Each round keeps its own votes, so a vote of a previous round is never reused.
         $where = array(
             'voting_id' => $voting_id,
+            'round_id' => $round_id,
             'option_id' => $option_id
         );
 
@@ -444,6 +447,7 @@ class LiveVotingVote
 
         $vote->setOptionId($option_id);
         $vote->setVotingId($voting_id);
+        $vote->setRoundId($round_id);
 
         return $vote;
     }
