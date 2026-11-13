@@ -1237,7 +1237,9 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 }
 
 .xlvo-new-ui .xlvo-vote-free-input .well {
+    overflow-wrap: anywhere;
     position: relative;
+    word-break: normal;
 }
 
 /* Room for the count on both sides, so a centred value stays centred whether or not it has a count */
