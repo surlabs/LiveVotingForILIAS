@@ -133,9 +133,18 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'confirmDeleteQuestion':
             case 'deleteQuestion':
             case 'endTime':
+                // Presenter and editing commands; voters only get the PIN page.
+                if (!$this->checkPermissionBool("write")) {
+                    $this->showContent();
+                    break;
+                }
                 $this->{$cmd}();
                 break;
             case 'edit':
+                if (!$this->checkPermissionBool("write")) {
+                    $this->showContent();
+                    break;
+                }
                 if ($this->object->getLiveVoting()->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
                     $this->editQuestionCM();
                 } else {
