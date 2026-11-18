@@ -73,9 +73,14 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
         $this->player = $liveVoting->getPlayer();
 
+        // Without an order there is nothing to store, and an empty vote breaks the results.
+        if (!isset($_POST['id']) || !is_array($_POST['id'])) {
+            return;
+        }
+
         $this->player->input(array(
             "input" => json_encode($_POST['id']),
-            "vote_id" => $_POST['vote_id']
+            "vote_id" => $_POST['vote_id'] ?? ''
         ));
     }
 
