@@ -12,6 +12,14 @@ $(document).ready(function() {
         }
     });
 
+    // The back button comes first in the form, so the browser would use it when pressing Enter.
+    $(document).on('keydown', 'input[name="pin_input"]', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            $(this).closest('form').find('[name="cmd[checkPin]"]').trigger('click');
+        }
+    });
+
     function isSameDomain(url1, url2) {
         const a = document.createElement('a');
         a.href = url1;
