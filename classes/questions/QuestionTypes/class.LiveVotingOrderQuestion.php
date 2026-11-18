@@ -144,7 +144,13 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
 
             $return .= ": ";
 
-            foreach (json_decode($vote->getFreeInput()) as $option_id) {
+            $json_decode = json_decode((string) $vote->getFreeInput());
+
+            if (!is_array($json_decode)) {
+                return "";
+            }
+
+            foreach ($json_decode as $option_id) {
                 foreach ($this->options as $option) {
                     if ($option->getId() == $option_id) {
                         $strings[] = $option->getText();
