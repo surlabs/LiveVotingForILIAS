@@ -103,8 +103,8 @@ class LiveVotingSingleVoteResultsUI extends LiveVotingInputResultsGUI
             $xlvoBarPercentageGUI->setOptionLetter($xlvoOption->getCipher());
             $xlvoBarPercentageGUI->setTitle($xlvoOption->getTextForPresentation());
             $xlvoBarPercentageGUI->setVotes(count(LiveVotingVote::getVotesOfOption($xlvoOption->getId(), $this->player->getRoundId())));
-            // The new UI answers "what share of participants picked this option?", so it divides by voters.
-            $xlvoBarPercentageGUI->setMaxVotes($this->isUsingNewUI() ? $voters : $total_votes);
+            // Each option answers "what share of participants picked it?", so it divides by voters.
+            $xlvoBarPercentageGUI->setMaxVotes($voters);
             $xlvoBarPercentageGUI->setShowInPercent(!$this->isShowAbsolute());
             $bars->addBar($xlvoBarPercentageGUI);
         }
