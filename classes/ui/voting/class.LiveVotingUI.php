@@ -168,6 +168,8 @@ class LiveVotingUI
 
         $template->setVariable('MODAL', $modal->getHTML());
         $template->setVariable("ZOOM_TEXT", $this->pl->txt("start_zoom"));
+        $template->setVariable("COPY_TEXT", $this->pl->txt("start_copy_link"));
+        $template->setVariable("COPIED_TEXT", $this->pl->txt("start_link_copied"));
         $template->setVariable("MODAL_SIGNAL", $modal->getShowSignal());
 
         $js = LiveVotingJs::getInstance()->addSetting("base_url", $DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "", "", true))->name('Player')->init();

@@ -2,7 +2,12 @@
 	<div class="panel-body row">
 		<div class="col-md-6 xlvo-start-info">
 			<div class="xlvo_shortlink well text-center xlvo-start-pin"><h3>{PIN}</h3></div>
-			<div class="xlvo_shortlink well text-center"><h3>{SHORTLINK}</h3></div>
+			<div class="xlvo_shortlink well text-center xlvo-start-link">
+				<h3><a href="{SHORTLINK}" target="_blank" rel="noopener noreferrer">{SHORTLINK}</a></h3>
+				<button type="button" class="xlvo-start-copy" data-link="{SHORTLINK}" data-copied="{COPIED_TEXT}">
+					<span class="glyphicon glyphicon-copy" aria-hidden="true"></span> <span class="xlvo-start-copy-label">{COPY_TEXT}</span>
+				</button>
+			</div>
 			<div class="xlvo_shortlink well text-center"><h3 id="xlvo-attendees">{ONLINE_TEXT}</h3></div>
 		</div>
 		<div class="col-md-6 xlvo-start-qr-col">

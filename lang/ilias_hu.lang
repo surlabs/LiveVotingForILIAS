@@ -293,6 +293,8 @@ qtype_2_answer_field_multi_line#:#MISSING qtype_2_answer_field_multi_line
 qtype_2_answer_field_multi_line_info#:#MISSING qtype_2_answer_field_multi_line_info
 start_online#:#MISSING start_online
 start_zoom#:#MISSING start_zoom
+start_copy_link#:#Link másolása
+start_link_copied#:#Link kimásolva
 qtype_6_mean#:#MISSING qtype_6_mean
 qtype_6_median#:#MISSING qtype_6_median
 qtype_6_mode#:#MISSING qtype_6_mode

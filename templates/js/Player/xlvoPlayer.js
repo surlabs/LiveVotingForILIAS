@@ -578,6 +578,18 @@ var xlvoPlayer = {
             }
             return true;
         });
+
+        $(".xlvo-start-copy").click(function () {
+            var copy_button = $(this);
+            var label = copy_button.find(".xlvo-start-copy-label");
+            var original_text = label.text();
+            navigator.clipboard.writeText(copy_button.data("link")).then(function () {
+                label.text(copy_button.data("copied"));
+                setTimeout(function () {
+                    label.text(original_text);
+                }, 2000);
+            });
+        });
     },
     /**
      * @param html

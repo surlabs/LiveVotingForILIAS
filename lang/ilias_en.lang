@@ -293,6 +293,8 @@ qtype_2_answer_field_multi_line#:#Multi-line answer field
 qtype_2_answer_field_multi_line_info#:#Multi-line answer field
 start_online#:#%s online
 start_zoom#:#Zoom
+start_copy_link#:#Copy link
+start_link_copied#:#Link copied
 qtype_6_mean#:#Mean
 qtype_6_median#:#Median
 qtype_6_mode#:#Mode
