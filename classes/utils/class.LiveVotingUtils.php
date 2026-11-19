@@ -77,7 +77,18 @@ class LiveVotingUtils
             } else {
                 return '';
             }
-        }, $a_str);
+        }, self::removeUnsupportedCharacters($a_str));
+    }
+
+    /**
+     * The plugin tables use a 3-byte utf8 charset, so 4-byte characters such as most emojis make the insert fail.
+     * Combining marks left without a base character after removing them are dropped too.
+     */
+    public static function removeUnsupportedCharacters(string $a_str): string
+    {
+        $str = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '', $a_str) ?? '';
+
+        return preg_replace('/(?<=^|\s)\p{M}+/u', '', $str) ?? '';
     }
 
     public static function _solveKeyBracketsBug(string $text): string

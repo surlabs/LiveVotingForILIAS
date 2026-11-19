@@ -22,6 +22,7 @@ namespace LiveVoting\platform;
 
 use Exception;
 use ilDBInterface;
+use LiveVoting\Utils\LiveVotingUtils;
 
 /**
  * Class LiveVotingDatabase
@@ -69,7 +70,7 @@ class LiveVotingDatabase {
 
         try {
             $this->db->query("INSERT INTO " . $table . " (" . implode(", ", array_keys($data)) . ") VALUES (" . implode(", ", array_map(function ($value) {
-                    return $this->db->quote($value);
+                    return $this->quoteValue($value);
                 }, array_values($data))) . ")");
         } catch (Exception $e) {
             throw new LiveVotingException($e->getMessage());
@@ -94,11 +95,11 @@ class LiveVotingDatabase {
 
         try {
             $this->db->query("INSERT INTO " . $table . " (" . implode(", ", array_keys($data)) . ") VALUES (" . implode(", ", array_map(function ($value) {
-                    return $this->db->quote($value);
+                    return $this->quoteValue($value);
                 }, array_values($data))) . ") ON DUPLICATE KEY UPDATE " . implode(", ", array_map(function ($key, $value) {
                     return $key . " = " . $value;
                 }, array_keys($data), array_map(function ($value) {
-                    return $this->db->quote($value);
+                    return $this->quoteValue($value);
                 }, array_values($data)))));
         } catch (Exception $e) {
             throw new LiveVotingException($e->getMessage());
@@ -126,7 +127,7 @@ class LiveVotingDatabase {
             $this->db->query("UPDATE " . $table . " SET " . implode(", ", array_map(function ($key, $value) {
                     return $key . " = " . $value;
                 }, array_keys($data), array_map(function ($value) {
-                    return $this->db->quote($value);
+                    return $this->quoteValue($value);
                 }, array_values($data)))) . " WHERE " . implode(" AND ", array_map(function ($key, $value) {
                     return $key . " = " . $value;
                 }, array_keys($where), array_map(function ($value) {
@@ -233,6 +234,21 @@ class LiveVotingDatabase {
         } catch (Exception $e) {
             throw new LiveVotingException($e->getMessage());
         }
+    }
+
+    /**
+     * The plugin tables use a 3-byte utf8 charset, so text values lose the characters they cannot store, such as most
+     * emojis, instead of making the whole query fail.
+     *
+     * @param mixed $value
+     */
+    private function quoteValue($value): string
+    {
+        if (is_string($value)) {
+            $value = LiveVotingUtils::removeUnsupportedCharacters($value);
+        }
+
+        return $this->db->quote($value);
     }
 
     public function isTableAllowed(string $table): bool
