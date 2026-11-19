@@ -336,6 +336,7 @@ empty_input_error#:#A kérdés nem lehet üres.
 manage_disclaimer_basic_mode#:#Ez az élőszavazás "Standard" módban lett létrehozva
 manage_disclaimer_challenge_mode#:#Ez az élőszavazás "Challenge" módban lett létrehozva. Ebben a módban csak "Single/Multiple Choice" kérdések lehetnek.
 player_option_count#:#%s lehetőség
+player_priorities_scoring#:#Minden szavazó első választása %s pontot ér, az utolsó 1 pontot.
 qtype_5_points_short#:#pont
 qtype_2_total_answers#:#Válaszok
 results_waiting_answers#:#Várakozás az első válaszokra…

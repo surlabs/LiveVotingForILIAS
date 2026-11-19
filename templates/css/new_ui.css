@@ -167,6 +167,12 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     display: none;
 }
 
+.xlvo-new-ui .xlvo-results-hint {
+    color: var(--xlvo-new-muted);
+    font-size: 0.9em;
+    margin: 4px 0 0;
+}
+
 .xlvo-new-ui .xlvo-results-meta {
     display: flex;
     flex-wrap: wrap;

@@ -176,6 +176,11 @@ class LiveVotingDisplayPlayerUI
         $this->tpl->setVariable('QUESTION', $question->getQuestionForPresentation());
         if ($this->liveVoting->usesNewUI()) {
             $this->tpl->setVariable('QUESTION_TYPE', $this->getQuestionTypeLine($question));
+            if ($question->getQuestionTypeId() === LiveVotingQuestion::QUESTION_TYPES_IDS['Priorities']) {
+                $this->tpl->setCurrentBlock('question_hint');
+                $this->tpl->setVariable('QUESTION_HINT', sprintf($this->pl->txt('player_priorities_scoring'), count($question->getOptions())));
+                $this->tpl->parseCurrentBlock();
+            }
         }
         $this->tpl->setVariable('VOTING_ID', $this->liveVoting->getId());
         $this->tpl->setVariable('OBJ_ID', $this->liveVoting->getId());
