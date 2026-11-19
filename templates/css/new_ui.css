@@ -363,6 +363,7 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     display: none;
 }
 
+/* default.css forces inline-block and a 25px line height with !important, which pushes the letter up in the 30px circle. */
 .xlvo-new-ui .xlvo-option_letter {
     background: var(--xlvo-new-accent);
     border-radius: 50%;
@@ -370,9 +371,9 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     flex: none;
     font-size: 0.9em;
     font-weight: 700;
-    line-height: 1;
+    line-height: 1 !important;
     padding: 0;
-    display: inline-flex;
+    display: inline-flex !important;
     height: 30px;
     justify-content: center;
     align-items: center;
