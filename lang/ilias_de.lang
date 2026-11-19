@@ -331,6 +331,7 @@ empty_input_error#:#Es kann keine leeren Optionen geben
 manage_disclaimer_basic_mode#:#Dieses LiveVoting wurde im Modus „Standard“ erstellt.
 manage_disclaimer_challenge_mode#:#Dieses LiveVoting wurde im Modus „Challenge“ erstellt. In diesem Modus sind nur „Single/Multiple Choice“-Fragen möglich.
 player_option_count#:#%s Optionen
+player_priorities_scoring#:#Die erste Wahl jeder abstimmenden Person zählt %s Punkte, die letzte 1 Punkt.
 qtype_5_points_short#:#Pkt.
 qtype_2_total_answers#:#Antworten
 results_waiting_answers#:#Warten auf die ersten Antworten…

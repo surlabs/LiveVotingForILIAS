@@ -331,6 +331,7 @@ empty_input_error#:#There cannot be empty options
 manage_disclaimer_basic_mode#:#This LiveVoting was created in "Standard" mode
 manage_disclaimer_challenge_mode#:#This LiveVoting was created in "Challenge" mode. In this mode, only "Single/Multiple Choice" questions are possible.
 player_option_count#:#%s options
+player_priorities_scoring#:#Each voter's first choice is worth %s points and their last choice 1 point.
 qtype_5_points_short#:#pts
 qtype_2_total_answers#:#Answers
 results_waiting_answers#:#Waiting for the first answers…
