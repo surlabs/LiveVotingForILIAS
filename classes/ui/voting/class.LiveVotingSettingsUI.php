@@ -25,7 +25,6 @@ use ilCtrlInterface;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use ilLiveVotingPlugin;
-use ilObjectListGUIFactory;
 use ilObjLiveVoting;
 use ilPlugin;
 use LiveVoting\objects\modes\LiveVotingMode;
@@ -239,8 +238,6 @@ class LiveVotingSettingsUI
             $sections
         );
 
-        $saving_info = "";
-
         $request = $DIC->http()->request();
 
         //Check if the form has been submitted
@@ -248,26 +245,21 @@ class LiveVotingSettingsUI
             $form = $form->withRequest($request);
             $result = $form->getData();
             if ($result) {
-                $saving_info = $this->saveProperties();
+                $this->saveProperties();
 
-                $l_gui = ilObjectListGUIFactory::_getListGUIByType($this->object->getType());
-                $l_gui->initItem($this->object->getRefId(), $this->object->getId(), $this->object->getType());
-                $DIC["tpl"]->setAlertProperties($l_gui->getAlertProperties());
-
+                // The fields of the form depend on the saved settings (e.g. the voting style), so it has to be
+                // built again from them. Redirecting also keeps a reload from sending the old form again.
+                $DIC->ui()->mainTemplate()->setOnScreenMessage("success", $this->plugin->txt('config_msg_success'), true);
+                $this->control->redirectToURL($form_action);
             }
         }
 
-        return $saving_info . $this->renderer->render($form);
+        return $this->renderer->render($form);
     }
 
-    protected function saveProperties(): string
+    protected function saveProperties(): void
     {
-        global $DIC;
-        $renderer = $DIC->ui()->renderer();
         $this->object->update();
-
-        return $renderer->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('config_msg_success')));
-
     }
 
 }
