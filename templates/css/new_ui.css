@@ -2270,6 +2270,32 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     overflow-wrap: anywhere;
 }
 
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-link {
+    flex-direction: column;
+    gap: 12px;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-link a {
+    color: var(--xlvo-new-accent);
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-copy {
+    background: var(--xlvo-new-wash);
+    border: 1px solid #c7d2fe;
+    border-radius: 8px;
+    color: var(--xlvo-new-accent);
+    font-weight: 600;
+    /* default.css gives .xlvo_shortlink a 115px line height and pre-wrap white space. */
+    line-height: 1.4;
+    padding: 6px 14px;
+    white-space: nowrap;
+}
+
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-copy:hover,
+.xlvo-new-ui.xlvo-start-screen .xlvo-start-copy:focus-visible {
+    background: #e0e7ff;
+}
+
 .xlvo-new-ui.xlvo-start-screen .xlvo-start-pin h3 {
     color: var(--xlvo-new-accent);
     font-size: 44px;
