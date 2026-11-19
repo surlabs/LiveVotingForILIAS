@@ -24,6 +24,7 @@ use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\UI\LiveVotingDisplayPlayerUI;
 use LiveVoting\Utils\LiveVotingJs;
+use LiveVoting\Utils\LiveVotingUtils;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
@@ -450,7 +451,7 @@ class LiveVotingPlayerGUI
 
         // TODO: Use Ilias API to get and validate post data
 
-        $nickname = filter_input(INPUT_POST, 'nickname_input'); // Debemos validar el nickname primero
+        $nickname = LiveVotingUtils::removeUnsupportedCharacters((string) filter_input(INPUT_POST, 'nickname_input')); // Debemos validar el nickname primero
 
         LiveVotingParticipant::getInstance()->setNickname($nickname, $this->live_voting->getPlayer()->getId());
 
