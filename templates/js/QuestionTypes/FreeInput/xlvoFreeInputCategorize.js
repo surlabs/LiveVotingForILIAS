@@ -15,9 +15,9 @@ var xlvoFreeInputCategorize = {
 	base_url: '',
 
 	/**
-	 * avoids simultaneous requests
+	 * number of requests in flight, avoids simultaneous requests
 	 */
-	request_pending: false,
+	request_pending: 0,
 
 	auto_scroll_interval: null,
 	auto_scroll_mouse_y: null,
@@ -331,11 +331,7 @@ var xlvoFreeInputCategorize = {
 	 * @param category_id int
  	 */
 	changeCategory: function(vote_id, category_id) {
-		if (xlvoFreeInputCategorize.isRequestPending()) {
-			this.log('Request Pending');
-			return;
-		}
-
+		// Never skipped: the answer has already been dropped in its new place.
 		xlvoFreeInputCategorize.startRequest();
 
 		$.post(xlvoPlayer.config.base_url + '&cmd=apiCall', {
@@ -375,16 +371,24 @@ var xlvoFreeInputCategorize = {
 		if (!xlvoFreeInputCategorize.isNewUI()) {
 			il.waiter.show();
 		}
-		xlvoFreeInputCategorize.request_pending = true;
+		xlvoFreeInputCategorize.request_pending++;
 	},
 	endRequest: function () {
-		if (!xlvoFreeInputCategorize.isNewUI()) {
+		xlvoFreeInputCategorize.request_pending = Math.max(0, xlvoFreeInputCategorize.request_pending - 1);
+		if (!xlvoFreeInputCategorize.isNewUI() && !xlvoFreeInputCategorize.isRequestPending()) {
 			il.waiter.hide();
 		}
-		xlvoFreeInputCategorize.request_pending = false;
 	},
 	isRequestPending: function () {
-		return xlvoFreeInputCategorize.request_pending;
+		return xlvoFreeInputCategorize.request_pending > 0;
+	},
+
+	/**
+	 * The player must not be re-rendered while an answer is dragged or its new category is still being saved.
+	 */
+	isBusy: function () {
+		return (xlvoFreeInputCategorize.drake !== null && xlvoFreeInputCategorize.drake.dragging)
+			|| xlvoFreeInputCategorize.isRequestPending();
 	},
 
 	/**

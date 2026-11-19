@@ -334,6 +334,11 @@ var xlvoPlayer = {
         xlvoPlayer.startRequest();
         $.get(xlvoPlayer.config.base_url, { cmd: "getPlayerData" })
             .done(function (data) {
+                // Re-rendering in the middle of a categorize drag removes the dragged answer: wait for it to end.
+                if (window.xlvoFreeInputCategorize && xlvoFreeInputCategorize.isBusy()) {
+                    xlvoPlayer.timeout = setTimeout(xlvoPlayer.getPlayerData, xlvoPlayer.delay);
+                    return;
+                }
                 xlvoPlayer.counter++;
 
                 if (xlvoPlayer.player.has_countdown || (xlvoPlayer.player.is_countdown_infinite && data.player.status === 1)) {
